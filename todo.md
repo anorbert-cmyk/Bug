@@ -84,3 +84,12 @@
 - [x] Syndicate tier: multiline API hívás lánc implementálása (4 részes)
 - [x] Promptok átvétele a GitHub repóból
 - [x] Prompt injection védelem implementálása
+
+## PayPal Integráció
+- [x] PayPal szolgáltatás létrehozása (backend)
+- [x] PayPal order létrehozás API
+- [x] PayPal capture API
+- [x] PayPal webhook verificáció
+- [x] PayPal UI gomb a Checkout oldalon
+- [x] Sandbox/Live mód támogatás
+- [x] Tesztek írása (7 teszt)

@@ -30,6 +30,7 @@ import { Tier, getTierPrice, getTierConfig, TIER_CONFIGS, isMultiPartTier } from
 import { generateAnalysis, generateSingleAnalysis, generateMultiPartAnalysis } from "./services/perplexityService";
 import { createPaymentIntent, isStripeConfigured } from "./services/stripeService";
 import { createCharge, isCoinbaseConfigured } from "./services/coinbaseService";
+import { createOrder as createPayPalOrder, captureOrder as capturePayPalOrder, isPayPalConfigured } from "./services/paypalService";
 import { verifyAdminSignature, checkAdminStatus } from "./services/walletAuthService";
 
 // Zod schemas
@@ -179,6 +180,72 @@ export const appRouter = router({
           chargeId: result.chargeId,
           code: result.code,
           hostedUrl: result.hostedUrl,
+        };
+      }),
+
+    // PayPal order creation
+    createPayPalOrder: publicProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        tier: tierSchema,
+        problemStatement: z.string(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (!isPayPalConfigured()) {
+          throw new TRPCError({ code: "PRECONDITION_FAILED", message: "PayPal is not configured" });
+        }
+
+        const result = await createPayPalOrder(input.tier, input.sessionId, input.problemStatement);
+
+        if (!result.success) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: result.error });
+        }
+
+        // Create purchase record
+        await createPurchase({
+          sessionId: input.sessionId,
+          userId: ctx.user?.id,
+          tier: input.tier,
+          amountUsd: getTierPrice(input.tier).toString(),
+          paymentMethod: "paypal",
+          paymentStatus: "pending",
+          paypalOrderId: result.orderId,
+        });
+
+        return {
+          orderId: result.orderId,
+          approvalUrl: result.approvalUrl,
+        };
+      }),
+
+    // PayPal order capture (after user approval)
+    capturePayPalOrder: publicProcedure
+      .input(z.object({
+        orderId: z.string(),
+        sessionId: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const result = await capturePayPalOrder(input.orderId);
+
+        if (!result.success) {
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: result.error });
+        }
+
+        // Update purchase status
+        await updatePurchaseStatus(input.sessionId, "completed");
+
+        // Notify owner
+        const purchase = await getPurchaseBySessionId(input.sessionId);
+        if (purchase) {
+          await notifyOwner({
+            title: "New PayPal Purchase",
+            content: `Tier: ${purchase.tier}\nAmount: $${purchase.amountUsd}\nSession: ${input.sessionId}`,
+          });
+        }
+
+        return {
+          success: true,
+          captureId: result.captureId,
         };
       }),
 
@@ -407,6 +474,7 @@ export const appRouter = router({
       return {
         stripeEnabled: isStripeConfigured(),
         coinbaseEnabled: isCoinbaseConfigured(),
+        paypalEnabled: isPayPalConfigured(),
         stripePublishableKey: process.env.VITE_STRIPE_PUBLISHABLE_KEY || "",
       };
     }),

@@ -15,6 +15,13 @@
       "when": 1766833391081,
       "tag": "0001_crazy_donald_blake",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1766839934160,
+      "tag": "0002_sour_leech",
+      "breakpoints": true
     }
   ]
 }

@@ -32,7 +32,7 @@ export const paymentStatusEnum = mysqlEnum("paymentStatus", ["pending", "complet
 /**
  * Payment method enum
  */
-export const paymentMethodEnum = mysqlEnum("paymentMethod", ["stripe", "coinbase"]);
+export const paymentMethodEnum = mysqlEnum("paymentMethod", ["stripe", "coinbase", "paypal"]);
 
 /**
  * Analysis sessions - links problem statement to payment and results
@@ -67,6 +67,8 @@ export const purchases = mysqlTable("purchases", {
   stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
   coinbaseChargeId: varchar("coinbaseChargeId", { length: 255 }),
   coinbaseChargeCode: varchar("coinbaseChargeCode", { length: 64 }),
+  paypalOrderId: varchar("paypalOrderId", { length: 64 }),
+  paypalCaptureId: varchar("paypalCaptureId", { length: 64 }),
   walletAddress: varchar("walletAddress", { length: 42 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   completedAt: timestamp("completedAt"),
