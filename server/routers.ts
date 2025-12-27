@@ -31,7 +31,7 @@ import { generateAnalysis, generateSingleAnalysis, generateMultiPartAnalysis } f
 import { createPaymentIntent, isStripeConfigured } from "./services/stripeService";
 import { createCharge, isCoinbaseConfigured } from "./services/coinbaseService";
 import { createOrder as createPayPalOrder, captureOrder as capturePayPalOrder, isPayPalConfigured } from "./services/paypalService";
-import { verifyAdminSignature, checkAdminStatus } from "./services/walletAuthService";
+import { verifyAdminSignature, verifyAdminSignatureWithChallenge, checkAdminStatus, generateChallenge } from "./services/walletAuthService";
 import { sendRapidApolloEmail, isEmailConfigured } from "./services/emailService";
 
 // Zod schemas
@@ -331,8 +331,8 @@ export const appRouter = router({
         if (!isAdmin) {
           throw new TRPCError({ code: "UNAUTHORIZED", message: "Not an admin wallet" });
         }
-        const challenge = nanoid(32);
-        const timestamp = Date.now();
+        // Use the walletAuthService to generate and store the challenge
+        const { challenge, timestamp } = generateChallenge(input.walletAddress);
         return { challenge, timestamp };
       }),
 
@@ -344,8 +344,10 @@ export const appRouter = router({
         timestamp: z.number(),
       }))
       .mutation(async ({ input }) => {
-        const result = await verifyAdminSignature(
+        // Use the challenge-based verification
+        const result = await verifyAdminSignatureWithChallenge(
           input.signature,
+          input.challenge,
           input.timestamp,
           input.walletAddress
         );

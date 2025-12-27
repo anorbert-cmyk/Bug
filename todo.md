@@ -108,3 +108,6 @@
 - [x] Confetti animáció sikeres fizetésnél
 - [x] Email értesítés jelzése
 - [x] Direct ETH payment gombok eltávolítva (csak Stripe, PayPal, Coinbase)
+
+## Hibajavítások
+- [x] MetaMask aláírás verifikáció javítása az admin oldalon (challenge-alapú hitelesítés)

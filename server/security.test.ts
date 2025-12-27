@@ -38,7 +38,9 @@ vi.mock("./services/coinbaseService", () => ({
 
 vi.mock("./services/walletAuthService", () => ({
   verifyAdminSignature: vi.fn(),
+  verifyAdminSignatureWithChallenge: vi.fn(),
   checkAdminStatus: vi.fn(),
+  generateChallenge: vi.fn().mockReturnValue({ challenge: "test-challenge", timestamp: Date.now() }),
 }));
 
 vi.mock("./services/perplexityService", () => ({
@@ -210,8 +212,9 @@ describe("Security: Admin Authentication", () => {
     });
 
     it("allows admin wallet for challenge request", async () => {
-      const { checkAdminStatus } = await import("./services/walletAuthService");
+      const { checkAdminStatus, generateChallenge } = await import("./services/walletAuthService");
       (checkAdminStatus as any).mockResolvedValueOnce(true);
+      (generateChallenge as any).mockReturnValueOnce({ challenge: "12345678901234567890123456789012", timestamp: Date.now() });
 
       const ctx = createPublicContext();
       const caller = appRouter.createCaller(ctx);
@@ -228,9 +231,10 @@ describe("Security: Admin Authentication", () => {
 
   describe("Signature Verification", () => {
     it("rejects invalid signature", async () => {
-      const { verifyAdminSignature } = await import("./services/walletAuthService");
-      (verifyAdminSignature as any).mockResolvedValueOnce({
+      const { verifyAdminSignatureWithChallenge } = await import("./services/walletAuthService");
+      (verifyAdminSignatureWithChallenge as any).mockResolvedValueOnce({
         success: false,
+        isAdmin: false,
         error: "Invalid signature",
       });
 
@@ -248,9 +252,10 @@ describe("Security: Admin Authentication", () => {
     });
 
     it("accepts valid signature", async () => {
-      const { verifyAdminSignature } = await import("./services/walletAuthService");
-      (verifyAdminSignature as any).mockResolvedValueOnce({
+      const { verifyAdminSignatureWithChallenge } = await import("./services/walletAuthService");
+      (verifyAdminSignatureWithChallenge as any).mockResolvedValueOnce({
         success: true,
+        isAdmin: true,
       });
 
       const ctx = createPublicContext();
