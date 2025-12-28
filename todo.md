@@ -165,3 +165,13 @@
 - [x] Create custom email template with magic link (Hungarian template exists)
 - [x] Magic link works - analysis page is public (no auth required)
 - [ ] Test full flow: Stripe payment → Email → Magic link → Analysis status
+
+## Output Page Redesign (APEX 4-Part Display)
+- [x] Analyze 4-part output structure from documents
+- [x] Design Part 1: Discovery & Problem Analysis section
+- [x] Design Part 2: Strategic Design & Roadmap section
+- [x] Design Part 3: AI Toolkit & Figma Prompts with copy functionality
+- [x] Design Part 4: Risk, Metrics & Rationale section
+- [x] Implement collapsible/expandable sections for long content
+- [x] Add copy-to-clipboard for Figma prompts
+- [x] Create unified Output page with excellent UX/UI
