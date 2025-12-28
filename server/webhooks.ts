@@ -16,7 +16,8 @@ import {
 import { notifyOwner } from "./_core/notification";
 import { getTierConfig, getTierPrice, isMultiPartTier } from "../shared/pricing";
 import { generateSingleAnalysis, generateMultiPartAnalysis } from "./services/perplexityService";
-import { updateAnalysisResult } from "./db";
+import { updateAnalysisResult, getUserById } from "./db";
+import { sendRapidApolloEmail, isEmailConfigured } from "./services/emailService";
 
 const webhookRouter = Router();
 
@@ -171,6 +172,13 @@ async function startAnalysisAfterPayment(sessionId: string) {
       content: `A new analysis has been purchased.\n\nTier: ${tierConfig?.displayName}\nAmount: $${getTierPrice(session.tier)}\nProblem: ${session.problemStatement.substring(0, 200)}...`,
     });
 
+    // Get user email for notification
+    let userEmail = session.email;
+    if (!userEmail && session.userId) {
+      const user = await getUserById(session.userId);
+      userEmail = user?.email || null;
+    }
+
     // Start analysis in background
     if (isMultiPartTier(session.tier)) {
       generateMultiPartAnalysis(session.problemStatement, {
@@ -184,6 +192,21 @@ async function startAnalysisAfterPayment(sessionId: string) {
             generatedAt: new Date(result.generatedAt),
           });
           await updateAnalysisSessionStatus(sessionId, "completed");
+          
+          // Send email notification with magic link
+          if (userEmail && isEmailConfigured()) {
+            const appUrl = process.env.VITE_APP_URL || 'https://rapidapollo.com';
+            await sendRapidApolloEmail({
+              to: userEmail,
+              userName: userEmail.split('@')[0],
+              magicLinkUrl: `${appUrl}/analysis/${sessionId}`,
+              transactionId: sessionId,
+              amount: String(getTierPrice(session.tier)),
+              currency: 'USD',
+              tier: session.tier,
+            });
+            console.log(`[Webhook] Email sent to ${userEmail} for session ${sessionId}`);
+          }
         },
         onError: async () => {
           await updateAnalysisSessionStatus(sessionId, "failed");
@@ -196,6 +219,21 @@ async function startAnalysisAfterPayment(sessionId: string) {
         generatedAt: new Date(result.generatedAt),
       });
       await updateAnalysisSessionStatus(sessionId, "completed");
+      
+      // Send email notification with magic link
+      if (userEmail && isEmailConfigured()) {
+        const appUrl = process.env.VITE_APP_URL || 'https://rapidapollo.com';
+        await sendRapidApolloEmail({
+          to: userEmail,
+          userName: userEmail.split('@')[0],
+          magicLinkUrl: `${appUrl}/analysis/${sessionId}`,
+          transactionId: sessionId,
+          amount: String(getTierPrice(session.tier)),
+          currency: 'USD',
+          tier: session.tier,
+        });
+        console.log(`[Webhook] Email sent to ${userEmail} for session ${sessionId}`);
+      }
     }
   } catch (error) {
     console.error("[Analysis] Failed to start analysis:", error);

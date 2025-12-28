@@ -159,3 +159,9 @@
 - [x] Remove PayPal payment buttons
 - [x] Verify Stripe payment validation (webhook)
 - [x] Verify Coinbase/crypto payment validation (webhook)
+
+## Post-Payment Email Flow
+- [x] Review current webhook → email flow
+- [x] Create custom email template with magic link (Hungarian template exists)
+- [x] Magic link works - analysis page is public (no auth required)
+- [ ] Test full flow: Stripe payment → Email → Magic link → Analysis status
