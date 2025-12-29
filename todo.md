@@ -246,3 +246,11 @@
 ### Mobile Optimization
 - [x] Fix menubar spreading/breaking on mobile
 - [x] Ensure all pages are mobile responsive
+
+## History Page - December 29
+
+### History Page Implementation
+- [ ] Display list of previous purchases/analyses
+- [ ] Show purchase date, tier, status, and problem statement
+- [ ] Allow navigation to completed analyses
+- [ ] Show payment status for each purchase
