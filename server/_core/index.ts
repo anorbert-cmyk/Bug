@@ -74,7 +74,9 @@ async function startServer() {
     }
   });
   
-  // Cron endpoint for email sequence processing (called by scheduled task)
+  // DISABLED: Cron endpoint for email sequence processing (called by scheduled task)
+  // Uncomment to enable automatic email sending
+  /*
   app.get("/api/cron/process-emails", async (req, res) => {
     try {
       // Verify cron secret to prevent unauthorized access
@@ -97,6 +99,7 @@ async function startServer() {
       res.status(500).json({ error: "Failed to process email sequence" });
     }
   });
+  */
   
   // tRPC API
   app.use(
