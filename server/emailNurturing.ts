@@ -2,6 +2,7 @@ import { getDb } from "./db";
 import { emailSubscribers, emailSequenceStatus } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { ENV } from "./_core/env";
+import { getTrackingPixelHtml } from "./emailTracking";
 
 // Resend API configuration
 const RESEND_API_URL = "https://api.resend.com/emails";
@@ -18,13 +19,23 @@ const getBaseUrl = () => {
 };
 
 /**
+ * Generate tracking ID for an email
+ */
+function generateEmailTrackingId(subscriberId: number, emailNumber: number): string {
+  const uniquePart = Math.random().toString(36).substring(2, 10);
+  return `${subscriberId}-${emailNumber}-${uniquePart}`;
+}
+
+/**
  * Email 1: Welcome + Value Delivery
  * Sent immediately after subscription
  */
-function getEmail1Template(email: string): EmailTemplate {
+function getEmail1Template(email: string, subscriberId: number = 0): EmailTemplate {
   const baseUrl = getBaseUrl();
   const firstName = email.split('@')[0].split('.')[0];
   const capitalizedName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+  const trackingId = generateEmailTrackingId(subscriberId, 1);
+  const trackingPixel = getTrackingPixelHtml(trackingId, baseUrl);
   
   return {
     subject: "Your strategic analysis toolkit is ready ⚡",
@@ -125,6 +136,7 @@ function getEmail1Template(email: string): EmailTemplate {
       </td>
     </tr>
   </table>
+  ${trackingPixel}
 </body>
 </html>
     `,
@@ -156,10 +168,12 @@ Unsubscribe: ${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}
  * Email 2: Social Proof + Founder Story
  * Sent 2-3 days after subscription
  */
-function getEmail2Template(email: string): EmailTemplate {
+function getEmail2Template(email: string, subscriberId: number = 0): EmailTemplate {
   const baseUrl = getBaseUrl();
   const firstName = email.split('@')[0].split('.')[0];
   const capitalizedName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+  const trackingId = generateEmailTrackingId(subscriberId, 2);
+  const trackingPixel = getTrackingPixelHtml(trackingId, baseUrl);
   
   return {
     subject: "How a founder validated their idea in 48 hours",
@@ -286,6 +300,7 @@ function getEmail2Template(email: string): EmailTemplate {
       </td>
     </tr>
   </table>
+  ${trackingPixel}
 </body>
 </html>
     `,
@@ -324,10 +339,12 @@ Unsubscribe: ${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}
  * Email 3: Problem-Solution Deep Dive
  * Sent 5-7 days after subscription
  */
-function getEmail3Template(email: string): EmailTemplate {
+function getEmail3Template(email: string, subscriberId: number = 0): EmailTemplate {
   const baseUrl = getBaseUrl();
   const firstName = email.split('@')[0].split('.')[0];
   const capitalizedName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+  const trackingId = generateEmailTrackingId(subscriberId, 3);
+  const trackingPixel = getTrackingPixelHtml(trackingId, baseUrl);
   
   return {
     subject: "The #1 reason startup ideas fail (and how to avoid it)",
@@ -472,6 +489,7 @@ function getEmail3Template(email: string): EmailTemplate {
       </td>
     </tr>
   </table>
+  ${trackingPixel}
 </body>
 </html>
     `,
@@ -513,10 +531,12 @@ Unsubscribe: ${baseUrl}/unsubscribe?email=${encodeURIComponent(email)}
  * Email 4: Priority Bonus Offer
  * Sent 10-14 days after subscription
  */
-function getEmail4Template(email: string): EmailTemplate {
+function getEmail4Template(email: string, subscriberId: number = 0): EmailTemplate {
   const baseUrl = getBaseUrl();
   const firstName = email.split('@')[0].split('.')[0];
   const capitalizedName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+  const trackingId = generateEmailTrackingId(subscriberId, 4);
+  const trackingPixel = getTrackingPixelHtml(trackingId, baseUrl);
   
   // Priority link with tracking
   const priorityLink = `${baseUrl}/#pricing?priority=PRIORITY`;
@@ -689,6 +709,7 @@ function getEmail4Template(email: string): EmailTemplate {
       </td>
     </tr>
   </table>
+  ${trackingPixel}
 </body>
 </html>
     `,
@@ -787,7 +808,7 @@ async function sendEmail(to: string, template: EmailTemplate): Promise<boolean> 
  * Send Email 1 (Welcome) immediately after subscription
  */
 export async function sendWelcomeEmail(subscriberId: number, email: string): Promise<boolean> {
-  const template = getEmail1Template(email);
+  const template = getEmail1Template(email, subscriberId);
   const success = await sendEmail(email, template);
   
   if (success) {
@@ -839,7 +860,7 @@ export async function processEmailSequence(): Promise<{ sent: number; errors: nu
     try {
       // Email 1: Immediate (if not sent yet)
       if (!status) {
-        const template = getEmail1Template(subscriber.email);
+        const template = getEmail1Template(subscriber.email, subscriber.id);
         if (await sendEmail(subscriber.email, template)) {
           await db.insert(emailSequenceStatus).values({
             subscriberId: subscriber.id,
@@ -855,7 +876,7 @@ export async function processEmailSequence(): Promise<{ sent: number; errors: nu
       
       // Email 2: Day 2-3 (if email 1 sent and email 2 not sent)
       if (status.email1SentAt && !status.email2SentAt && daysSinceSubscription >= 2) {
-        const template = getEmail2Template(subscriber.email);
+        const template = getEmail2Template(subscriber.email, subscriber.id);
         if (await sendEmail(subscriber.email, template)) {
           await db.update(emailSequenceStatus)
             .set({ email2SentAt: now })
@@ -869,7 +890,7 @@ export async function processEmailSequence(): Promise<{ sent: number; errors: nu
       
       // Email 3: Day 5-7 (if email 2 sent and email 3 not sent)
       if (status.email2SentAt && !status.email3SentAt && daysSinceSubscription >= 5) {
-        const template = getEmail3Template(subscriber.email);
+        const template = getEmail3Template(subscriber.email, subscriber.id);
         if (await sendEmail(subscriber.email, template)) {
           await db.update(emailSequenceStatus)
             .set({ email3SentAt: now })
@@ -883,7 +904,7 @@ export async function processEmailSequence(): Promise<{ sent: number; errors: nu
       
       // Email 4: Day 10-14 (if email 3 sent and email 4 not sent)
       if (status.email3SentAt && !status.email4SentAt && daysSinceSubscription >= 10) {
-        const template = getEmail4Template(subscriber.email);
+        const template = getEmail4Template(subscriber.email, subscriber.id);
         if (await sendEmail(subscriber.email, template)) {
           await db.update(emailSequenceStatus)
             .set({ email4SentAt: now })

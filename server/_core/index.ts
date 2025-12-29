@@ -36,6 +36,44 @@ async function startServer() {
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   
+  // Email tracking pixel endpoint
+  app.get("/api/track/email-open/:trackingId", async (req, res) => {
+    try {
+      const { trackingId } = req.params;
+      const userAgent = req.headers["user-agent"] || "";
+      const ipAddress = req.headers["x-forwarded-for"]?.toString().split(",")[0] || req.socket.remoteAddress || "";
+      
+      // Record the email open
+      const { recordEmailOpen } = await import("../emailTracking");
+      await recordEmailOpen(trackingId, userAgent, ipAddress);
+      
+      // Return a 1x1 transparent GIF
+      const transparentGif = Buffer.from(
+        "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+        "base64"
+      );
+      
+      res.set({
+        "Content-Type": "image/gif",
+        "Content-Length": transparentGif.length,
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+      });
+      
+      res.send(transparentGif);
+    } catch (error) {
+      console.error("[EmailTracking] Error recording email open:", error);
+      // Still return the pixel even if tracking fails
+      const transparentGif = Buffer.from(
+        "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+        "base64"
+      );
+      res.set("Content-Type", "image/gif");
+      res.send(transparentGif);
+    }
+  });
+  
   // Cron endpoint for email sequence processing (called by scheduled task)
   app.get("/api/cron/process-emails", async (req, res) => {
     try {

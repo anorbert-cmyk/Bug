@@ -220,3 +220,20 @@ export const emailSequenceStatus = mysqlTable("email_sequence_status", {
 
 export type EmailSequenceStatus = typeof emailSequenceStatus.$inferSelect;
 export type InsertEmailSequenceStatus = typeof emailSequenceStatus.$inferInsert;
+
+/**
+ * Email opens tracking - detailed log of email opens
+ */
+export const emailOpens = mysqlTable("email_opens", {
+  id: int("id").autoincrement().primaryKey(),
+  trackingId: varchar("trackingId", { length: 64 }).notNull().unique(), // Unique ID for each email sent
+  subscriberId: int("subscriberId").references(() => emailSubscribers.id),
+  email: varchar("email", { length: 320 }).notNull(),
+  emailNumber: int("emailNumber").notNull(), // 1, 2, 3, or 4
+  openedAt: timestamp("openedAt").defaultNow().notNull(),
+  userAgent: text("userAgent"),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+});
+
+export type EmailOpen = typeof emailOpens.$inferSelect;
+export type InsertEmailOpen = typeof emailOpens.$inferInsert;
