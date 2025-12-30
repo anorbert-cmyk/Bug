@@ -33,7 +33,7 @@ import {
 
 import { Tier, getTierPrice, getTierConfig, TIER_CONFIGS, isMultiPartTier } from "../shared/pricing";
 import { generateAnalysis, generateSingleAnalysis, generateMultiPartAnalysis } from "./services/perplexityService";
-import { createPaymentIntent, isStripeConfigured } from "./services/stripeService";
+import { createCheckout, isLemonSqueezyConfigured } from "./services/lemonSqueezyService";
 import { createCharge, isCoinbaseConfigured } from "./services/coinbaseService";
 import { createOrder as createPayPalOrder, captureOrder as capturePayPalOrder, isPayPalConfigured } from "./services/paypalService";
 import { verifyAdminSignature, verifyAdminSignatureWithChallenge, checkAdminStatus, generateChallenge } from "./services/walletAuthService";
@@ -119,18 +119,28 @@ export const appRouter = router({
 
   // ============ PAYMENT ============
   payment: router({
-    createStripeIntent: publicProcedure
+    createLemonSqueezyCheckout: publicProcedure
       .input(z.object({
         sessionId: z.string(),
         tier: tierSchema,
         problemStatement: z.string(),
+        email: z.string().email().optional(),
+        isPriority: z.boolean().optional(),
+        prioritySource: z.string().optional(),
       }))
       .mutation(async ({ input, ctx }) => {
-        if (!isStripeConfigured()) {
-          throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Stripe is not configured" });
+        if (!isLemonSqueezyConfigured()) {
+          throw new TRPCError({ code: "PRECONDITION_FAILED", message: "LemonSqueezy is not configured" });
         }
 
-        const result = await createPaymentIntent(input.tier, input.sessionId, input.problemStatement);
+        const result = await createCheckout(
+          input.tier,
+          input.sessionId,
+          input.problemStatement,
+          input.email || ctx.user?.email || undefined,
+          input.isPriority,
+          input.prioritySource
+        );
         
         if (!result.success) {
           throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: result.error });
@@ -142,14 +152,12 @@ export const appRouter = router({
           userId: ctx.user?.id,
           tier: input.tier,
           amountUsd: getTierPrice(input.tier).toString(),
-          paymentMethod: "stripe",
+          paymentMethod: "lemonsqueezy",
           paymentStatus: "pending",
-          stripePaymentIntentId: result.paymentIntentId,
         });
 
         return {
-          clientSecret: result.clientSecret,
-          paymentIntentId: result.paymentIntentId,
+          checkoutUrl: result.checkoutUrl,
         };
       }),
 
@@ -528,11 +536,10 @@ export const appRouter = router({
   config: router({
     getPaymentConfig: publicProcedure.query(() => {
       return {
-        stripeEnabled: isStripeConfigured(),
+        lemonSqueezyEnabled: isLemonSqueezyConfigured(),
         coinbaseEnabled: isCoinbaseConfigured(),
         paypalEnabled: isPayPalConfigured(),
         perplexityEnabled: isPerplexityConfigured(),
-        stripePublishableKey: process.env.VITE_STRIPE_PUBLISHABLE_KEY || "",
       };
     }),
   }),

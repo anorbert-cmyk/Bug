@@ -249,7 +249,7 @@ describe("Config Router", () => {
 
     const config = await caller.config.getPaymentConfig();
 
-    expect(config).toHaveProperty("stripeEnabled");
+    expect(config).toHaveProperty("lemonSqueezyEnabled");
     expect(config).toHaveProperty("coinbaseEnabled");
   });
 });

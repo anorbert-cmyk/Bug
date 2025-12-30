@@ -7,8 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+// LemonSqueezy uses hosted checkout - no SDK needed
 import { 
   CreditCard, 
   Wallet, 
@@ -27,82 +26,14 @@ const TIER_INFO = {
   full: { name: "Syndicate", price: 199, badge: "tier-badge-full", icon: "⚡" },
 };
 
-// Initialize Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
+// LemonSqueezy uses hosted checkout page - no client-side initialization needed
 
-// Stripe Payment Form Component
-function StripePaymentForm({ 
-  sessionId, 
-  onSuccess, 
-  onError 
-}: { 
-  sessionId: string; 
-  onSuccess: () => void; 
-  onError: (error: string) => void;
-}) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!stripe || !elements) {
-      return;
-    }
-
-    setIsProcessing(true);
-
-    const { error, paymentIntent } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/payment-success/${sessionId}`,
-      },
-      redirect: "if_required",
-    });
-
-    if (error) {
-      onError(error.message || "Payment failed");
-      setIsProcessing(false);
-    } else if (paymentIntent && paymentIntent.status === "succeeded") {
-      onSuccess();
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <PaymentElement 
-        options={{
-          layout: "tabs",
-        }}
-      />
-      <Button 
-        type="submit" 
-        disabled={!stripe || isProcessing}
-        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500"
-      >
-        {isProcessing ? (
-          <>
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            Processing...
-          </>
-        ) : (
-          <>
-            <Lock className="h-4 w-4 mr-2" />
-            Pay Securely
-          </>
-        )}
-      </Button>
-    </form>
-  );
-}
 
 export default function Checkout() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const [, navigate] = useLocation();
-  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "coinbase" | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"lemonsqueezy" | "coinbase" | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
 
   const { data: session, isLoading: sessionLoading } = trpc.session.get.useQuery(
     { sessionId: sessionId || "" },
@@ -111,12 +42,13 @@ export default function Checkout() {
 
   const { data: paymentConfig } = trpc.config.getPaymentConfig.useQuery();
 
-  const createStripeIntent = trpc.payment.createStripeIntent.useMutation({
-    onSuccess: (data) => {
-      setClientSecret(data.clientSecret || null);
-      toast.success("Payment form ready!");
+  const createLemonSqueezyCheckout = trpc.payment.createLemonSqueezyCheckout.useMutation({
+    onSuccess: (data: { checkoutUrl?: string }) => {
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      }
     },
-    onError: (error) => {
+    onError: (error: { message: string }) => {
       toast.error("Payment setup failed", { description: error.message });
       setIsProcessing(false);
       setPaymentMethod(null);
@@ -135,17 +67,20 @@ export default function Checkout() {
     },
   });
 
-  const handleSelectPaymentMethod = (method: "stripe" | "coinbase") => {
+  const handleSelectPaymentMethod = (method: "lemonsqueezy" | "coinbase") => {
     if (!session) return;
     
     setPaymentMethod(method);
     setIsProcessing(true);
 
-    if (method === "stripe") {
-      createStripeIntent.mutate({
+    if (method === "lemonsqueezy") {
+      createLemonSqueezyCheckout.mutate({
         sessionId: session.sessionId,
         tier: session.tier as "standard" | "medium" | "full",
         problemStatement: session.problemStatement,
+        email: session.email || undefined,
+        isPriority: session.isPriority,
+        prioritySource: session.prioritySource || undefined,
       });
     } else if (method === "coinbase") {
       createCoinbaseCharge.mutate({
@@ -285,60 +220,13 @@ export default function Checkout() {
             <div className="space-y-6">
               <h2 className="text-lg font-semibold">Select Payment Method</h2>
 
-              {/* If Stripe is selected and we have clientSecret, show payment form */}
-              {paymentMethod === "stripe" && clientSecret ? (
-                <Card className="glass-panel">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <CreditCard className="h-5 w-5" />
-                      Card Payment
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Elements 
-                      stripe={stripePromise} 
-                      options={{ 
-                        clientSecret,
-                        appearance: {
-                          theme: "night",
-                          variables: {
-                            colorPrimary: "#6366f1",
-                            colorBackground: "#1a1a2e",
-                            colorText: "#ffffff",
-                            colorDanger: "#ef4444",
-                            fontFamily: "system-ui, sans-serif",
-                            borderRadius: "8px",
-                          },
-                        },
-                      }}
-                    >
-                      <StripePaymentForm 
-                        sessionId={sessionId || ""}
-                        onSuccess={handlePaymentSuccess}
-                        onError={handlePaymentError}
-                      />
-                    </Elements>
-                    <Button 
-                      variant="ghost" 
-                      className="w-full mt-4"
-                      onClick={() => {
-                        setPaymentMethod(null);
-                        setClientSecret(null);
-                        setIsProcessing(false);
-                      }}
-                    >
-                      Choose Different Method
-                    </Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="space-y-4">
-                  {/* Stripe Card Payment */}
+              <div className="space-y-4">
+                {/* LemonSqueezy Card Payment */}
                   <Card 
                     className={`glass-panel cursor-pointer transition-all hover:border-primary/50 ${
-                      paymentMethod === "stripe" && !clientSecret ? "border-primary/50 bg-primary/5" : ""
+                      paymentMethod === "lemonsqueezy" ? "border-primary/50 bg-primary/5" : ""
                     }`}
-                    onClick={() => !isProcessing && paymentConfig?.stripeEnabled && handleSelectPaymentMethod("stripe")}
+                    onClick={() => !isProcessing && paymentConfig?.lemonSqueezyEnabled && handleSelectPaymentMethod("lemonsqueezy")}
                   >
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
@@ -348,12 +236,12 @@ export default function Checkout() {
                           </div>
                           <div>
                             <p className="font-medium">Credit / Debit Card</p>
-                            <p className="text-xs text-muted-foreground">Visa, Mastercard, Amex</p>
+                            <p className="text-xs text-muted-foreground">Visa, Mastercard, Amex, Apple Pay, Google Pay</p>
                           </div>
                         </div>
-                        {paymentMethod === "stripe" && !clientSecret ? (
+                        {paymentMethod === "lemonsqueezy" ? (
                           <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                        ) : paymentConfig?.stripeEnabled ? (
+                        ) : paymentConfig?.lemonSqueezyEnabled ? (
                           <Badge variant="outline" className="text-emerald-400 border-emerald-400/30">
                             <CheckCircle2 className="h-3 w-3 mr-1" />
                             Available
@@ -400,8 +288,7 @@ export default function Checkout() {
                       </div>
                     </CardContent>
                   </Card>
-                </div>
-              )}
+              </div>
 
               {/* What happens next */}
               <Card className="glass-panel bg-muted/20">

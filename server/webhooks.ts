@@ -1,12 +1,11 @@
 /**
- * Webhook handlers for Stripe and Coinbase Commerce
+ * Webhook handlers for LemonSqueezy and Coinbase Commerce
  */
 
 import { Router, Request, Response } from "express";
-import { verifyWebhookSignature as verifyStripeSignature } from "./services/stripeService";
+import { verifyWebhookSignature as verifyLemonSqueezySignature, parseWebhookEvent as parseLemonSqueezyEvent } from "./services/lemonSqueezyService";
 import { verifyWebhookSignature as verifyCoinbaseSignature } from "./services/coinbaseService";
 import { 
-  getPurchaseByStripePaymentIntent, 
   getPurchaseByCoinbaseChargeId,
   updatePurchaseStatus,
   updateAnalysisSessionStatus,
@@ -22,59 +21,64 @@ import { sendRapidApolloEmail, isEmailConfigured } from "./services/emailService
 const webhookRouter = Router();
 
 /**
- * Stripe Webhook Handler
+ * LemonSqueezy Webhook Handler
  */
-webhookRouter.post("/stripe", async (req: Request, res: Response) => {
-  const signature = req.headers["stripe-signature"] as string;
+webhookRouter.post("/lemonsqueezy", async (req: Request, res: Response) => {
+  const signature = req.headers["x-signature"] as string;
   
   if (!signature) {
-    console.error("[Stripe Webhook] Missing signature");
+    console.error("[LemonSqueezy Webhook] Missing signature");
     return res.status(400).json({ error: "Missing signature" });
   }
 
   // Get raw body for signature verification
   const rawBody = (req as any).rawBody || JSON.stringify(req.body);
   
-  const event = verifyStripeSignature(rawBody, signature);
-  if (!event) {
-    console.error("[Stripe Webhook] Invalid signature");
+  if (!verifyLemonSqueezySignature(rawBody, signature)) {
+    console.error("[LemonSqueezy Webhook] Invalid signature");
     return res.status(400).json({ error: "Invalid signature" });
   }
 
-  console.log("[Stripe Webhook] Received event:", event.type);
+  const event = parseLemonSqueezyEvent(rawBody);
+  if (!event) {
+    console.error("[LemonSqueezy Webhook] Failed to parse event");
+    return res.status(400).json({ error: "Invalid event payload" });
+  }
+
+  console.log("[LemonSqueezy Webhook] Received event:", event.meta.event_name);
 
   try {
-    switch (event.type) {
-      case "payment_intent.succeeded": {
-        const paymentIntent = event.data.object as any;
-        const purchase = await getPurchaseByStripePaymentIntent(paymentIntent.id);
+    const customData = event.meta.custom_data;
+    const sessionId = customData?.session_id;
+
+    if (!sessionId) {
+      console.error("[LemonSqueezy Webhook] Missing session_id in custom_data");
+      return res.status(400).json({ error: "Missing session_id" });
+    }
+
+    switch (event.meta.event_name) {
+      case "order_created": {
+        // Payment completed - order was created successfully
+        await updatePurchaseStatus(sessionId, "completed", new Date());
+        console.log("[LemonSqueezy Webhook] Payment completed for session:", sessionId);
         
-        if (purchase) {
-          await updatePurchaseStatus(purchase.sessionId, "completed", new Date());
-          console.log("[Stripe Webhook] Payment completed for session:", purchase.sessionId);
-          
-          // Start analysis
-          await startAnalysisAfterPayment(purchase.sessionId);
-        }
+        // Start analysis
+        await startAnalysisAfterPayment(sessionId);
         break;
       }
 
-      case "payment_intent.payment_failed": {
-        const paymentIntent = event.data.object as any;
-        const purchase = await getPurchaseByStripePaymentIntent(paymentIntent.id);
-        
-        if (purchase) {
-          await updatePurchaseStatus(purchase.sessionId, "failed");
-          await updateAnalysisSessionStatus(purchase.sessionId, "failed");
-          console.log("[Stripe Webhook] Payment failed for session:", purchase.sessionId);
-        }
+      case "order_refunded": {
+        // Payment was refunded
+        await updatePurchaseStatus(sessionId, "refunded");
+        await updateAnalysisSessionStatus(sessionId, "failed");
+        console.log("[LemonSqueezy Webhook] Payment refunded for session:", sessionId);
         break;
       }
     }
 
     res.json({ received: true });
   } catch (error) {
-    console.error("[Stripe Webhook] Error processing event:", error);
+    console.error("[LemonSqueezy Webhook] Error processing event:", error);
     res.status(500).json({ error: "Webhook processing failed" });
   }
 });

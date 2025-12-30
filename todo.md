@@ -305,3 +305,15 @@
 - [x] Create tracking pixel endpoint /api/track/email-open
 - [x] Add unique tracking pixel to each email template
 - [x] Track which email (1-4) was opened and when
+
+## LemonSqueezy Integration - December 30, 2024
+### Migration from Stripe to LemonSqueezy
+- [x] Create LemonSqueezy account and products (Observer $29, Insider $79, Syndicate $199)
+- [x] Implement LemonSqueezy checkout API (server/services/lemonSqueezyService.ts)
+- [x] Create LemonSqueezy webhook endpoint for payment confirmation (server/webhooks.ts)
+- [x] Update frontend checkout flow for LemonSqueezy (client/src/pages/Checkout.tsx)
+- [x] Keep Coinbase Commerce integration unchanged
+- [x] Configure environment variables (API key, Store ID, Variant IDs, Webhook Secret)
+- [x] Create webhook in LemonSqueezy dashboard via API
+- [x] Write and pass LemonSqueezy API validation tests
+- [x] Test complete payment flow
