@@ -70,13 +70,20 @@ export async function createCheckout(
     }
 
     // Build checkout data with custom fields for tracking
+    // All custom fields MUST be strings for LemonSqueezy API
+    const customData: Record<string, string> = {
+      session_id: String(sessionId),
+      tier: String(tier),
+      is_priority: isPriority ? "true" : "false",
+    };
+    
+    // Only add priority_source if it's a non-empty string
+    if (prioritySource && typeof prioritySource === "string" && prioritySource.trim() !== "") {
+      customData.priority_source = prioritySource;
+    }
+
     const checkoutData: any = {
-      custom: {
-        session_id: sessionId,
-        tier: tier,
-        is_priority: isPriority ? "true" : "false",
-        priority_source: prioritySource || "",
-      },
+      custom: customData,
     };
 
     // Pre-fill customer email if provided

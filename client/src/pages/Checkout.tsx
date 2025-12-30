@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 // LemonSqueezy uses hosted checkout - no SDK needed
 import { 
@@ -17,7 +19,8 @@ import {
   Loader2,
   CheckCircle2,
   ExternalLink,
-  Zap
+  Zap,
+  Mail
 } from "lucide-react";
 
 const TIER_INFO = {
@@ -34,6 +37,8 @@ export default function Checkout() {
   const [, navigate] = useLocation();
   const [paymentMethod, setPaymentMethod] = useState<"lemonsqueezy" | "coinbase" | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   const { data: session, isLoading: sessionLoading } = trpc.session.get.useQuery(
     { sessionId: sessionId || "" },
@@ -67,8 +72,28 @@ export default function Checkout() {
     },
   });
 
+  const validateEmail = (emailToValidate: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailToValidate.trim()) {
+      setEmailError("Email is required to receive your analysis");
+      return false;
+    }
+    if (!emailRegex.test(emailToValidate)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    setEmailError(null);
+    return true;
+  };
+
   const handleSelectPaymentMethod = (method: "lemonsqueezy" | "coinbase") => {
     if (!session) return;
+    
+    // Validate email before proceeding
+    if (!validateEmail(email)) {
+      toast.error("Please enter your email", { description: "We need your email to send the analysis results" });
+      return;
+    }
     
     setPaymentMethod(method);
     setIsProcessing(true);
@@ -78,9 +103,9 @@ export default function Checkout() {
         sessionId: session.sessionId,
         tier: session.tier as "standard" | "medium" | "full",
         problemStatement: session.problemStatement,
-        email: session.email || undefined,
+        email: email,
         isPriority: session.isPriority,
-        prioritySource: session.prioritySource || undefined,
+        prioritySource: session.prioritySource ? String(session.prioritySource) : undefined,
       });
     } else if (method === "coinbase") {
       createCoinbaseCharge.mutate({
@@ -218,6 +243,36 @@ export default function Checkout() {
 
             {/* Payment Methods */}
             <div className="space-y-6">
+              {/* Email Input */}
+              <div className="space-y-3">
+                <Label htmlFor="email" className="text-lg font-semibold flex items-center gap-2">
+                  <Mail className="h-5 w-5 text-primary" />
+                  Your Email
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (emailError) setEmailError(null);
+                    }}
+                    className={`pl-4 pr-4 py-3 h-12 text-base ${emailError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                    disabled={isProcessing}
+                  />
+                </div>
+                {emailError && (
+                  <p className="text-sm text-red-500">{emailError}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  We'll send your strategic analysis to this email address
+                </p>
+              </div>
+
+              <Separator />
+
               <h2 className="text-lg font-semibold">Select Payment Method</h2>
 
               <div className="space-y-4">

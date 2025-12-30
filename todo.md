@@ -317,3 +317,10 @@
 - [x] Create webhook in LemonSqueezy dashboard via API
 - [x] Write and pass LemonSqueezy API validation tests
 - [x] Test complete payment flow
+
+## Userflow Fixes - December 30, 2024
+### Critical Issues
+- [x] Fix LemonSqueezy 422 API error on checkout (priority_source must be string)
+- [x] Add email input field to checkout page (required for magic link)
+- [x] Fix Coinbase "Coming Soon" to show "Available" when configured (already correct - shows based on coinbaseEnabled config)
+- [x] Test complete payment flow end-to-end - LemonSqueezy checkout working!
