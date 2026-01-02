@@ -365,3 +365,8 @@
 - [x] Keep email gate that appears at 50% scroll
 - [x] Content locked with blur until email submitted
 - [x] Store emails in database with spam protection (honeypot field)
+
+## Resend Domain Verification - January 2, 2025
+- [x] Verify domain on Resend.com to enable sending emails to any address (validatestrategy.com verified)
+- [x] Update RESEND_FROM_EMAIL to contact@validatestrategy.com
+- [x] Test email sending configuration (Resend API tests passed)
