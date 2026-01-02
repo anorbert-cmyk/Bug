@@ -351,3 +351,11 @@
 
 ## Admin Navigation - January 2, 2025
 - [x] Add Admin link to navbar visible only for admin wallet users
+
+## Demo Analysis Page Fixes - January 2, 2025
+- [x] Restore original Demo Analysis design and rich content (full 4-part APEX with tabs, Figma prompts)
+- [x] Store email addresses in database when submitted on Demo page (via tRPC emailSubscriber.subscribe)
+- [x] Add honeypot spam protection to email form
+- [x] Fix New Analysis button modal functionality (works on Dashboard)
+- [x] Add Output and History navigation links to Demo page (visible after email unlock)
+- [x] Show Output and History navigation after purchase (magic link users)
