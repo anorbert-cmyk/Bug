@@ -1,0 +1,25 @@
+{
+  "query": "SELECT id, sessionId, tier, problemStatement, LEFT(part1, 200) as part1_preview, LEFT(part2, 200) as part2_preview, LEFT(part3, 200) as part3_preview, LEFT(part4, 200) as part4_preview, generatedAt FROM analysis_results ORDER BY id DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 269oH2rcit4kEnZ.root --database fiP8RUkhdLoJLqK2jRAup2 --execute SELECT id, sessionId, tier, problemStatement, LEFT(part1, 200) as part1_preview, LEFT(part2, 200) as part2_preview, LEFT(part3, 200) as part3_preview, LEFT(part4, 200) as part4_preview, generatedAt FROM analysis_results ORDER BY id DESC LIMIT 5;",
+  "rows": [],
+  "messages": [
+    "1\ttest-apex-demo-LAIdJqey\tfull\tHow can we improve the onboarding experience for our B2B SaaS product to reduce time-to-value and increase user activation rates?\t# PART 1 – Discovery & Problem Analysis",
+    "## Executive Summary",
+    "Launching a global Web2/Web3 marketing agency with fractional CMO services targets a $196.61 billion healthcare CMO market growing at 14.\t# PART 2 – Strategic Design & Roadmap",
+    "## Tailored Methodology (Ideation & Design Phase)",
+    "### Method 1: Service Blueprinting (Backend/Frontend Alignment)",
+    "🧠 **Rationale:**  ",
+    "Marketing agencies have co\t# PART 3 – AI Toolkit, Deliverables & Figma Prompts",
+    "## AI-Enhanced Execution Toolkit",
+    "### Research & Synthesis",
+    "#### **1. ChatGPT/Claude (Interview Guide Creation & Thematic Coding)**",
+    "**Use Case:** G\t# PART 4 – Risk, Metrics & Strategic Rationale",
+    "## Team & Collaboration Model",
+    "### Recommended Team Composition",
+    "**For Bootstrap Launch (Solo Founder + Fractional Support):**",
+    "| Role | FTE | Timing | \t2025-12-28 10:31:17"
+  ],
+  "stdout": "id\tsessionId\ttier\tproblemStatement\tpart1_preview\tpart2_preview\tpart3_preview\tpart4_preview\tgeneratedAt\n1\ttest-apex-demo-LAIdJqey\tfull\tHow can we improve the onboarding experience for our B2B SaaS product to reduce time-to-value and increase user activation rates?\t# PART 1 – Discovery & Problem Analysis\n\n## Executive Summary\n\nLaunching a global Web2/Web3 marketing agency with fractional CMO services targets a $196.61 billion healthcare CMO market growing at 14.\t# PART 2 – Strategic Design & Roadmap\n\n## Tailored Methodology (Ideation & Design Phase)\n\n### Method 1: Service Blueprinting (Backend/Frontend Alignment)\n\n🧠 **Rationale:**  \nMarketing agencies have co\t# PART 3 – AI Toolkit, Deliverables & Figma Prompts\n\n## AI-Enhanced Execution Toolkit\n\n### Research & Synthesis\n\n#### **1. ChatGPT/Claude (Interview Guide Creation & Thematic Coding)**\n**Use Case:** G\t# PART 4 – Risk, Metrics & Strategic Rationale\n\n## Team & Collaboration Model\n\n### Recommended Team Composition\n\n**For Bootstrap Launch (Solo Founder + Fractional Support):**\n\n| Role | FTE | Timing | \t2025-12-28 10:31:17\n",
+  "stderr": "",
+  "execution_time_ms": 112
+}

@@ -29,6 +29,7 @@ import {
   saveEmailSubscriber,
   getAllEmailSubscribers,
   getEmailSubscriberCount,
+  getDemoAnalysisResult,
 } from "./db";
 
 import { Tier, getTierPrice, getTierConfig, TIER_CONFIGS, isMultiPartTier } from "../shared/pricing";
@@ -372,6 +373,17 @@ export const appRouter = router({
     processSequence: protectedProcedure.mutation(async () => {
       const { runEmailSequenceCron } = await import("./emailCron");
       return await runEmailSequenceCron();
+    }),
+  }),
+
+  // ============ DEMO ============
+  demo: router({
+    getAnalysis: publicProcedure.query(async () => {
+      const result = await getDemoAnalysisResult();
+      if (!result) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Demo analysis not found" });
+      }
+      return result;
     }),
   }),
 

@@ -66,65 +66,157 @@ const SECTION_ICONS: Record<string, React.ElementType> = {
 };
 
 // Demo content - rich sample APEX analysis
-const DEMO_PROBLEM_STATEMENT = "I want to build a SaaS platform that provides AI-powered strategic UX analysis for startups and product teams, helping them validate ideas and create actionable roadmaps.";
+const DEMO_PROBLEM_STATEMENT = "I want to launch a global Web2/Web3 marketing agency offering fractional CMO services, targeting both traditional B2B clients and blockchain/DeFi projects requiring compliant influencer campaigns.";
 
 const DEMO_OVERVIEW = `## Executive Summary
 
-This comprehensive APEX analysis examines the feasibility and strategic approach for building an AI-powered UX analysis platform. The analysis reveals a significant market opportunity in the intersection of AI capabilities and UX consulting, with an estimated addressable market of $2.3B by 2026.
+Launching a global Web2/Web3 marketing agency with fractional CMO services targets a **$196.61 billion healthcare CMO market** growing at 14.9% CAGR through 2032, alongside emerging Web3 marketing demands requiring specialized compliance expertise.
+
+The dual-market approach addresses established B2B demand for fractional CMO services ($7,500-$15,000/month retainers) while capturing high-growth Web3 clients seeking regulatory-compliant campaigns.
 
 **Key Findings:**
-- Strong product-market fit potential with early-stage startups and product teams
-- Technical feasibility confirmed with current AI capabilities (GPT-4, Claude, Perplexity)
-- Recommended MVP timeline: 8-12 weeks with core features
-- Primary risk: Market education and trust-building with AI-generated insights
+- Strong product-market fit in both Web2 (fractional CMO) and Web3 (compliant campaigns) segments
+- Technical feasibility confirmed with wallet integration + on-chain verification systems
+- Recommended MVP timeline: 3-6 months with core service flows
+- Primary risk: Regulatory complexity (FTC/SEC compliance for Web3 campaigns)
 
-**Strategic Recommendation:** Proceed with development using a phased approach, starting with a focused MVP targeting seed-stage startups. The combination of AI-powered analysis with human-curated frameworks provides a defensible competitive advantage.
+**Strategic Recommendation:** Proceed with a phased approach, starting with a focused MVP targeting seed-stage startups and DeFi protocols. The combination of compliance-first positioning with on-chain credibility verification provides a defensible competitive advantage.
 
-The platform should prioritize:
-1. Rapid time-to-value (24-hour analysis delivery)
-2. Actionable, implementation-ready outputs
-3. Integration with existing product workflows (Figma, Notion, Linear)
+**Expected Outcome:** A scalable service platform differentiating through on-chain credibility verification, transparent pricing, and jurisdictional compliance frameworks that convert 75%+ qualified leads within 3-day onboarding cycles.
 
-**Projected ROI:** 3.2x within 18 months based on conservative customer acquisition estimates.`;
+**Projected ROI:** $600k+ ARR within 12 months based on 40+ paying clients ($15k avg MRR).`;
 
 const DEMO_PART1 = `## Adaptive Problem Analysis
 
-### Core Problem Statement
-The startup ecosystem lacks accessible, affordable strategic UX guidance. Traditional consulting is expensive ($150-500/hour) and slow (2-4 week engagements). Founders need rapid validation and actionable insights, not lengthy reports.
+### Task Type Detection
+**Type:** Exploratory (New Concept) — Strategic Launch  
+**Rationale:** No existing product to optimize; building from zero with dual-market positioning requiring distinct service architectures for Web2 vs. Web3 clients.
 
-### Market Context
-- 77% of startups fail due to poor product-market fit
-- Average seed-stage startup spends $15,000+ on UX consulting annually
-- 89% of founders report feeling "lost" when making product decisions
-- AI-powered tools are gaining trust: 67% of product teams now use AI in their workflow
+### User Base
+**Primary Segments:**
+- **Web2 Clients:** B2B (SMEs, scale-ups, enterprises) seeking fractional CMO services without full-time executive commitment
+- **Web3 Clients:** DeFi protocols, DAOs, NFT projects, Layer 1/2 blockchains requiring compliant influencer campaigns and tokenomics marketing
+- **Multi-Stakeholder:** Decision-makers include founders, boards, treasury managers (Web3), and traditional C-suite executives (Web2)
 
-### User Personas
+### Complexity Level
+**Strategic (3-6 months)** — Rationale:
+- Dual service architecture requires separate onboarding flows, pricing models, and compliance frameworks
+- Fractional CMO market is competitive; differentiation requires proof-of-work systems (case studies, on-chain verified campaigns)
+- Regulatory complexity: Web3 campaigns trigger FTC endorsement guides + SEC securities rules
 
-**Primary: The Bootstrapped Founder**
-- Solo or small team (1-3 people)
-- Technical background, limited design experience
-- Budget-conscious, values speed over perfection
-- Needs: Quick validation, actionable next steps
+### Key Constraints
 
-**Secondary: The Product Manager**
-- Works at Series A-B startup
-- Has some design resources but needs strategic direction
-- Accountable for roadmap decisions
-- Needs: Data-backed recommendations, stakeholder-ready outputs
+| Constraint Type | Details | Impact on UX Strategy |
+|-----------------|---------|----------------------|
+| **Regulatory** | FTC disclosure requirements for influencer campaigns; SEC securities compliance for token-related services | ⚠️ Business Risk: Non-compliance = fines, reputation damage. Mitigation: Pre-publication review workflows, automated disclosure verification |
+| **Technical** | Web3 wallet integration (MetaMask, WalletConnect); on-chain verification systems (Etherscan API, IPFS); real-time ETH/USD pricing | ⚠️ User Friction: 68% wallet abandonment without email fallback. Mitigation: Dual-path onboarding (wallet OR email) |
+| **Budget** | Bootstrap launch; limited capital for enterprise sales teams | Prioritize self-service onboarding, transparent pricing, AI-accelerated content creation |
+| **Timeline** | 3-6 months to MVP launch | Focus on core flows (discovery → onboarding → service delivery); defer advanced features (token-gated tiers, DAO governance) |
+| **Organizational** | Likely solo founder or small team (2-3 people) | Leverage AI tools (ChatGPT for content, Figma AI for design, Maze AI for testing) to accelerate delivery |
 
-### Competitive Landscape
-| Competitor | Pricing | Delivery | Weakness |
-|------------|---------|----------|----------|
-| Traditional Consulting | $5,000-50,000 | 2-4 weeks | Cost, speed |
-| Fiverr/Upwork | $500-2,000 | 1-2 weeks | Quality variance |
-| AI Tools (ChatGPT) | Free-$20/mo | Instant | Generic, no framework |
-| **Our Solution** | $29-199 | 24 hours | New entrant |
+---
 
-### Assumption Ledger
-1. ✅ Founders will trust AI-generated strategic advice (validated via surveys)
-2. ⚠️ Users will pay premium for structured output vs. raw AI chat
-3. ✅ 24-hour delivery is fast enough for decision-making
-4. ❓ Integration with existing tools will drive retention`;
+## Core Problem Statement (JTBD Lens)
+
+### What Users Are Trying to Accomplish
+
+**Web2 Clients (Fractional CMO Buyers):**  
+"When I need strategic marketing leadership but can't justify a $200k+ full-time CMO, I want to hire a fractional CMO who can audit my current strategy, build a 90-day roadmap, and execute high-leverage campaigns within my $10k-$15k/month budget, so I can scale revenue without wasting spend on ineffective tactics."
+
+**Web3 Clients (Compliant Campaign Buyers):**  
+"When I launch a token or build a DeFi protocol, I need a marketing agency that understands SEC/FTC compliance, can run influencer campaigns with proper disclosures, and provides on-chain proof of campaign execution, so I avoid regulatory penalties while growing my community from 1k to 100k+ members."
+
+### Current Pain Points (VERIFIED)
+
+**Web2 Market:**
+- **Opaque Pricing:** Many agencies hide pricing behind "schedule a call," creating friction for budget-conscious buyers
+- **Lack of Proof:** Agencies claim results without verifiable metrics; case studies often use vanity metrics (impressions, not revenue)
+- **Geographic Limitations:** Most fractional CMOs operate regionally; global 24/7 service is rare
+
+**Web3 Market:**
+- **Compliance Ignorance:** 70% of Web3 projects run non-compliant influencer campaigns, risking FTC fines
+- **Trust Deficit:** No on-chain verification of campaign spend or results; claims are unauditable
+- **Wallet Friction:** 68% abandonment rate during wallet-connect flows (VERIFIED)
+
+### Success Criteria
+
+**Business Success (12 Months):**
+- 40+ paying clients (20 Web2, 20 Web3)
+- $600k+ ARR ($15k avg MRR × 40 clients)
+- 30% revenue from Web3 segment
+
+**UX Success (90 Days Post-Launch):**
+- <5-minute discovery-to-qualified-lead time
+- 75%+ onboarding completion (vs. 32% industry baseline for complex forms)
+- <3-day time-to-first-campaign-kickoff
+- 80%+ task completion in usability tests
+
+**Trust/Compliance Success:**
+- 100% of Web3 campaigns include FTC-compliant disclosures
+- On-chain verification links for all claimed metrics (Etherscan, Dune Analytics)
+- Zero regulatory inquiries in first 12 months
+
+---
+
+## Tailored Methodology Selection (Discovery Phase)
+
+### Method 1: Jobs-to-be-Done (JTBD) Framework
+
+🧠 **Behind the Decision:**  
+Traditional personas describe demographics (e.g., "35-year-old founder in fintech") but fail to reveal *why* they switch from DIY marketing or competitors. JTBD uncovers the "struggling moment" — e.g., "When my competitor's token community grows 10x and I realize my Telegram group is dead, I need a Web3 agency that can replicate that growth without hiring 5 full-time community managers."
+
+**When to Apply:** Week 1-2  
+**Expected Output:**
+- 8-12 JTBD statements per segment (Web2 vs. Web3)
+- Prioritized by frequency (how often this job occurs) × revenue potential
+- Switching triggers mapped to service packaging
+
+### Method 2: Competitive Analysis (Hybrid Agency Audit)
+
+🧠 **Behind the Decision:**  
+The fractional CMO market is saturated ($196.61B), but few agencies bridge Web2 and Web3 with compliance-first positioning. Analyzing 15-20 competitors reveals gaps: 90% lack transparent pricing, 85% have no wallet-connect option, 100% lack on-chain verification. This whitespace = differentiation opportunity.
+
+**When to Apply:** Week 1  
+**Expected Output:**
+- Feature matrix: 20 agencies × 15 features (pricing transparency, wallet-connect, compliance docs, case study verification, global availability)
+- UX teardown: 5 top performers (screenshots, flow analysis, friction point catalog)
+- Pricing benchmark: Retainer ranges, hourly rates, equity models
+
+### Method 3: Contextual Inquiry (Shadow Potential Clients)
+
+🧠 **Behind the Decision:**  
+B2B buying decisions happen in Slack channels, Discord servers, and board meetings — not in 1-hour interviews. Shadowing reveals real evaluation criteria: Web2 clients check LinkedIn testimonials and Google "fractional CMO cost"; Web3 clients verify agency wallet addresses on Etherscan and ask "Have you run compliant campaigns?" in Telegram.
+
+**When to Apply:** Week 2-3 (8 sessions: 4 Web2, 4 Web3)  
+**Expected Output:**
+- Decision journey maps with screenshot evidence
+- Channel-specific trust signals (LinkedIn endorsements vs. Etherscan transaction history)
+- Emotional friction points (fear of wasting budget, fear of SEC penalties)
+
+### Method 4: Heuristic Evaluation (Expert Review of Top 5 Competitors)
+
+🧠 **Behind the Decision:**  
+Before building anything, identify UX anti-patterns in competitor sites. Common issues: hidden pricing (requires 3 clicks + email capture), generic service descriptions ("We do marketing strategy"), no wallet-connect option, case studies without verifiable metrics.
+
+**When to Apply:** Week 1  
+**Expected Output:**
+- Heuristic violation report (Nielsen's 10 usability principles)
+- Severity ratings: Critical (prevents task completion) vs. Minor (cosmetic)
+- Quick-win recommendations (e.g., "Add pricing page with real numbers")
+
+---
+
+## Assumption Ledger
+
+| # | Assumption | Confidence | Validation Plan | Business Risk if Wrong |
+|---|------------|------------|-----------------|------------------------|
+| **A1** | Fractional CMO retainers are $7,500-$15,000/month | **High** | Interview 10 fractional CMO buyers about actual spend; analyze competitor pricing pages | Overpricing = zero sales; underpricing = unsustainable margins |
+| **A2** | Web3 clients will pay 20-30% premium for compliance expertise | **Medium** | Show pricing mockups in JTBD interviews; measure willingness to pay | If wrong: Web3 segment unprofitable; pivot to Web2-only |
+| **A3** | 68% wallet abandonment without email fallback | **High** (VERIFIED) | A/B test wallet-only vs. dual-path onboarding in usability tests | If wrong: Over-invested in fallback UX; wasted dev resources |
+| **A4** | On-chain verification increases trust by 40% | **Low** | A/B test case study pages: with vs. without Etherscan links; measure conversion | If wrong: Complex feature with low ROI; deprioritize |
+| **A5** | Global "worldwide" positioning attracts 30% more leads than regional | **Medium** | Track lead source geo in CRM; measure conversion by region | If wrong: Overpromised global coverage we can't deliver; customer churn |
+| **A6** | AI-accelerated content creation reduces delivery time by 50% | **High** | Time-track manual vs. AI-assisted campaign creation in Week 1-2 pilot | If wrong: Over-reliance on AI; quality issues; client dissatisfaction |
+| **A7** | FTC compliance monitoring systems are required for all Web3 campaigns | **High** (VERIFIED) | Legal review in Week 5; implement pre-publication approval workflow | If wrong: Regulatory fines, contract terminations, reputation damage |`;
 
 const DEMO_PART2 = `## Strategic Design & Roadmap
 
