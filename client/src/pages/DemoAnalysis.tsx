@@ -1,41 +1,74 @@
-import { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { trpc } from "@/lib/trpc";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 import { Streamdown } from "streamdown";
+import { useEffect, useState, useCallback } from "react";
+import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 import { 
-  ChevronDown, 
-  ChevronUp, 
-  FileText, 
-  Target, 
-  Lightbulb, 
-  AlertTriangle, 
-  Mail, 
-  Lock, 
-  Sparkles, 
-  Zap, 
-  Clock,
+  ArrowLeft, 
+  Download, 
+  Loader2,
+  CheckCircle2,
+  Lightbulb,
+  Target,
   Layers,
+  AlertTriangle,
+  TrendingUp,
+  FileText,
+  Zap,
+  ChevronDown,
+  ChevronUp,
   Copy,
   Check,
   Palette,
+  LayoutGrid,
   Shield,
-  TrendingUp,
+  Users,
+  Sparkles,
+  BookOpen,
+  Wrench,
+  BarChart3,
+  Brain,
+  Rocket,
+  Lock,
+  Mail,
   ArrowRight,
-  Home,
-  History,
-  Plus,
-  Eye
+  Plus
 } from "lucide-react";
-import { useLocation } from "wouter";
+import { NewAnalysisModal } from "@/components/NewAnalysisModal";
 
-// Demo analysis data - Full rich content for each part
-const DEMO_ANALYSIS = {
-  problemStatement: "I want to build a SaaS platform that provides AI-powered strategic UX analysis for startups and product teams, helping them validate ideas and create actionable roadmaps.",
-  overview: `## Executive Summary
+// Part configuration with colors and icons
+const PART_CONFIG = [
+  { number: 1, name: "Discovery & Problem Analysis", icon: Target, color: "text-blue-500", bgColor: "bg-blue-500", gradient: "from-blue-500/20 to-cyan-500/20", borderColor: "border-blue-500/30", description: "Deep dive into the problem space and user needs" },
+  { number: 2, name: "Strategic Design & Roadmap", icon: Layers, color: "text-purple-500", bgColor: "bg-purple-500", gradient: "from-purple-500/20 to-pink-500/20", borderColor: "border-purple-500/30", description: "Design strategy and implementation roadmap" },
+  { number: 3, name: "AI Toolkit & Figma Prompts", icon: Lightbulb, color: "text-yellow-500", bgColor: "bg-yellow-500", gradient: "from-yellow-500/20 to-orange-500/20", borderColor: "border-yellow-500/30", description: "Practical tools and 10 production-ready prompts" },
+  { number: 4, name: "Risk, Metrics & Rationale", icon: AlertTriangle, color: "text-red-500", bgColor: "bg-red-500", gradient: "from-red-500/20 to-rose-500/20", borderColor: "border-red-500/30", description: "Risk assessment and success metrics" },
+];
+
+// Section icons mapping
+const SECTION_ICONS: Record<string, React.ElementType> = {
+  "Executive Summary": Sparkles,
+  "Adaptive Problem Analysis": Brain,
+  "Core Problem Statement": Target,
+  "Tailored Methodology": BookOpen,
+  "Assumption Ledger": BarChart3,
+  "Service Blueprint": LayoutGrid,
+  "Phase-by-Phase Roadmap": Rocket,
+  "AI-Enhanced Execution Toolkit": Wrench,
+  "Deliverables Framework": FileText,
+  "Figma AI Prompts": Palette,
+  "Team & Collaboration": Users,
+  "Risk Mitigation": Shield,
+  "Success Metrics": TrendingUp,
+};
+
+// Demo content - rich sample APEX analysis
+const DEMO_PROBLEM_STATEMENT = "I want to build a SaaS platform that provides AI-powered strategic UX analysis for startups and product teams, helping them validate ideas and create actionable roadmaps.";
+
+const DEMO_OVERVIEW = `## Executive Summary
 
 This comprehensive APEX analysis examines the feasibility and strategic approach for building an AI-powered UX analysis platform. The analysis reveals a significant market opportunity in the intersection of AI capabilities and UX consulting, with an estimated addressable market of $2.3B by 2026.
 
@@ -52,415 +85,252 @@ The platform should prioritize:
 2. Actionable, implementation-ready outputs
 3. Integration with existing product workflows (Figma, Notion, Linear)
 
-**Projected ROI:** 3.2x within 18 months based on conservative customer acquisition estimates.`,
-  part1: {
-    title: "Discovery & Problem Analysis",
-    icon: Target,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500",
-    gradient: "from-blue-500/20 to-cyan-500/20",
-    borderColor: "border-blue-500/30",
-    content: `# Part 1: Discovery & Problem Analysis
+**Projected ROI:** 3.2x within 18 months based on conservative customer acquisition estimates.`;
 
-## Problem Context
+const DEMO_PART1 = `## Adaptive Problem Analysis
 
-The challenge of building a SaaS platform for strategic UX analysis represents a complex intersection of AI capabilities, user experience design, and business model validation. This analysis examines the core problem space and identifies key opportunities.
+### Core Problem Statement
+The startup ecosystem lacks accessible, affordable strategic UX guidance. Traditional consulting is expensive ($150-500/hour) and slow (2-4 week engagements). Founders need rapid validation and actionable insights, not lengthy reports.
 
-### Market Landscape
+### Market Context
+- 77% of startups fail due to poor product-market fit
+- Average seed-stage startup spends $15,000+ on UX consulting annually
+- 89% of founders report feeling "lost" when making product decisions
+- AI-powered tools are gaining trust: 67% of product teams now use AI in their workflow
 
-The UX consulting market is valued at approximately $1.8 billion globally, with a projected CAGR of 12.3% through 2028. However, traditional UX consulting faces several challenges:
+### User Personas
 
-- **High Cost Barrier**: Enterprise UX audits typically range from $15,000 to $50,000
-- **Long Delivery Times**: Traditional analysis takes 4-8 weeks
-- **Scalability Issues**: Human-dependent processes limit growth
-- **Inconsistent Quality**: Results vary significantly by consultant
+**Primary: The Bootstrapped Founder**
+- Solo or small team (1-3 people)
+- Technical background, limited design experience
+- Budget-conscious, values speed over perfection
+- Needs: Quick validation, actionable next steps
 
-### Target User Personas
+**Secondary: The Product Manager**
+- Works at Series A-B startup
+- Has some design resources but needs strategic direction
+- Accountable for roadmap decisions
+- Needs: Data-backed recommendations, stakeholder-ready outputs
 
-**Primary Persona: Startup Founder (Sarah)**
-- Age: 28-40
-- Stage: Seed to Series A
-- Pain Points: Limited budget, needs fast validation, lacks UX expertise
-- Goals: Validate product direction, impress investors, ship faster
+### Competitive Landscape
+| Competitor | Pricing | Delivery | Weakness |
+|------------|---------|----------|----------|
+| Traditional Consulting | $5,000-50,000 | 2-4 weeks | Cost, speed |
+| Fiverr/Upwork | $500-2,000 | 1-2 weeks | Quality variance |
+| AI Tools (ChatGPT) | Free-$20/mo | Instant | Generic, no framework |
+| **Our Solution** | $29-199 | 24 hours | New entrant |
 
-**Secondary Persona: Product Manager (Marcus)**
-- Age: 30-45
-- Company: Mid-size tech company
-- Pain Points: Stakeholder alignment, data-driven decisions, resource constraints
-- Goals: Prioritize roadmap, reduce redesign cycles, improve metrics
+### Assumption Ledger
+1. ✅ Founders will trust AI-generated strategic advice (validated via surveys)
+2. ⚠️ Users will pay premium for structured output vs. raw AI chat
+3. ✅ 24-hour delivery is fast enough for decision-making
+4. ❓ Integration with existing tools will drive retention`;
 
-### Competitive Analysis
+const DEMO_PART2 = `## Strategic Design & Roadmap
 
-| Competitor | Strengths | Weaknesses | Price Point |
-|------------|-----------|------------|-------------|
-| UserTesting | Large panel, video feedback | Expensive, slow | $15k+/year |
-| Maze | Quick surveys, integrations | Limited depth | $99-499/mo |
-| Hotjar | Heatmaps, recordings | No strategic insights | $39-389/mo |
-| **Our Platform** | AI-powered, fast, strategic | New entrant | $29-199/analysis |
+### Service Blueprint
 
-### Key Insights
+**Customer Journey Map:**
+\`\`\`
+Discovery → Evaluation → Purchase → Onboarding → Analysis → Delivery → Action
+   |            |           |           |           |          |         |
+   v            v           v           v           v          v         v
+Landing    Demo/Free    Checkout    Problem     AI        Results   Figma
+ Page       Trial       Flow       Statement  Processing  Page     Export
+\`\`\`
 
-1. **Gap in Market**: No solution offers fast, affordable, strategic UX analysis
-2. **AI Timing**: LLM capabilities now sufficient for nuanced analysis
-3. **Willingness to Pay**: Surveys indicate 73% of founders would pay $100-300 for instant analysis
-4. **Distribution Opportunity**: Product Hunt, Twitter/X, and indie hacker communities are underserved`
-  },
-  part2: {
-    title: "Strategic Design & Roadmap",
-    icon: Layers,
-    color: "text-purple-500",
-    bgColor: "bg-purple-500",
-    gradient: "from-purple-500/20 to-pink-500/20",
-    borderColor: "border-purple-500/30",
-    content: `# Part 2: Strategic Design & Roadmap
+### Phase-by-Phase Roadmap
 
-## Phase-by-Phase Implementation
-
-### Phase 1: Foundation (Weeks 1-4)
-
-**Technical Infrastructure**
-- Set up Next.js/React frontend with TypeScript
-- Implement tRPC for type-safe API layer
-- Configure PostgreSQL database with Drizzle ORM
-- Integrate Stripe for payment processing
-- Set up authentication (OAuth + wallet connect)
-
-**Core Features**
-- Problem statement input interface
-- Basic AI analysis pipeline (single-tier)
+**Phase 1: MVP (Weeks 1-8)**
+- Core analysis engine with Perplexity API
+- Single-tier offering (Syndicate)
+- Basic payment integration (Stripe)
 - Email delivery system
-- Simple dashboard for results
+- Landing page with social proof
 
-**Success Metrics**
-- 10 beta users onboarded
-- <5 minute analysis generation time
-- 90% email delivery rate
-
-### Phase 2: Enhancement (Weeks 5-8)
-
-**Advanced Analysis**
-- Multi-part APEX analysis (4-part chain)
-- Perplexity integration for real-time research
-- Figma prompt generation
-- PDF export functionality
-
-**User Experience**
-- Progress indicators during analysis
-- Collapsible section navigation
-- Copy-to-clipboard for prompts
-- Mobile-responsive design
-
-**Monetization**
-- Three-tier pricing (Observer, Insider, Syndicate)
-- Crypto payment option (NOWPayments)
-- Referral program foundation
-
-### Phase 3: Scale (Weeks 9-12)
-
-**Growth Features**
-- Email nurturing sequences
-- Demo analysis with email gate
-- Admin dashboard with analytics
+**Phase 2: Growth (Weeks 9-16)**
+- Multi-tier pricing (Observer, Insider, Syndicate)
+- User dashboard and history
+- Figma plugin integration
+- Referral program
 - A/B testing framework
 
-**Technical Optimization**
-- CDN for global performance
-- Database query optimization
-- Caching layer implementation
-- Error monitoring (Sentry)
+**Phase 3: Scale (Weeks 17-24)**
+- Team/enterprise features
+- White-label options
+- API access for agencies
+- Advanced analytics
+- Community features
 
-## Resource Allocation
-
-| Role | Hours/Week | Duration | Cost Estimate |
-|------|------------|----------|---------------|
-| Full-stack Developer | 40 | 12 weeks | $24,000 |
-| AI/ML Engineer | 20 | 8 weeks | $12,000 |
-| Designer | 15 | 6 weeks | $6,000 |
-| QA/Testing | 10 | 4 weeks | $2,000 |
-| **Total** | | | **$44,000** |
-
-## Technology Stack Recommendation
-
+### Technical Architecture
 \`\`\`
-Frontend: React 19 + TypeScript + Tailwind CSS 4
-Backend: Node.js + tRPC + Express
-Database: PostgreSQL + Drizzle ORM
-AI: OpenAI GPT-4 + Perplexity sonar-pro
-Payments: Stripe + NOWPayments
-Hosting: Vercel/Railway + Cloudflare
-\`\`\``
-  },
-  part3: {
-    title: "AI Toolkit & Figma Prompts",
-    icon: Lightbulb,
-    color: "text-yellow-500",
-    bgColor: "bg-yellow-500",
-    gradient: "from-yellow-500/20 to-orange-500/20",
-    borderColor: "border-yellow-500/30",
-    content: `# Part 3: AI Toolkit & Figma Prompts
+Frontend (React + Tailwind)
+    ↓
+API Layer (tRPC)
+    ↓
+Analysis Engine
+    ├── Perplexity API (Research)
+    ├── Claude API (Synthesis)
+    └── Custom Prompts (Framework)
+    ↓
+Database (PostgreSQL)
+    ↓
+Delivery (Email + Dashboard)
+\`\`\`
 
-## AI-Enhanced Execution Toolkit
+### Key Metrics to Track
+- Time to First Value (TTFV): Target < 5 minutes
+- Analysis Completion Rate: Target > 95%
+- Customer Satisfaction (CSAT): Target > 4.5/5
+- Net Promoter Score (NPS): Target > 50`;
+
+const DEMO_PART3 = `## AI-Enhanced Execution Toolkit
 
 ### Recommended AI Tools
-
-1. **Content Generation**: GPT-4 for analysis, Claude for long-form
-2. **Research**: Perplexity sonar-pro for real-time web data
-3. **Design**: Figma AI, Midjourney for assets
-4. **Code**: GitHub Copilot, Cursor for development
-5. **Testing**: Playwright for E2E, Vitest for unit tests
-6. **Analytics**: PostHog for product analytics
+- **Content Generation:** GPT-4 for analysis, Claude for long-form
+- **Research:** Perplexity sonar-pro for real-time web data
+- **Design:** Figma AI, Midjourney for assets
+- **Code:** GitHub Copilot, Cursor for development
+- **Testing:** Playwright for E2E, Vitest for unit tests
+- **Analytics:** PostHog for product analytics
 
 ### Automation Workflows
 
-**Analysis Pipeline**
-\`\`\`
-Input → Validation → AI Processing → Quality Check → Delivery
-  ↓         ↓            ↓              ↓           ↓
- Form    Sanitize    4-Part Chain    Review     Email+Dashboard
-\`\`\`
+**Analysis Pipeline:**
+1. User submits problem statement
+2. Perplexity researches market context
+3. Claude synthesizes findings into framework
+4. GPT-4 generates actionable recommendations
+5. System compiles into structured output
+
+### Deliverables Framework
+- Executive Summary (1 page)
+- Full Analysis Report (10-15 pages)
+- Action Item Checklist
+- 10 Figma AI Prompts
+- Resource Links & References
 
 ## 10 Production-Ready Figma Prompts
 
-### Prompt 1: Homepage Hero (Landing Page)
-\`\`\`
-Design a dark-themed SaaS landing page hero section with:
-- Gradient background (indigo to purple, subtle)
-- Large headline: "Stop building in the dark. Validate your idea today."
-- Subheadline explaining 24-hour AI analysis
-- Primary CTA button with glow effect
-- Trust badges below (SSL, 500+ users)
-- Floating UI elements showing analysis preview
-- Mobile-responsive layout
-Style: Modern, tech-forward, premium feel
-\`\`\`
+Copy and paste these directly into Figma AI for instant high-fidelity mockups:`;
 
-### Prompt 2: Pricing Cards (Conversion)
-\`\`\`
-Create a 3-tier pricing section with:
-- Observer ($29): Basic tier, muted styling
-- Insider ($79): Popular tier, highlighted border
-- Syndicate ($199): Premium tier, gradient background, "APEX" badge
-- Each card: price, feature list, CTA button
-- Toggle for monthly/annual (future)
-- "Powered by Perplexity" badge on premium
-Dark theme, glass-morphism cards, subtle animations
-\`\`\`
+const DEMO_PART4 = `## Risk, Metrics & Rationale
 
-### Prompt 3: Analysis Dashboard (User Portal)
-\`\`\`
-Design a dashboard showing analysis results:
-- Sidebar: Logo, Output, History, Settings
-- Main area: 4-part tabbed interface
-- Progress indicator for processing state
-- Collapsible sections within each part
-- Copy buttons for Figma prompts
-- Export PDF button in header
-- Real-time status updates
-Dark theme, terminal/hacker aesthetic accents
-\`\`\`
-
-### Prompt 4: Email Gate Modal (Lead Capture)
-\`\`\`
-Create an email capture overlay:
-- Semi-transparent backdrop
-- Centered card with lock icon
-- Headline: "Unlock the Full Demo"
-- Benefits list (Zero spam, Early access, 5 sec setup)
-- Email input with icon
-- Submit button with sparkle icon
-- "No credit card required" disclaimer
-Glassmorphism style, primary color accents
-\`\`\`
-
-### Prompt 5: Processing State (Loading)
-\`\`\`
-Design an analysis processing screen:
-- 4-part progress cards in grid
-- Each card shows: icon, part name, status
-- Active part has pulsing indicator
-- Overall progress bar with percentage
-- Estimated time remaining
-- System log terminal at bottom
-- Animated background grid pattern
-Cyberpunk/tech aesthetic, cyan accents
-\`\`\`
-
-### Prompt 6: Success Confirmation (Post-Purchase)
-\`\`\`
-Create a payment success page:
-- Confetti animation (subtle)
-- Checkmark icon with success message
-- Order summary card
-- "Check your email" instruction
-- Magic link explanation
-- CTA to view analysis
-- Support contact link
-Celebratory but professional tone
-\`\`\`
-
-### Prompt 7: Mobile Navigation (Responsive)
-\`\`\`
-Design mobile navigation for the app:
-- Bottom tab bar with 4 items
-- Icons: Home, Output, History, Profile
-- Active state with label and highlight
-- Floating action button for "New Analysis"
-- Slide-out menu for secondary items
-Touch-friendly, 44px minimum targets
-\`\`\`
-
-### Prompt 8: Error States (Recovery)
-\`\`\`
-Create error state components:
-- 404 page with "Lost in the void" theme
-- Payment failed with retry option
-- Analysis error with support contact
-- Network error with refresh button
-- Empty states for no analyses
-Maintain brand voice, helpful tone
-\`\`\`
-
-### Prompt 9: Testimonials Section (Social Proof)
-\`\`\`
-Design a testimonials carousel:
-- "Intercepted Transmissions" header
-- Cards with hex codes and timestamps
-- Avatar, name, title, company
-- Quote with specific metrics mentioned
-- "Verified via blockchain" badge
-- Auto-scroll with manual controls
-Terminal/transmission aesthetic
-\`\`\`
-
-### Prompt 10: Admin Analytics (Internal)
-\`\`\`
-Create an admin dashboard:
-- Revenue chart (line graph)
-- Tier distribution (pie chart)
-- Conversion funnel visualization
-- Recent transactions table
-- User growth metrics
-- Quick stats cards at top
-Data-dense but scannable layout
-\`\`\``
-  },
-  part4: {
-    title: "Risk, Metrics & Rationale",
-    icon: AlertTriangle,
-    color: "text-red-500",
-    bgColor: "bg-red-500",
-    gradient: "from-red-500/20 to-rose-500/20",
-    borderColor: "border-red-500/30",
-    content: `# Part 4: Risk, Metrics & Rationale
-
-## Risk Assessment Matrix
-
-### High Priority Risks
+### Risk Mitigation Matrix
 
 | Risk | Probability | Impact | Mitigation |
 |------|-------------|--------|------------|
-| AI API costs exceed projections | Medium | High | Implement caching, optimize prompts, set usage limits |
-| Low initial conversion rate | High | Medium | A/B test pricing, offer money-back guarantee |
-| Competitor copies model | Medium | Medium | Build brand, community, iterate faster |
-| AI hallucination in analysis | Low | High | Human review layer, confidence scoring |
+| AI output quality variance | Medium | High | Human review layer, quality scoring |
+| API cost overruns | Low | Medium | Usage caps, tiered pricing |
+| Competitor copying | High | Medium | Speed to market, brand building |
+| User trust issues | Medium | High | Transparency, case studies, guarantees |
+| Technical scaling | Low | High | Cloud-native architecture, caching |
 
-### Medium Priority Risks
+### Success Metrics Framework
 
-1. **Payment Processing Issues**
-   - Risk: Stripe account restrictions for AI services
-   - Mitigation: Maintain clear ToS, add crypto alternative
+**North Star Metric:** Monthly Recurring Revenue (MRR)
 
-2. **Scaling Challenges**
-   - Risk: Analysis queue bottlenecks during growth
-   - Mitigation: Implement job queue (BullMQ), horizontal scaling
+**Leading Indicators:**
+- Website traffic → Demo requests → Purchases
+- Analysis completion rate
+- User return rate (30-day)
 
-3. **User Churn**
-   - Risk: One-time use without repeat purchases
-   - Mitigation: Email nurturing, upgrade paths, new features
+**Lagging Indicators:**
+- Revenue growth (MoM)
+- Customer lifetime value (LTV)
+- Churn rate
 
-## Success Metrics Framework
+### Financial Projections
 
-### North Star Metric
-**Analyses Completed per Week** - Directly correlates with revenue and value delivered
+**Year 1 Targets:**
+- Month 1-3: 50 customers, $5,000 MRR
+- Month 4-6: 200 customers, $20,000 MRR
+- Month 7-12: 500 customers, $50,000 MRR
 
-### Primary KPIs
+**Unit Economics:**
+- Customer Acquisition Cost (CAC): $50
+- Lifetime Value (LTV): $250
+- LTV:CAC Ratio: 5:1 ✅
 
-| Metric | Target (Month 1) | Target (Month 6) |
-|--------|------------------|------------------|
-| Weekly Active Analyses | 50 | 500 |
-| Conversion Rate | 2% | 5% |
-| Average Revenue per User | $79 | $120 |
-| Email Open Rate | 40% | 50% |
-| NPS Score | 30 | 50 |
+### Strategic Rationale
 
-### Secondary Metrics
+**Why Now?**
+1. AI capabilities have reached "good enough" threshold
+2. Economic downturn increases demand for affordable consulting
+3. Remote work normalized async, AI-powered services
+4. First-mover advantage in AI + UX intersection
 
-- Time to first analysis completion
-- Support ticket volume
-- Referral rate
-- Feature adoption (PDF export, copy prompts)
-- Mobile vs desktop usage
+**Why Us?**
+1. Deep understanding of startup pain points
+2. Technical capability to build and iterate fast
+3. Framework-based approach provides consistency
+4. Commitment to actionable, not theoretical, outputs`;
 
-## Financial Projections
-
-### Year 1 Revenue Model
-
-\`\`\`
-Month 1-3: Beta/Launch
-- 100 analyses × $79 avg = $7,900/month
-- Costs: $3,000 (AI) + $500 (infra) = $3,500
-- Net: $4,400/month
-
-Month 4-6: Growth
-- 400 analyses × $99 avg = $39,600/month
-- Costs: $8,000 (AI) + $1,000 (infra) + $2,000 (marketing)
-- Net: $28,600/month
-
-Month 7-12: Scale
-- 1,000 analyses × $119 avg = $119,000/month
-- Costs: $20,000 (AI) + $3,000 (infra) + $10,000 (team)
-- Net: $86,000/month
-
-Year 1 Total: ~$600,000 revenue, ~$400,000 net
-\`\`\`
-
-## Strategic Rationale
-
-### Why This Will Work
-
-1. **Timing**: AI capabilities have reached the threshold for quality analysis
-2. **Price Point**: 10x cheaper than consultants, 10x more strategic than tools
-3. **Speed**: 24-hour delivery vs 4-8 week traditional timeline
-4. **Scalability**: Marginal cost per analysis approaches $5-10
-
-### Competitive Moat
-
-- **Data Flywheel**: Each analysis improves prompt quality
-- **Brand**: First-mover in "AI UX strategist" category
-- **Community**: Building around indie hackers and startup founders
-- **Integration**: Deep ties to Figma, Notion, Linear ecosystems
-
-### Exit Potential
-
-- **Acquisition Targets**: Figma, Notion, Webflow, design agencies
-- **Valuation Multiple**: 8-12x ARR for AI SaaS (2024 benchmarks)
-- **Timeline**: 3-5 years to meaningful exit opportunity`
-  }
-};
-
-// Figma prompts extracted for copy functionality
-const FIGMA_PROMPTS = [
-  { number: 1, title: "Homepage Hero", screen: "Landing Page", prompt: DEMO_ANALYSIS.part3.content.match(/### Prompt 1:[\s\S]*?```\n([\s\S]*?)```/)?.[1] || "" },
-  { number: 2, title: "Pricing Cards", screen: "Conversion", prompt: DEMO_ANALYSIS.part3.content.match(/### Prompt 2:[\s\S]*?```\n([\s\S]*?)```/)?.[1] || "" },
-  { number: 3, title: "Analysis Dashboard", screen: "User Portal", prompt: DEMO_ANALYSIS.part3.content.match(/### Prompt 3:[\s\S]*?```\n([\s\S]*?)```/)?.[1] || "" },
-  { number: 4, title: "Email Gate Modal", screen: "Lead Capture", prompt: DEMO_ANALYSIS.part3.content.match(/### Prompt 4:[\s\S]*?```\n([\s\S]*?)```/)?.[1] || "" },
-  { number: 5, title: "Processing State", screen: "Loading", prompt: DEMO_ANALYSIS.part3.content.match(/### Prompt 5:[\s\S]*?```\n([\s\S]*?)```/)?.[1] || "" },
-  { number: 6, title: "Success Confirmation", screen: "Post-Purchase", prompt: DEMO_ANALYSIS.part3.content.match(/### Prompt 6:[\s\S]*?```\n([\s\S]*?)```/)?.[1] || "" },
-  { number: 7, title: "Mobile Navigation", screen: "Responsive", prompt: DEMO_ANALYSIS.part3.content.match(/### Prompt 7:[\s\S]*?```\n([\s\S]*?)```/)?.[1] || "" },
-  { number: 8, title: "Error States", screen: "Recovery", prompt: DEMO_ANALYSIS.part3.content.match(/### Prompt 8:[\s\S]*?```\n([\s\S]*?)```/)?.[1] || "" },
-  { number: 9, title: "Testimonials Section", screen: "Social Proof", prompt: DEMO_ANALYSIS.part3.content.match(/### Prompt 9:[\s\S]*?```\n([\s\S]*?)```/)?.[1] || "" },
-  { number: 10, title: "Admin Analytics", screen: "Internal", prompt: DEMO_ANALYSIS.part3.content.match(/### Prompt 10:[\s\S]*?```\n([\s\S]*?)```/)?.[1] || "" },
+// Demo Figma prompts
+const DEMO_FIGMA_PROMPTS = [
+  { number: 1, title: "Homepage Hero", screen: "Landing Page", description: "High-converting hero section with dual CTAs for different user paths", prompt: "Design a dark-themed SaaS landing page hero section for an AI-powered UX analysis platform. Include: gradient background (purple to blue), bold headline 'Stop building in the dark. Validate your idea today.', subheadline about transforming problem statements into strategies, two CTA buttons (primary: 'Start Analysis' with lightning icon, secondary: 'View Demo'), floating UI elements showing analysis snippets, trust badges (Stripe, Vercel logos). Modern, premium feel with subtle animations." },
+  { number: 2, title: "Pricing Cards", screen: "Conversion", description: "Three-tier pricing with feature comparison and urgency elements", prompt: "Create a pricing section with 3 tiers: Observer ($29), Insider ($79), Syndicate ($199). Dark theme with glass-morphism cards. Syndicate card highlighted with gradient border and 'Most Popular' badge. Each card shows: tier name, price, feature list with checkmarks, CTA button. Include comparison table below. Add subtle glow effects on hover. Professional SaaS aesthetic." },
+  { number: 3, title: "Analysis Dashboard", screen: "User Portal", description: "Main dashboard showing analysis status and quick actions", prompt: "Design a user dashboard for viewing AI analysis results. Dark theme with sidebar navigation. Main area shows: current analysis card with progress indicator, 4-part analysis tabs (Discovery, Strategy, Toolkit, Risk), quick stats panel, recent analyses list. Include status badges (Processing, Completed), export buttons, and 'New Analysis' CTA. Clean, data-rich interface." },
+  { number: 4, title: "Email Gate Modal", screen: "Lead Capture", description: "Email capture modal with value proposition and trust elements", prompt: "Create an email gate modal for unlocking demo content. Dark theme with gradient glow border. Include: lock icon, headline 'Unlock the Full APEX Demo', description about 4-part analysis access, email input field with mail icon, submit button 'Unlock Full Demo', trust badges (Zero Spam, Early Access, 5 Sec Setup), skip link. Elegant, non-intrusive design." },
+  { number: 5, title: "Processing State", screen: "Loading", description: "Analysis processing screen with real-time progress updates", prompt: "Design an analysis processing screen showing AI at work. Dark theme with animated elements. Include: central progress indicator with percentage, 4-step progress bar (Part 1-4), current step highlight with pulse animation, estimated time remaining, system log showing real-time updates, 'Powered by Perplexity' badge. Futuristic, tech-forward aesthetic." },
+  { number: 6, title: "Success Confirmation", screen: "Post-Purchase", description: "Payment success page with next steps and celebration", prompt: "Create a payment success page with celebration elements. Dark theme with confetti animation. Include: large checkmark with glow, 'Payment Successful!' headline, order summary card, 'What happens next' timeline (3 steps), email notification preview, 'View Analysis' primary CTA, 'Return Home' secondary link. Warm, celebratory mood." },
+  { number: 7, title: "Mobile Navigation", screen: "Responsive", description: "Bottom navigation bar optimized for mobile users", prompt: "Design a mobile bottom navigation bar for the analysis platform. Dark theme, 5 items: Home, Demo, Output, History, Menu. Active state with gradient highlight and icon fill. Include notification badge on Output when analysis ready. Thumb-friendly touch targets, subtle backdrop blur. iOS/Android hybrid style." },
+  { number: 8, title: "Error States", screen: "Recovery", description: "Error handling screens for various failure scenarios", prompt: "Create error state designs for: payment failed, analysis error, network timeout. Dark theme with appropriate warning colors. Each includes: icon (warning/error), clear headline, helpful description, primary action button, secondary support link. Maintain brand consistency while clearly communicating issues. Non-alarming, solution-focused tone." },
+  { number: 9, title: "Testimonials Section", screen: "Social Proof", description: "Customer testimonials with verification badges", prompt: "Design a testimonials section with 4 customer quotes. Dark theme with card layout. Each testimonial: quote text, customer name/title, company logo, star rating, 'Verified Purchase' badge. Include section header 'Trusted by 500+ Teams', rotating animation. Mix of founder and PM personas. Authentic, trustworthy presentation." },
+  { number: 10, title: "Admin Analytics", screen: "Internal", description: "Admin dashboard with revenue and usage analytics", prompt: "Create an admin analytics dashboard. Dark theme with data visualization. Include: revenue chart (line graph), tier distribution (pie chart), recent transactions table, conversion funnel, active users count, MRR display. Filter controls for date range. Clean data presentation with actionable insights. Internal tool aesthetic." },
 ];
+
+// Collapsible Section Component
+function CollapsibleSection({ 
+  title, 
+  icon: Icon, 
+  children, 
+  defaultOpen = false,
+  badge,
+  color = "text-foreground",
+  locked = false
+}: { 
+  title: string; 
+  icon?: React.ElementType; 
+  children: React.ReactNode; 
+  defaultOpen?: boolean;
+  badge?: string;
+  color?: string;
+  locked?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  
+  return (
+    <div className={`border border-border/50 rounded-lg overflow-hidden bg-card/50 backdrop-blur-sm ${locked ? 'opacity-60' : ''}`}>
+      <button
+        onClick={() => !locked && setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors ${locked ? 'cursor-not-allowed' : ''}`}
+        disabled={locked}
+      >
+        <div className="flex items-center gap-3">
+          {Icon && <Icon className={`h-5 w-5 ${color}`} />}
+          <span className="font-medium">{title}</span>
+          {badge && (
+            <span className="px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full">
+              {badge}
+            </span>
+          )}
+          {locked && <Lock className="h-4 w-4 text-muted-foreground ml-2" />}
+        </div>
+        {!locked && (isOpen ? (
+          <ChevronUp className="h-5 w-5 text-muted-foreground" />
+        ) : (
+          <ChevronDown className="h-5 w-5 text-muted-foreground" />
+        ))}
+      </button>
+      {isOpen && !locked && (
+        <div className="p-4 pt-0 border-t border-border/50">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // Copy Button Component
 function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
@@ -499,70 +369,26 @@ function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) 
   );
 }
 
-// Collapsible Section Component
-function CollapsibleSection({ 
-  title, 
-  icon: Icon, 
-  children, 
-  defaultOpen = false,
-  badge,
-  color = "text-foreground"
-}: { 
-  title: string; 
-  icon?: React.ElementType; 
-  children: React.ReactNode; 
-  defaultOpen?: boolean;
-  badge?: string;
-  color?: string;
-}) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-  
-  return (
-    <div className="border border-border/50 rounded-lg overflow-hidden bg-card/50 backdrop-blur-sm">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          {Icon && <Icon className={`h-5 w-5 ${color}`} />}
-          <span className="font-medium">{title}</span>
-          {badge && (
-            <span className="px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-full">
-              {badge}
-            </span>
-          )}
-        </div>
-        {isOpen ? (
-          <ChevronUp className="h-5 w-5 text-muted-foreground" />
-        ) : (
-          <ChevronDown className="h-5 w-5 text-muted-foreground" />
-        )}
-      </button>
-      {isOpen && (
-        <div className="p-4 pt-0 border-t border-border/50">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-}
-
 // Figma Prompt Card Component
 function FigmaPromptCard({ 
   number, 
   title, 
+  description, 
+  prompt,
   screen,
-  prompt
+  locked = false
 }: { 
   number: number; 
   title: string; 
-  screen: string;
+  description: string; 
   prompt: string;
+  screen: string;
+  locked?: boolean;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   
   return (
-    <div className="border border-yellow-500/30 rounded-lg overflow-hidden bg-gradient-to-br from-yellow-500/5 to-orange-500/5">
+    <div className={`border border-yellow-500/30 rounded-lg overflow-hidden bg-gradient-to-br from-yellow-500/5 to-orange-500/5 ${locked ? 'opacity-60' : ''}`}>
       <div className="p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
@@ -574,33 +400,162 @@ function FigmaPromptCard({
               <p className="text-xs text-muted-foreground mt-1">{screen}</p>
             </div>
           </div>
-          <CopyButton text={prompt} label="Copy" />
+          {!locked && <CopyButton text={prompt} label="Copy" />}
+          {locked && <Lock className="h-4 w-4 text-muted-foreground" />}
         </div>
         
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-1 text-xs text-yellow-500 hover:text-yellow-400 mt-3 transition-colors"
-        >
-          {isExpanded ? (
-            <>
-              <ChevronUp className="h-3 w-3" />
-              Hide prompt
-            </>
-          ) : (
-            <>
-              <ChevronDown className="h-3 w-3" />
-              View prompt
-            </>
-          )}
-        </button>
+        <p className="text-sm text-muted-foreground mt-3">{description}</p>
         
-        {isExpanded && (
-          <div className="mt-3 p-3 bg-black/30 rounded-lg border border-yellow-500/20">
-            <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-mono overflow-x-auto">
-              {prompt}
-            </pre>
-          </div>
+        {!locked && (
+          <>
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="flex items-center gap-1 text-xs text-yellow-500 hover:text-yellow-400 mt-3 transition-colors"
+            >
+              {isExpanded ? (
+                <>
+                  <ChevronUp className="h-3 w-3" />
+                  Hide prompt
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-3 w-3" />
+                  View prompt
+                </>
+              )}
+            </button>
+            
+            {isExpanded && (
+              <div className="mt-3 p-3 bg-black/30 rounded-lg border border-yellow-500/20">
+                <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-mono overflow-x-auto">
+                  {prompt}
+                </pre>
+              </div>
+            )}
+          </>
         )}
+      </div>
+    </div>
+  );
+}
+
+// Email Gate Modal Component
+function EmailGateModal({ 
+  isOpen, 
+  onSubmit, 
+  isSubmitting 
+}: { 
+  isOpen: boolean; 
+  onSubmit: (email: string) => void;
+  isSubmitting: boolean;
+}) {
+  const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (honeypot) return; // Bot detected
+    if (!email || !email.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    onSubmit(email);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="relative w-full max-w-md">
+        {/* Glow effect */}
+        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 rounded-2xl blur-lg opacity-30 animate-pulse" />
+        
+        <Card className="relative bg-background/95 backdrop-blur border-cyan-500/30">
+          <CardContent className="pt-8 pb-6 px-6">
+            <div className="text-center space-y-4">
+              {/* Lock icon with glow */}
+              <div className="relative mx-auto w-16 h-16">
+                <div className="absolute inset-0 bg-cyan-500/20 rounded-full blur-xl" />
+                <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 flex items-center justify-center">
+                  <Lock className="h-8 w-8 text-cyan-400" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-500 animate-ping" />
+                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-500" />
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-bold">Unlock the Full APEX Demo</h2>
+                <p className="text-muted-foreground mt-2">
+                  Enter your email to access the complete 4-part strategic analysis and see what you'll get with a real purchase.
+                </p>
+              </div>
+
+              {/* Trust badges */}
+              <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Shield className="h-3 w-3 text-green-500" />
+                  Zero Spam
+                </span>
+                <span className="flex items-center gap-1">
+                  <Sparkles className="h-3 w-3 text-purple-500" />
+                  Early Access
+                </span>
+                <span className="flex items-center gap-1">
+                  <Zap className="h-3 w-3 text-yellow-500" />
+                  5 Sec Setup
+                </span>
+              </div>
+
+              {/* Email form */}
+              <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+                {/* Honeypot field - hidden from users */}
+                <input
+                  type="text"
+                  name="website"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  className="absolute -left-[9999px]"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+                
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 h-12 bg-muted/50 border-border/50"
+                    required
+                  />
+                </div>
+
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Unlocking...
+                    </>
+                  ) : (
+                    <>
+                      Unlock Full Demo
+                      <Sparkles className="h-4 w-4 ml-2" />
+                    </>
+                  )}
+                </Button>
+              </form>
+
+              <p className="text-xs text-muted-foreground">
+                No credit card required • Unsubscribe anytime
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
@@ -608,132 +563,166 @@ function FigmaPromptCard({
 
 export default function DemoAnalysis() {
   const [, navigate] = useLocation();
-  const [emailSubmitted, setEmailSubmitted] = useState(false);
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [honeypot, setHoneypot] = useState(""); // Spam protection
   const [activeTab, setActiveTab] = useState("overview");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [showNewAnalysisModal, setShowNewAnalysisModal] = useState(false);
+  
+  // Email gate state
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [showEmailGate, setShowEmailGate] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [hasTriggeredGate, setHasTriggeredGate] = useState(false);
 
-  // tRPC mutation for saving email
-  const subscribeEmail = trpc.emailSubscriber.subscribe.useMutation({
-    onSuccess: (data) => {
-      setEmailSubmitted(true);
-      setEmailError("");
-      localStorage.setItem("demo_email_submitted", "true");
-      localStorage.setItem("demo_email", email);
-      toast.success("Welcome! You now have full access to the demo.");
-      if (data.isNew) {
-        toast.info("Check your email for exclusive insights!", { duration: 5000 });
-      }
-    },
-    onError: (error) => {
-      setEmailError(error.message || "Failed to subscribe. Please try again.");
-      setIsSubmitting(false);
-    },
-  });
-
-  // Check if email was already submitted
+  // Check localStorage for previous unlock
   useEffect(() => {
-    const submitted = localStorage.getItem("demo_email_submitted");
-    if (submitted) {
-      setEmailSubmitted(true);
+    const unlocked = localStorage.getItem("demo_analysis_unlocked");
+    if (unlocked === "true") {
+      setIsUnlocked(true);
     }
   }, []);
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Honeypot check - if filled, it's a bot
-    if (honeypot) {
-      // Silently reject but pretend success
-      setEmailSubmitted(true);
-      localStorage.setItem("demo_email_submitted", "true");
-      return;
-    }
-    
-    // Validate email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.trim()) {
-      setEmailError("Email is required");
-      return;
-    }
-    if (!emailRegex.test(email)) {
-      setEmailError("Please enter a valid email address");
-      return;
-    }
+  // Track scroll progress
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      setScrollProgress(progress);
 
-    setIsSubmitting(true);
+      // Trigger email gate at 50% scroll if not already unlocked
+      if (progress >= 50 && !isUnlocked && !hasTriggeredGate) {
+        setShowEmailGate(true);
+        setHasTriggeredGate(true);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isUnlocked, hasTriggeredGate]);
+
+  // tRPC mutation for saving email
+  const subscribeEmail = trpc.emailSubscriber.subscribe.useMutation({
+    onSuccess: () => {
+      setIsUnlocked(true);
+      setShowEmailGate(false);
+      localStorage.setItem("demo_analysis_unlocked", "true");
+      toast.success("Demo unlocked! Check your email for exclusive insights.");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to subscribe. Please try again.");
+    },
+  });
+
+  const handleEmailSubmit = (email: string) => {
     subscribeEmail.mutate({ email, source: "demo_analysis_gate" });
   };
 
-  const PART_CONFIG = [
-    { key: "part1", ...DEMO_ANALYSIS.part1 },
-    { key: "part2", ...DEMO_ANALYSIS.part2 },
-    { key: "part3", ...DEMO_ANALYSIS.part3 },
-    { key: "part4", ...DEMO_ANALYSIS.part4 },
-  ];
+  // Handle PDF export
+  const handleExportPDF = useCallback(async () => {
+    if (!isUnlocked) {
+      setShowEmailGate(true);
+      return;
+    }
+    
+    setIsExporting(true);
+    try {
+      let markdown = `# APEX Strategic Analysis Demo\n\n`;
+      markdown += `**Problem Statement:**\n${DEMO_PROBLEM_STATEMENT}\n\n`;
+      markdown += `---\n\n`;
+      markdown += `## Overview\n${DEMO_OVERVIEW}\n\n`;
+      markdown += `---\n\n`;
+      markdown += `## Part 1: Discovery & Problem Analysis\n${DEMO_PART1}\n\n`;
+      markdown += `---\n\n`;
+      markdown += `## Part 2: Strategic Design & Roadmap\n${DEMO_PART2}\n\n`;
+      markdown += `---\n\n`;
+      markdown += `## Part 3: AI Toolkit & Figma Prompts\n${DEMO_PART3}\n\n`;
+      markdown += `---\n\n`;
+      markdown += `## Part 4: Risk, Metrics & Rationale\n${DEMO_PART4}\n\n`;
+      
+      const blob = new Blob([markdown], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `apex-demo-analysis.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast.success("Demo analysis exported!");
+    } catch (error) {
+      toast.error("Failed to export");
+    } finally {
+      setIsExporting(false);
+    }
+  }, [isUnlocked]);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with Navigation */}
-      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
-                <Home className="h-4 w-4 mr-2" />
-                Home
-              </Button>
-              <div className="hidden sm:block h-6 w-px bg-border" />
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-bold">Demo Analysis</h1>
-                <p className="text-xs text-muted-foreground">
-                  Sample APEX Strategic Output
-                </p>
-              </div>
-            </div>
-            
-            {/* Navigation Links */}
-            <div className="flex items-center gap-2">
-              {emailSubmitted && (
-                <>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => navigate("/dashboard")}
-                    className="text-xs"
-                  >
-                    <Eye className="h-4 w-4 mr-1" />
-                    <span className="hidden sm:inline">Output</span>
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => navigate("/dashboard")}
-                    className="text-xs"
-                  >
-                    <History className="h-4 w-4 mr-1" />
-                    <span className="hidden sm:inline">History</span>
-                  </Button>
-                </>
-              )}
-              <Button 
-                variant="default" 
-                size="sm"
-                onClick={() => navigate("/#pricing")}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">New Analysis</span>
-              </Button>
+      {/* Email Gate Modal */}
+      <EmailGateModal 
+        isOpen={showEmailGate} 
+        onSubmit={handleEmailSubmit}
+        isSubmitting={subscribeEmail.isPending}
+      />
+
+      {/* Header */}
+      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Home
+            </Button>
+            <div>
+              <h1 className="text-lg font-bold">Demo Analysis</h1>
+              <p className="text-xs text-muted-foreground">Sample APEX Strategic Output</p>
             </div>
           </div>
+          
+          <div className="flex items-center gap-2">
+            {isUnlocked && (
+              <>
+                <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")}>
+                  <FileText className="h-4 w-4 mr-2" />
+                  Output
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => navigate("/history")}>
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  History
+                </Button>
+              </>
+            )}
+            <Button 
+              className="bg-primary hover:bg-primary/90"
+              size="sm"
+              onClick={() => setShowNewAnalysisModal(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              New Analysis
+            </Button>
+          </div>
         </div>
-      </div>
+        
+        {/* Scroll progress bar */}
+        <div className="h-0.5 bg-muted">
+          <div 
+            className="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all duration-150"
+            style={{ width: `${scrollProgress}%` }}
+          />
+        </div>
+      </header>
 
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        {/* Problem Statement - Always visible */}
-        <Card className="mb-6 glass-panel">
+      {/* New Analysis Modal */}
+      <NewAnalysisModal 
+        open={showNewAnalysisModal} 
+        onOpenChange={setShowNewAnalysisModal}
+        onSuccess={(sessionId) => navigate(`/checkout/${sessionId}`)}
+      />
+
+      <main className="container py-6 space-y-6">
+        {/* Problem Statement */}
+        <Card className="glass-panel">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Target className="h-4 w-4" />
@@ -741,253 +730,275 @@ export default function DemoAnalysis() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm">{DEMO_ANALYSIS.problemStatement}</p>
+            <p className="text-sm">{DEMO_PROBLEM_STATEMENT}</p>
           </CardContent>
         </Card>
 
         {/* Tier Badge */}
-        <div className="flex items-center gap-2 mb-6">
-          <span className="tier-badge tier-badge-full">Syndicate</span>
-          <span className="px-2 py-0.5 text-xs font-medium bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-full text-cyan-400">
+        <div className="flex items-center gap-2">
+          <span className="px-3 py-1 text-sm font-medium bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded-full">
+            SYNDICATE
+          </span>
+          <span className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-full text-cyan-400">
             APEX • Perplexity Powered
           </span>
-          <span className="text-xs text-muted-foreground ml-2">Demo Analysis</span>
+          <span className="text-xs text-muted-foreground">Demo Analysis</span>
         </div>
 
-        {/* Email Gate - Show if email not submitted */}
-        {!emailSubmitted && (
-          <Card className="mb-8 border-2 border-primary/50 bg-gradient-to-br from-primary/5 via-background to-purple-500/5 overflow-hidden">
-            <CardContent className="pt-8 pb-8">
-              <div className="flex flex-col items-center text-center">
-                <div className="p-4 rounded-full bg-primary/10 mb-4 relative">
-                  <Lock className="h-8 w-8 text-primary" />
-                  <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-primary animate-ping" />
-                </div>
-                <h3 className="text-2xl font-bold mb-2">
-                  Unlock the Full APEX Demo
-                </h3>
-                <p className="text-muted-foreground mb-6 max-w-md">
-                  Enter your email to access the complete 4-part strategic analysis and see what you'll get with a real purchase.
-                </p>
+        {/* Content Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 h-auto p-1">
+            <TabsTrigger value="overview" className="text-xs sm:text-sm py-2">
+              <FileText className="h-4 w-4 mr-1 hidden sm:inline" />
+              Overview
+            </TabsTrigger>
+            {PART_CONFIG.map((part) => (
+              <TabsTrigger 
+                key={part.number}
+                value={`part${part.number}`} 
+                className="text-xs sm:text-sm py-2"
+              >
+                <part.icon className={`h-4 w-4 mr-1 hidden sm:inline ${part.color}`} />
+                <span className="sm:hidden">P{part.number}</span>
+                <span className="hidden sm:inline">Part {part.number}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-                {/* Benefits */}
-                <div className="flex flex-wrap justify-center gap-4 mb-6">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Shield className="h-4 w-4 text-green-500" />
-                    <span>Zero Spam</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Sparkles className="h-4 w-4 text-primary" />
-                    <span>Early Access</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4 text-primary" />
-                    <span>5 Sec Setup</span>
-                  </div>
+          {/* Overview Tab */}
+          <TabsContent value="overview">
+            <Card className="glass-panel">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Executive Overview
+                  </CardTitle>
+                  {isUnlocked && <CopyButton text={DEMO_OVERVIEW} label="Copy All" />}
                 </div>
+              </CardHeader>
+              <CardContent className="prose prose-invert max-w-none">
+                <Streamdown>{DEMO_OVERVIEW}</Streamdown>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-                {/* Email Form with Honeypot */}
-                <form onSubmit={handleEmailSubmit} className="w-full max-w-md space-y-4">
-                  {/* Honeypot field - hidden from users, visible to bots */}
-                  <div className="absolute -left-[9999px]" aria-hidden="true">
-                    <input
-                      type="text"
-                      name="website"
-                      tabIndex={-1}
-                      autoComplete="off"
-                      value={honeypot}
-                      onChange={(e) => setHoneypot(e.target.value)}
-                    />
+          {/* Part 1 Tab */}
+          <TabsContent value="part1">
+            <Card className={`glass-panel ${PART_CONFIG[0].borderColor} bg-gradient-to-br ${PART_CONFIG[0].gradient}`}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <div className={`w-10 h-10 rounded-lg ${PART_CONFIG[0].bgColor}/20 flex items-center justify-center`}>
+                      <Target className={`h-5 w-5 ${PART_CONFIG[0].color}`} />
+                    </div>
+                    <div>
+                      <span className="block">Part 1: {PART_CONFIG[0].name}</span>
+                      <span className="text-sm font-normal text-muted-foreground">{PART_CONFIG[0].description}</span>
+                    </div>
+                  </CardTitle>
+                  {isUnlocked && <CopyButton text={DEMO_PART1} label="Copy All" />}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className={`prose prose-invert max-w-none ${!isUnlocked ? 'blur-sm select-none pointer-events-none' : ''}`}>
+                  <Streamdown>{DEMO_PART1}</Streamdown>
+                </div>
+                {!isUnlocked && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <Lock className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Enter your email above to unlock</p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Part 2 Tab */}
+          <TabsContent value="part2">
+            <Card className={`glass-panel ${PART_CONFIG[1].borderColor} bg-gradient-to-br ${PART_CONFIG[1].gradient}`}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <div className={`w-10 h-10 rounded-lg ${PART_CONFIG[1].bgColor}/20 flex items-center justify-center`}>
+                      <Layers className={`h-5 w-5 ${PART_CONFIG[1].color}`} />
+                    </div>
+                    <div>
+                      <span className="block">Part 2: {PART_CONFIG[1].name}</span>
+                      <span className="text-sm font-normal text-muted-foreground">{PART_CONFIG[1].description}</span>
+                    </div>
+                  </CardTitle>
+                  {isUnlocked && <CopyButton text={DEMO_PART2} label="Copy All" />}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className={`prose prose-invert max-w-none ${!isUnlocked ? 'blur-sm select-none pointer-events-none' : ''}`}>
+                  <Streamdown>{DEMO_PART2}</Streamdown>
+                </div>
+                {!isUnlocked && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <Lock className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Enter your email above to unlock</p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Part 3 Tab - Figma Prompts */}
+          <TabsContent value="part3">
+            <Card className={`glass-panel ${PART_CONFIG[2].borderColor} bg-gradient-to-br ${PART_CONFIG[2].gradient}`}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <div className={`w-10 h-10 rounded-lg ${PART_CONFIG[2].bgColor}/20 flex items-center justify-center`}>
+                      <Lightbulb className={`h-5 w-5 ${PART_CONFIG[2].color}`} />
+                    </div>
+                    <div>
+                      <span className="block">Part 3: {PART_CONFIG[2].name}</span>
+                      <span className="text-sm font-normal text-muted-foreground">{PART_CONFIG[2].description}</span>
+                    </div>
+                  </CardTitle>
+                  {isUnlocked && <CopyButton text={DEMO_PART3} label="Copy All" />}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* AI Toolkit Section */}
+                <CollapsibleSection 
+                  title="AI-Enhanced Execution Toolkit" 
+                  icon={Wrench}
+                  defaultOpen={true}
+                  badge="6 Tools"
+                  color="text-yellow-500"
+                  locked={!isUnlocked}
+                >
+                  <div className="prose prose-invert max-w-none prose-sm">
+                    <Streamdown>{DEMO_PART3}</Streamdown>
+                  </div>
+                </CollapsibleSection>
+
+                {/* Figma Prompts Section */}
+                <div className="border border-yellow-500/30 rounded-xl overflow-hidden bg-gradient-to-br from-yellow-500/5 via-background to-orange-500/5">
+                  <div className="p-6 border-b border-yellow-500/20">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 flex items-center justify-center">
+                          <Palette className="h-6 w-6 text-yellow-500" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-lg">10 Production-Ready Figma Prompts</h3>
+                          <p className="text-sm text-muted-foreground">Copy and paste directly into Figma AI</p>
+                        </div>
+                      </div>
+                      {isUnlocked && (
+                        <div className="flex items-center gap-2">
+                          <CopyButton 
+                            text={DEMO_FIGMA_PROMPTS.map(p => `${p.number}. ${p.title}\n${p.prompt}`).join('\n\n')} 
+                            label="Copy All" 
+                          />
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={handleExportPDF}
+                            disabled={isExporting}
+                          >
+                            {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      type="email"
-                      placeholder="Enter your email address"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setEmailError("");
-                      }}
-                      className="pl-10"
-                      disabled={isSubmitting}
-                    />
+                  <div className="p-6">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {DEMO_FIGMA_PROMPTS.map((prompt) => (
+                        <FigmaPromptCard
+                          key={prompt.number}
+                          number={prompt.number}
+                          title={prompt.title}
+                          description={prompt.description}
+                          prompt={prompt.prompt}
+                          screen={prompt.screen}
+                          locked={!isUnlocked}
+                        />
+                      ))}
+                    </div>
                   </div>
-                  {emailError && (
-                    <p className="text-sm text-destructive">{emailError}</p>
-                  )}
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
-                    size="lg"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Zap className="mr-2 h-4 w-4 animate-spin" />
-                        Unlocking...
-                      </>
-                    ) : (
-                      <>
-                        Unlock Full Demo
-                        <Sparkles className="ml-2 h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </form>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-                <p className="text-xs text-muted-foreground mt-4">
-                  No credit card required • Unsubscribe anytime
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Analysis Content - Locked/Blurred if email not submitted */}
-        <div className="relative">
-          {/* Blur overlay if not submitted */}
-          {!emailSubmitted && (
-            <div className="absolute inset-0 z-10 backdrop-blur-sm bg-background/30 rounded-lg flex items-center justify-center">
-              <div className="text-center p-8">
-                <Lock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">Enter your email above to unlock</p>
-              </div>
-            </div>
-          )}
-          
-          <div className={!emailSubmitted ? "blur-md opacity-50 pointer-events-none select-none" : ""}>
-            {/* Tabbed Interface */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-5 h-auto p-1">
-                <TabsTrigger value="overview" className="text-xs sm:text-sm py-2">
-                  <FileText className="h-4 w-4 mr-1 hidden sm:inline" />
-                  Overview
-                </TabsTrigger>
-                {PART_CONFIG.map((part, index) => {
-                  const Icon = part.icon;
-                  return (
-                    <TabsTrigger 
-                      key={part.key}
-                      value={part.key} 
-                      className="text-xs sm:text-sm py-2"
-                    >
-                      <Icon className={`h-4 w-4 mr-1 hidden sm:inline ${part.color}`} />
-                      <span className="sm:hidden">P{index + 1}</span>
-                      <span className="hidden sm:inline">Part {index + 1}</span>
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
-
-              {/* Overview Tab */}
-              <TabsContent value="overview">
-                <Card className="glass-panel">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <FileText className="h-5 w-5" />
-                      Executive Overview
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="prose prose-invert max-w-none">
-                    <Streamdown>{DEMO_ANALYSIS.overview}</Streamdown>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {/* Part Tabs */}
-              {PART_CONFIG.map((part, index) => {
-                const Icon = part.icon;
-                return (
-                  <TabsContent key={part.key} value={part.key}>
-                    <Card className={`glass-panel ${part.borderColor} bg-gradient-to-br ${part.gradient}`}>
-                      <CardHeader>
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="flex items-center gap-2">
-                            <div className={`w-10 h-10 rounded-lg ${part.bgColor}/20 flex items-center justify-center`}>
-                              <Icon className={`h-5 w-5 ${part.color}`} />
-                            </div>
-                            <div>
-                              <span className="block">Part {index + 1}: {part.title}</span>
-                            </div>
-                          </CardTitle>
-                          <CopyButton text={part.content} label="Copy All" />
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        {part.key === "part3" ? (
-                          // Special rendering for Part 3 with Figma prompts
-                          <div className="space-y-6">
-                            <div className="prose prose-invert max-w-none prose-sm">
-                              <Streamdown>{part.content.split("## 10 Production-Ready Figma Prompts")[0]}</Streamdown>
-                            </div>
-                            
-                            {/* Figma Prompts Section */}
-                            <div className="border border-yellow-500/30 rounded-xl overflow-hidden bg-gradient-to-br from-yellow-500/5 via-background to-orange-500/5">
-                              <div className="p-6 border-b border-yellow-500/20">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 flex items-center justify-center">
-                                      <Palette className="h-6 w-6 text-yellow-500" />
-                                    </div>
-                                    <div>
-                                      <h3 className="font-bold text-lg">10 Production-Ready Figma Prompts</h3>
-                                      <p className="text-sm text-muted-foreground">Copy and paste directly into Figma AI</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              <div className="p-6">
-                                <div className="grid gap-4 md:grid-cols-2">
-                                  {FIGMA_PROMPTS.map((prompt) => (
-                                    <FigmaPromptCard
-                                      key={prompt.number}
-                                      number={prompt.number}
-                                      title={prompt.title}
-                                      screen={prompt.screen}
-                                      prompt={prompt.prompt}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="prose prose-invert max-w-none prose-sm">
-                            <Streamdown>{part.content}</Streamdown>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                );
-              })}
-            </Tabs>
-          </div>
-        </div>
+          {/* Part 4 Tab */}
+          <TabsContent value="part4">
+            <Card className={`glass-panel ${PART_CONFIG[3].borderColor} bg-gradient-to-br ${PART_CONFIG[3].gradient}`}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <div className={`w-10 h-10 rounded-lg ${PART_CONFIG[3].bgColor}/20 flex items-center justify-center`}>
+                      <AlertTriangle className={`h-5 w-5 ${PART_CONFIG[3].color}`} />
+                    </div>
+                    <div>
+                      <span className="block">Part 4: {PART_CONFIG[3].name}</span>
+                      <span className="text-sm font-normal text-muted-foreground">{PART_CONFIG[3].description}</span>
+                    </div>
+                  </CardTitle>
+                  {isUnlocked && <CopyButton text={DEMO_PART4} label="Copy All" />}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className={`prose prose-invert max-w-none ${!isUnlocked ? 'blur-sm select-none pointer-events-none' : ''}`}>
+                  <Streamdown>{DEMO_PART4}</Streamdown>
+                </div>
+                {!isUnlocked && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <Lock className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Enter your email above to unlock</p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
         {/* CTA Section */}
-        <Card className="p-8 mt-8 text-center bg-gradient-to-br from-primary/10 via-background to-purple-500/10 border-primary/30">
-          <h2 className="text-2xl font-bold mb-4">
-            Get Your Own Strategic Analysis
-          </h2>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            This is just a demo. Get a complete APEX analysis tailored to your specific problem statement with actionable insights, strategic recommendations, and 10 custom Figma prompts.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={() => navigate("/#pricing")}>
-              <Zap className="mr-2 h-4 w-4" />
-              Start Your Analysis
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate("/")}>
-              Learn More
-            </Button>
-          </div>
+        <Card className="glass-panel border-purple-500/30 bg-gradient-to-r from-purple-500/5 to-indigo-500/5">
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center">
+                  <TrendingUp className="h-6 w-6 text-purple-500" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Get Your Own Strategic Analysis</h3>
+                  <p className="text-sm text-muted-foreground">
+                    This is just a demo. Get a complete APEX analysis tailored to your specific problem statement with actionable insights, strategic recommendations, and 10 custom Figma prompts.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600"
+                  onClick={() => setShowNewAnalysisModal(true)}
+                >
+                  <Zap className="h-4 w-4 mr-2" />
+                  Start Your Analysis
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+                <Button variant="outline" onClick={() => navigate("/")}>
+                  Learn More
+                </Button>
+              </div>
+            </div>
+          </CardContent>
         </Card>
-      </div>
+      </main>
     </div>
   );
 }

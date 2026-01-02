@@ -359,3 +359,9 @@
 - [x] Fix New Analysis button modal functionality (works on Dashboard)
 - [x] Add Output and History navigation links to Demo page (visible after email unlock)
 - [x] Show Output and History navigation after purchase (magic link users)
+
+## Demo Analysis Design Restoration - January 2, 2025
+- [x] Restore c915eec AnalysisResult.tsx design to Demo Analysis page
+- [x] Keep email gate that appears at 50% scroll
+- [x] Content locked with blur until email submitted
+- [x] Store emails in database with spam protection (honeypot field)
