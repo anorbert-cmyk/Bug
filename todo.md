@@ -345,4 +345,6 @@
 - [x] Create /demo-analysis route and page with email gate
 - [x] Implement email gate for Demo Analysis with content lock from start (not just 50% scroll)
 - [x] Add Overview section with 12-16 sentence executive summary to Output view
-- [ ] Test New Analysis button functionality in Demo and Dashboard pages
+- [x] Test New Analysis button functionality in Demo and Dashboard pages
+- [x] Remove automatic admin redirect from homepage (only redirect on explicit wallet connect click)
+- [x] Email gate cannot be bypassed by closing modal (content locked from start, no X button)

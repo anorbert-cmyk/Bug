@@ -69,7 +69,7 @@ export default function Home() {
   const [isConnectingWallet, setIsConnectingWallet] = useState(false);
   const hasMetaMask = typeof window !== "undefined" && typeof (window as any).ethereum !== "undefined";
   
-  // Check for existing wallet connection on mount
+  // Check for existing wallet connection on mount - NO auto redirect
   useEffect(() => {
     const checkWalletConnection = async () => {
       if (hasMetaMask) {
@@ -78,10 +78,7 @@ export default function Home() {
           if (accounts.length > 0) {
             const address = accounts[0].toLowerCase();
             setWalletAddress(address);
-            // If admin wallet, redirect to admin
-            if (address === ADMIN_WALLET && ADMIN_WALLET) {
-              navigate("/admin");
-            }
+            // Just show the wallet address, don't auto-redirect
           }
         } catch (error) {
           console.error("Error checking wallet connection:", error);
@@ -89,9 +86,9 @@ export default function Home() {
       }
     };
     checkWalletConnection();
-  }, [hasMetaMask, navigate]);
+  }, [hasMetaMask]);
   
-  // Listen for account changes
+  // Listen for account changes - NO auto redirect
   useEffect(() => {
     if (hasMetaMask) {
       const handleAccountsChanged = (accounts: string[]) => {
@@ -100,9 +97,7 @@ export default function Home() {
         } else {
           const address = accounts[0].toLowerCase();
           setWalletAddress(address);
-          if (address === ADMIN_WALLET && ADMIN_WALLET) {
-            navigate("/admin");
-          }
+          // Just update wallet address, don't auto-redirect
         }
       };
       
@@ -111,7 +106,7 @@ export default function Home() {
         (window as any).ethereum.removeListener("accountsChanged", handleAccountsChanged);
       };
     }
-  }, [hasMetaMask, navigate]);
+  }, [hasMetaMask]);
   
   // Connect wallet function
   const connectWallet = async () => {
