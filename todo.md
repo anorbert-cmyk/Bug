@@ -378,3 +378,9 @@
 
 ## Demo Content Update - January 2, 2025
 - [x] Replace hardcoded demo content with new Web2/Web3 marketing agency analysis (Part 1)
+- [ ] Update Part 2, 3, 4 and Figma prompts from validatestrategy.manus.space demo
+
+## Analysis Result Page Fixes - January 2, 2025
+- [x] Fix Overview tab to show combined parts when fullMarkdown is empty
+- [x] Demo analysis content loads from database (test-apex-demo-LAIdJqey session)
+- [x] Part 1, 2, 3, 4 tabs all work correctly with database content

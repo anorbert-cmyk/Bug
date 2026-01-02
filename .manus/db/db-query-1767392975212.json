@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, sessionId, problemStatement, tier, status FROM analysis_sessions WHERE sessionId = 'test-apex-demo-LAIdJqey' LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 269oH2rcit4kEnZ.root --database fiP8RUkhdLoJLqK2jRAup2 --execute SELECT id, sessionId, problemStatement, tier, status FROM analysis_sessions WHERE sessionId = 'test-apex-demo-LAIdJqey' LIMIT 1;",
+  "rows": [
+    {
+      "id": "4",
+      "sessionId": "test-apex-demo-LAIdJqey",
+      "problemStatement": "How can we improve the onboarding experience for our B2B SaaS product to reduce time-to-value and increase user activation rates?",
+      "tier": "full",
+      "status": "completed"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tsessionId\tproblemStatement\ttier\tstatus\n4\ttest-apex-demo-LAIdJqey\tHow can we improve the onboarding experience for our B2B SaaS product to reduce time-to-value and increase user activation rates?\tfull\tcompleted\n",
+  "stderr": "",
+  "execution_time_ms": 59
+}

@@ -1090,6 +1090,33 @@ export default function AnalysisResult() {
                     <CardContent className="prose prose-invert max-w-none">
                       {result.fullMarkdown ? (
                         <Streamdown>{result.fullMarkdown}</Streamdown>
+                      ) : (result.part1 || result.part2 || result.part3 || result.part4) ? (
+                        <div className="space-y-8">
+                          {result.part1 && (
+                            <div>
+                              <h2 className="text-xl font-bold text-blue-400 mb-4">Part 1: Discovery & Problem Analysis</h2>
+                              <Streamdown>{result.part1}</Streamdown>
+                            </div>
+                          )}
+                          {result.part2 && (
+                            <div>
+                              <h2 className="text-xl font-bold text-purple-400 mb-4">Part 2: Strategic Design & Roadmap</h2>
+                              <Streamdown>{result.part2}</Streamdown>
+                            </div>
+                          )}
+                          {result.part3 && (
+                            <div>
+                              <h2 className="text-xl font-bold text-yellow-400 mb-4">Part 3: AI Toolkit & Figma Prompts</h2>
+                              <Streamdown>{result.part3}</Streamdown>
+                            </div>
+                          )}
+                          {result.part4 && (
+                            <div>
+                              <h2 className="text-xl font-bold text-red-400 mb-4">Part 4: Risk, Metrics & Rationale</h2>
+                              <Streamdown>{result.part4}</Streamdown>
+                            </div>
+                          )}
+                        </div>
                       ) : (
                         <div className="text-center py-8 text-muted-foreground">
                           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
