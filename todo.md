@@ -343,6 +343,6 @@
 - [x] Fix Dashboard visibility - hide from unauthenticated users (removed from Home.tsx nav)
 - [x] Simplify Dashboard menu to only 2 items: Output, History (removed Dashboard + Settings)
 - [x] Create /demo-analysis route and page with email gate
-- [x] Implement email gate for Demo Analysis with content lock after 50% scroll
+- [x] Implement email gate for Demo Analysis with content lock from start (not just 50% scroll)
 - [x] Add Overview section with 12-16 sentence executive summary to Output view
 - [ ] Test New Analysis button functionality in Demo and Dashboard pages
