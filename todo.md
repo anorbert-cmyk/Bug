@@ -694,3 +694,13 @@
 ## UI Cleanup - January 2025
 
 - [x] Remove gate closing banner from top of page
+
+## Critical Bug Fixes - January 2025
+
+### Syndicate Tier (Part5/6 not saving)
+- [x] Fix partKey type to include part5 and part6
+- [x] Ensure all 6 parts are saved to database
+
+### Insider Tier (Wrong analysis function)
+- [x] Fix tier routing to use generateInsiderAnalysis for medium tier
+- [x] Ensure 2-part analysis is generated for Insider customers

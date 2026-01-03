@@ -33,7 +33,7 @@ import {
 } from "./db";
 
 import { Tier, getTierPrice, getTierConfig, TIER_CONFIGS, isMultiPartTier } from "../shared/pricing";
-import { generateAnalysis, generateSingleAnalysis, generateMultiPartAnalysis } from "./services/perplexityService";
+import { generateAnalysis, generateSingleAnalysis, generateMultiPartAnalysis, generateInsiderAnalysis } from "./services/perplexityService";
 // LemonSqueezy - commented out until company is established
 // import { createCheckout, isLemonSqueezyConfigured } from "./services/lemonSqueezyService";
 // Coinbase - replaced with NOWPayments
@@ -770,11 +770,12 @@ async function startAnalysisInBackground(sessionId: string, problemStatement: st
     console.log(`[Analysis] Starting ${tier} analysis for session ${sessionId}`);
 
     if (isMultiPartTier(tier)) {
-      // Multi-part analysis for full tier
+      // Syndicate tier: 6-part comprehensive APEX analysis
       const result = await generateMultiPartAnalysis(problemStatement, {
         onPartComplete: async (partNum, content) => {
           console.log(`[Analysis] Part ${partNum} complete for session ${sessionId}`);
-          const partKey = `part${partNum}` as "part1" | "part2" | "part3" | "part4";
+          // Support all 6 parts for Syndicate tier
+          const partKey = `part${partNum}` as "part1" | "part2" | "part3" | "part4" | "part5" | "part6";
           await updateAnalysisResult(sessionId, { [partKey]: content });
         },
         onComplete: async (result) => {
@@ -783,11 +784,10 @@ async function startAnalysisInBackground(sessionId: string, problemStatement: st
             generatedAt: new Date(result.generatedAt),
           });
           await updateAnalysisSessionStatus(sessionId, "completed");
-          console.log(`[Analysis] Multi-part analysis complete for session ${sessionId}`);
+          console.log(`[Analysis] 6-part Syndicate analysis complete for session ${sessionId}`);
           
           // Send email notification
           if (email && isEmailConfigured()) {
-            const tierConfig = getTierConfig(tier);
             await sendRapidApolloEmail({
               to: email,
               userName: email.split('@')[0],
@@ -804,19 +804,54 @@ async function startAnalysisInBackground(sessionId: string, problemStatement: st
           await updateAnalysisSessionStatus(sessionId, "failed");
         },
       });
+    } else if (tier === "medium") {
+      // Insider tier: 2-part strategic blueprint
+      console.log(`[Analysis] Starting Insider 2-part analysis for session ${sessionId}`);
+      const result = await generateInsiderAnalysis(problemStatement, {
+        onPartComplete: async (partNum, content) => {
+          console.log(`[Analysis] Insider Part ${partNum} complete for session ${sessionId}`);
+          const partKey = `part${partNum}` as "part1" | "part2";
+          await updateAnalysisResult(sessionId, { [partKey]: content });
+        },
+        onComplete: async (result) => {
+          await updateAnalysisResult(sessionId, {
+            fullMarkdown: result.fullMarkdown,
+            generatedAt: new Date(result.generatedAt),
+          });
+          await updateAnalysisSessionStatus(sessionId, "completed");
+          console.log(`[Analysis] 2-part Insider analysis complete for session ${sessionId}`);
+          
+          // Send email notification
+          if (email && isEmailConfigured()) {
+            await sendRapidApolloEmail({
+              to: email,
+              userName: email.split('@')[0],
+              magicLinkUrl: `${process.env.VITE_APP_URL || ''}/analysis/${sessionId}`,
+              transactionId: sessionId,
+              amount: String(getTierPrice(tier)),
+              currency: 'USD',
+              tier: tier,
+            });
+          }
+        },
+        onError: async (error) => {
+          console.error(`[Analysis] Insider error for session ${sessionId}:`, error);
+          await updateAnalysisSessionStatus(sessionId, "failed");
+        },
+      });
     } else {
-      // Single analysis for standard/medium tier
-      const result = await generateSingleAnalysis(problemStatement, tier as "standard" | "medium");
+      // Observer tier: Single analysis
+      console.log(`[Analysis] Starting Observer single analysis for session ${sessionId}`);
+      const result = await generateSingleAnalysis(problemStatement, "standard");
       await updateAnalysisResult(sessionId, {
         singleResult: result.content,
         generatedAt: new Date(result.generatedAt),
       });
       await updateAnalysisSessionStatus(sessionId, "completed");
-      console.log(`[Analysis] Single analysis complete for session ${sessionId}`);
+      console.log(`[Analysis] Observer analysis complete for session ${sessionId}`);
       
       // Send email notification
       if (email && isEmailConfigured()) {
-        const tierConfig = getTierConfig(tier);
         await sendRapidApolloEmail({
           to: email,
           userName: email.split('@')[0],
