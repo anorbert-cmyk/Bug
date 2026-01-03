@@ -65,16 +65,18 @@ export default function PaymentSuccess() {
   const tierInfo = session ? TIER_INFO[session.tier as keyof typeof TIER_INFO] : null;
   const isMultiPart = session?.tier === "full";
 
-  // Extract progress status from result
+  // Extract progress status from result (6 parts for Syndicate tier)
   const part1Status = (result?.part1Status as ProgressStatus) || "pending";
   const part2Status = (result?.part2Status as ProgressStatus) || "pending";
   const part3Status = (result?.part3Status as ProgressStatus) || "pending";
   const part4Status = (result?.part4Status as ProgressStatus) || "pending";
+  const part5Status = (result?.part5Status as ProgressStatus) || "pending";
+  const part6Status = (result?.part6Status as ProgressStatus) || "pending";
   const estimatedCompletionAt = result?.estimatedCompletionAt;
 
-  // Calculate progress
-  const completedParts = [part1Status, part2Status, part3Status, part4Status].filter(s => s === "completed").length;
-  const progressPercent = isMultiPart ? (completedParts / 4) * 100 : (result?.singleResult ? 100 : 0);
+  // Calculate progress (6 parts for Syndicate)
+  const completedParts = [part1Status, part2Status, part3Status, part4Status, part5Status, part6Status].filter(s => s === "completed").length;
+  const progressPercent = isMultiPart ? (completedParts / 6) * 100 : (result?.singleResult ? 100 : 0);
 
   // Show confetti on mount
   useEffect(() => {
@@ -114,6 +116,8 @@ export default function PaymentSuccess() {
       case 2: return part2Status;
       case 3: return part3Status;
       case 4: return part4Status;
+      case 5: return part5Status;
+      case 6: return part6Status;
       default: return "pending";
     }
   };

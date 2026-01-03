@@ -36,17 +36,20 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  Plus
+  Plus,
+  Globe
 } from "lucide-react";
 import { NewAnalysisModal } from "@/components/NewAnalysisModal";
 import { useRecaptcha } from "@/hooks/useRecaptcha";
 
-// Part configuration with colors and icons
+// Part configuration with colors and icons (6 parts for Syndicate tier)
 const PART_CONFIG = [
   { number: 1, name: "Discovery & Problem Analysis", icon: Target, color: "text-blue-500", bgColor: "bg-blue-500", gradient: "from-blue-500/20 to-cyan-500/20", borderColor: "border-blue-500/30", description: "Deep dive into the problem space and user needs" },
-  { number: 2, name: "Strategic Design & Roadmap", icon: Layers, color: "text-purple-500", bgColor: "bg-purple-500", gradient: "from-purple-500/20 to-pink-500/20", borderColor: "border-purple-500/30", description: "Design strategy and implementation roadmap" },
-  { number: 3, name: "AI Toolkit & Figma Prompts", icon: Lightbulb, color: "text-yellow-500", bgColor: "bg-yellow-500", gradient: "from-yellow-500/20 to-orange-500/20", borderColor: "border-yellow-500/30", description: "Practical tools and 10 production-ready prompts" },
-  { number: 4, name: "Risk, Metrics & Rationale", icon: AlertTriangle, color: "text-red-500", bgColor: "bg-red-500", gradient: "from-red-500/20 to-rose-500/20", borderColor: "border-red-500/30", description: "Risk assessment and success metrics" },
+  { number: 2, name: "Competitor Deep-Dive", icon: Layers, color: "text-cyan-500", bgColor: "bg-cyan-500", gradient: "from-cyan-500/20 to-teal-500/20", borderColor: "border-cyan-500/30", description: "Intensive competitive research with real-time data" },
+  { number: 3, name: "Strategic Roadmap", icon: Layers, color: "text-purple-500", bgColor: "bg-purple-500", gradient: "from-purple-500/20 to-pink-500/20", borderColor: "border-purple-500/30", description: "Phase-by-phase implementation roadmap" },
+  { number: 4, name: "5 Core Design Prompts", icon: Palette, color: "text-yellow-500", bgColor: "bg-yellow-500", gradient: "from-yellow-500/20 to-orange-500/20", borderColor: "border-yellow-500/30", description: "Production-ready prompts for core screens" },
+  { number: 5, name: "5 Advanced Design Prompts", icon: Lightbulb, color: "text-green-500", bgColor: "bg-green-500", gradient: "from-green-500/20 to-emerald-500/20", borderColor: "border-green-500/30", description: "Edge cases, error states, and mobile adaptations" },
+  { number: 6, name: "Risk, Metrics & ROI", icon: AlertTriangle, color: "text-red-500", bgColor: "bg-red-500", gradient: "from-red-500/20 to-rose-500/20", borderColor: "border-red-500/30", description: "Risk assessment, success metrics, and ROI justification" },
 ];
 
 // Copy Button Component
@@ -467,27 +470,31 @@ export default function DemoAnalysis() {
     });
   };
 
-  // Parse content from database
+  // Parse content from database (6 parts for Syndicate tier)
   const part1Raw = demoData?.part1 || "";
   const part2Raw = demoData?.part2 || "";
   const part3Raw = demoData?.part3 || "";
   const part4Raw = demoData?.part4 || "";
+  const part5Raw = demoData?.part5 || "";
+  const part6Raw = demoData?.part6 || "";
   
   // Try to parse as JSON, fallback to raw string
   const part1 = safeParseJSON(part1Raw)?.content || part1Raw;
   const part2 = safeParseJSON(part2Raw)?.content || part2Raw;
   const part3 = safeParseJSON(part3Raw)?.content || part3Raw;
   const part4 = safeParseJSON(part4Raw)?.content || part4Raw;
+  const part5 = safeParseJSON(part5Raw)?.content || part5Raw;
+  const part6 = safeParseJSON(part6Raw)?.content || part6Raw;
   
   // Overview comes from fullMarkdown or is constructed from parts
   const overview = demoData?.fullMarkdown || "";
   const problemStatement = demoData?.problemStatement || "Demo analysis";
   
-  // Extract Figma prompts from Part 3
-  const figmaPrompts = extractFigmaPrompts(demoData?.part3 || "");
+  // Extract Figma prompts from Part 4 and Part 5 (design prompts)
+  const figmaPrompts = extractFigmaPrompts((demoData?.part4 || "") + "\n" + (demoData?.part5 || ""));
 
   // Combine all parts for Overview if overview is empty
-  const fullOverview = overview || `${part1}\n\n---\n\n${part2}\n\n---\n\n${part3}\n\n---\n\n${part4}`;
+  const fullOverview = overview || `${part1}\n\n---\n\n${part2}\n\n---\n\n${part3}\n\n---\n\n${part4}\n\n---\n\n${part5}\n\n---\n\n${part6}`;
 
   // Handle PDF export
   const handleExportPDF = useCallback(async () => {
@@ -505,11 +512,15 @@ export default function DemoAnalysis() {
       markdown += `---\n\n`;
       markdown += `## Part 1: Discovery & Problem Analysis\n${part1}\n\n`;
       markdown += `---\n\n`;
-      markdown += `## Part 2: Strategic Design & Roadmap\n${part2}\n\n`;
+      markdown += `## Part 2: Competitor Deep-Dive\n${part2}\n\n`;
       markdown += `---\n\n`;
-      markdown += `## Part 3: AI Toolkit & Figma Prompts\n${part3}\n\n`;
+      markdown += `## Part 3: Strategic Roadmap\n${part3}\n\n`;
       markdown += `---\n\n`;
-      markdown += `## Part 4: Risk, Metrics & Rationale\n${part4}\n\n`;
+      markdown += `## Part 4: 5 Core Design Prompts\n${part4}\n\n`;
+      markdown += `---\n\n`;
+      markdown += `## Part 5: 5 Advanced Design Prompts\n${part5}\n\n`;
+      markdown += `---\n\n`;
+      markdown += `## Part 6: Risk, Metrics & ROI\n${part6}\n\n`;
       
       const blob = new Blob([markdown], { type: 'text/markdown' });
       const url = URL.createObjectURL(blob);
@@ -527,7 +538,7 @@ export default function DemoAnalysis() {
     } finally {
       setIsExporting(false);
     }
-  }, [isUnlocked, problemStatement, overview, part1, part2, part3, part4]);
+  }, [isUnlocked, problemStatement, overview, part1, part2, part3, part4, part5, part6]);
 
   // Loading state
   if (isLoading) {
@@ -645,7 +656,7 @@ export default function DemoAnalysis() {
 
         {/* Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 h-auto p-1">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto p-1 gap-1">
             {PART_CONFIG.map((part) => (
               <TabsTrigger 
                 key={part.number}
@@ -792,14 +803,14 @@ export default function DemoAnalysis() {
             </Card>
           </TabsContent>
 
-          {/* Part 4 Tab */}
+          {/* Part 4 Tab - Core Design Prompts */}
           <TabsContent value="part4">
             <Card className={`glass-panel ${PART_CONFIG[3].borderColor} bg-gradient-to-br ${PART_CONFIG[3].gradient}`}>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
                     <div className={`w-10 h-10 rounded-lg ${PART_CONFIG[3].bgColor}/20 flex items-center justify-center`}>
-                      <AlertTriangle className={`h-5 w-5 ${PART_CONFIG[3].color}`} />
+                      <Palette className={`h-5 w-5 ${PART_CONFIG[3].color}`} />
                     </div>
                     <div>
                       <span className="block">Part 4: {PART_CONFIG[3].name}</span>
@@ -812,6 +823,72 @@ export default function DemoAnalysis() {
               <CardContent>
                 <div className={`prose prose-invert max-w-none ${!isUnlocked ? 'blur-sm select-none pointer-events-none' : ''}`}>
                   <Streamdown>{part4}</Streamdown>
+                </div>
+                {!isUnlocked && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <Lock className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Enter your email above to unlock</p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Part 5 Tab - Advanced Design Prompts */}
+          <TabsContent value="part5">
+            <Card className={`glass-panel ${PART_CONFIG[4].borderColor} bg-gradient-to-br ${PART_CONFIG[4].gradient}`}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <div className={`w-10 h-10 rounded-lg ${PART_CONFIG[4].bgColor}/20 flex items-center justify-center`}>
+                      <Lightbulb className={`h-5 w-5 ${PART_CONFIG[4].color}`} />
+                    </div>
+                    <div>
+                      <span className="block">Part 5: {PART_CONFIG[4].name}</span>
+                      <span className="text-sm font-normal text-muted-foreground">{PART_CONFIG[4].description}</span>
+                    </div>
+                  </CardTitle>
+                  {isUnlocked && <CopyButton text={part5} label="Copy All" />}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className={`prose prose-invert max-w-none ${!isUnlocked ? 'blur-sm select-none pointer-events-none' : ''}`}>
+                  <Streamdown>{part5}</Streamdown>
+                </div>
+                {!isUnlocked && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <Lock className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Enter your email above to unlock</p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Part 6 Tab - Risk, Metrics & ROI */}
+          <TabsContent value="part6">
+            <Card className={`glass-panel ${PART_CONFIG[5].borderColor} bg-gradient-to-br ${PART_CONFIG[5].gradient}`}>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <div className={`w-10 h-10 rounded-lg ${PART_CONFIG[5].bgColor}/20 flex items-center justify-center`}>
+                      <AlertTriangle className={`h-5 w-5 ${PART_CONFIG[5].color}`} />
+                    </div>
+                    <div>
+                      <span className="block">Part 6: {PART_CONFIG[5].name}</span>
+                      <span className="text-sm font-normal text-muted-foreground">{PART_CONFIG[5].description}</span>
+                    </div>
+                  </CardTitle>
+                  {isUnlocked && <CopyButton text={part6} label="Copy All" />}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className={`prose prose-invert max-w-none ${!isUnlocked ? 'blur-sm select-none pointer-events-none' : ''}`}>
+                  <Streamdown>{part6}</Streamdown>
                 </div>
                 {!isUnlocked && (
                   <div className="absolute inset-0 flex items-center justify-center">

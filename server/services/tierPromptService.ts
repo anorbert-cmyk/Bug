@@ -137,7 +137,7 @@ EVIDENCE & SOURCE HANDLING:
 - No placeholders allowed: All microcopy examples must be real, production-ready text
 
 CONSTRAINTS (INSIDER TIER):
-- NO Production-Ready Design Prompts (upgrade to Syndicate for 10 Figma prompts)
+- NO Production-Ready Design Prompts (upgrade to Syndicate for 10 design prompts)
 - NO AI-Enhanced Execution Toolkit (upgrade to Syndicate)
 - NO Full Success Metrics Dashboard (Insider includes only a preview)
 - NO Business OKR Alignment (upgrade to Syndicate)
@@ -180,107 +180,63 @@ Select and justify appropriate research methodologies. For each method provide:
 - **Expected outputs** and deliverables
 - **How outputs inform design decisions**
 
-Consider: User Interviews, Jobs to be Done framework, Competitive Analysis, Contextual Inquiry/Shadowing, Survey research, Analytics review.
-
 ## Assumption Ledger (5-7 key assumptions)
 | # | Assumption | Confidence | Validation Plan | Business Risk if Wrong |
 |---|------------|------------|-----------------|------------------------|
 | A1 | [Clear statement] | High/Med/Low + justification | [How to test] | [Risk] |
-| A2 | [Clear statement] | High/Med/Low + justification | [How to test] | [Risk] |
-| A3 | [Clear statement] | High/Med/Low + justification | [How to test] | [Risk] |
-| A4 | [Clear statement] | High/Med/Low + justification | [How to test] | [Risk] |
-| A5 | [Clear statement] | High/Med/Low + justification | [How to test] | [Risk] |
 
 ## ✅ Immediate Action Items (This Week)
 - [ ] Action 1: [Specific task with deliverable and estimated time]
 - [ ] Action 2: [Specific task with responsible role]
 - [ ] Action 3: [Specific task with success criteria]
-
-## 📋 Recommended Next Steps (Next 2 Weeks)
-- [ ] Step 1: [Milestone-based step with dependencies]
-- [ ] Step 2: [Step with clear success criteria]
 
 **End with:** \`[✅ PART 1 COMPLETE]\``,
 
   2: `### PART 2 – Strategic Design & Roadmap (~5,000 tokens)
 
-Reference insights from Part 1 naturally (e.g., "Based on Assumption A3 from Part 1" or "Building on the competitor analysis from Part 1"). Do not repeat Part 1 content verbatim.
+Reference insights from Part 1 naturally. Do not repeat Part 1 content verbatim.
 
 OUTPUT THESE SECTIONS:
 
 ## Tailored Methodology (Ideation & Design phase)
-Based on the discovery findings from Part 1, select and justify appropriate design methodologies. For each method provide the rationale and expected impact on user experience, business outcomes, and technical implementation.
-
-Consider:
-- Service Blueprinting (for backend/frontend alignment, especially complex multi-system interactions)
-- Dual-Path Information Architecture (for products serving multiple distinct audiences)
-- User Journey Mapping (end-to-end experience visualization)
-- Error Path Mapping (anticipating failure modes and designing recovery experiences)
-- Wireframing to Prototyping spectrum (recommend appropriate fidelity level)
+Based on the discovery findings from Part 1, select and justify appropriate design methodologies.
 
 ## Phase-by-Phase Roadmap
-Create a detailed implementation roadmap. Structure as week-by-week for Quick Win/Medium Complexity, or month-by-month for Strategic Initiatives.
+Structure based on complexity level from Part 1:
+- Quick Win: Week-by-week (4-6 weeks)
+- Medium: Month-by-month (3-4 months)
+- Strategic: Quarter-by-quarter (6-12 months)
 
-| Week | Phase | Primary Focus | Key Deliverables | Critical Decision Points | Dependencies | Risk Factors |
-|------|-------|---------------|------------------|--------------------------|--------------|---------------|
-| 1-2 | Discovery | [Focus] | [Deliverables] | [Decisions] | [Dependencies] | [Risks] |
-| 3-4 | Define | [Focus] | [Deliverables] | [Decisions] | [Dependencies] | [Risks] |
-| 5-7 | Design | [Focus] | [Deliverables] | [Decisions] | [Dependencies] | [Risks] |
-| 8-9 | Validate | [Focus] | [Deliverables] | [Decisions] | [Dependencies] | [Risks] |
-| 10 | Launch Prep | [Focus] | [Deliverables] | [Decisions] | [Dependencies] | [Risks] |
+For each phase include:
+- **Objectives:** Primary and secondary goals
+- **Key Deliverables:** With acceptance criteria
+- **Critical Decision Points:** Stakeholders, deadlines
+- **Dependencies:** Internal and external
+- **Risk Factors:** With mitigation strategies
 
-Include team collaboration touchpoints specifying when and how different roles should synchronize.
-
-## Critical Workstream: Error Paths & Recovery Flows (MANDATORY)
-Identify top 5-7 failure scenarios users might encounter:
-
-| Scenario | User Impact | Emotional Response | Recovery UX Pattern | Microcopy | Instrumentation |
-|----------|-------------|-------------------|---------------------|-----------|------------------|
-| [What goes wrong] | [Impact] | [Abandonment risk] | [Pattern] | [Specific text] | [How to detect] |
-
-Prioritize by likelihood and severity (High/Medium/Low).
+## Error Path Mapping (Top 5-7 Failure Scenarios)
+For each failure scenario:
+- **What Goes Wrong:** User perspective description
+- **User Impact:** Emotional response, abandonment risk
+- **Recovery UX Pattern:** Specific microcopy (real text), visual treatment, interaction design
+- **Priority:** High/Medium/Low
 
 ## 5 Critical Risk Mitigations
-| Risk | User Impact | Business Impact | Mitigation Action | Plan B Contingency |
-|------|-------------|-----------------|-------------------|--------------------|
-| [Risk 1] | [How it affects UX] | [Revenue/reputation] | [Proactive action] | [If mitigation fails] |
-| [Risk 2] | [How it affects UX] | [Revenue/reputation] | [Proactive action] | [If mitigation fails] |
-| [Risk 3] | [How it affects UX] | [Revenue/reputation] | [Proactive action] | [If mitigation fails] |
-| [Risk 4] | [How it affects UX] | [Revenue/reputation] | [Proactive action] | [If mitigation fails] |
-| [Risk 5] | [How it affects UX] | [Revenue/reputation] | [Proactive action] | [If mitigation fails] |
+| Risk | Likelihood | Impact | Mitigation Strategy | Plan B |
+|------|------------|--------|---------------------|--------|
+| [Risk 1] | H/M/L | H/M/L | [Strategy] | [Contingency] |
 
 ## Team Collaboration Model
-- **Recommended team composition:** List specific roles needed (UX Lead, Researcher, Visual Designer, PM, Engineering Lead, QA, Compliance/Legal if applicable)
-- **Key collaboration moments:** Specify format and timing for Kick-off, Mid-point Review, Pre-launch coordination
-- **Documentation standards:** Recommend specific tools and practices
-
-If Solo Founder/Designer: Provide modified approach with self-paced checkpoints, AI tool acceleration recommendations, and async documentation practices.
+- Recommended team composition with roles and time allocation
+- Key collaboration moments (kick-off, reviews, handoffs)
+- Documentation standards
 
 ## Success Metrics Preview
-(Note: Full Success Metrics Dashboard with OKR Alignment available in Syndicate tier)
-
-| Metric | Target | Measurement Method | Why It Matters |
-|--------|--------|-------------------|----------------|
-| Task Completion Rate | [Target %] | [Method] | [Relevance] |
-| Time on Task | [Target improvement] | [Baseline approach] | [Relevance] |
-| User Satisfaction (SUS) | [Target score] | [Method] | [Relevance] |
-| Error Rate | [Target threshold] | [Detection method] | [Relevance] |
-
-## "Behind the Decision" Notes
-For each major phase and recommendation, provide transparent reasoning:
-- Why this approach was chosen over alternatives (name what was considered)
-- How this approach balances speed versus rigor for this specific context
-- How this approach addresses business risk while maximizing user value
+3-5 key metrics to track success (full dashboard in Syndicate tier).
 
 ## ✅ Immediate Action Items (This Week)
-- [ ] Action 1: [Specific task with deliverable and estimated time]
-- [ ] Action 2: [Specific task with responsible role]
-- [ ] Action 3: [Specific task with success criteria]
-
-## 📋 Recommended Next Steps (Next 2 Weeks)
-- [ ] Step 1: [Milestone-based step with dependencies on previous items]
-- [ ] Step 2: [Step with clear success criteria]
-- [ ] Step 3: [Step with clear success criteria]
+- [ ] Action 1: [Specific task]
+- [ ] Action 2: [Specific task]
 
 **End with:** \`[✅ PART 2 COMPLETE — Strategic Blueprint delivered across 2 parts.]\``
 };
@@ -326,14 +282,14 @@ ${INSIDER_PART_SCOPES[partNumber]}`;
 }
 
 // ===========================================
-// SYNDICATE TIER - 4 Parts, Full APEX Analysis
-// Uses the existing MULTI_PART prompts from perplexityService.ts
+// SYNDICATE TIER - 6 Parts, Full APEX Analysis
+// Optimized for maximum quality with dedicated prompts per part
 // ===========================================
 
-export const SYNDICATE_SYSTEM_PROMPT = `You are an elite UX strategist with 15+ years of experience across complex, data-heavy products (finance, SaaS, enterprise, internal tools).
+export const SYNDICATE_SYSTEM_PROMPT = `You are an elite UX strategist with 15+ years of experience across complex, data-heavy products (finance, SaaS, enterprise, Web3, healthcare, internal tools).
 Your job is to generate a complete, execution-ready UX solution plan that automatically adapts to the complexity, scope, audience, and constraints of any given problem.
 
-You maintain context across all 4 parts of the conversation to build a cohesive strategic analysis. Each part builds on previous insights.
+You maintain context across all 6 parts of the conversation to build a cohesive strategic analysis. Each part builds on previous insights while maintaining laser focus on its specific deliverables.
 
 DESIGN ETHOS & DECISION PRINCIPLES:
 - Balance is Mandatory: Every decision must balance user needs and business goals
@@ -342,21 +298,320 @@ DESIGN ETHOS & DECISION PRINCIPLES:
 - Trust & Safety First: For data-heavy, regulated, or financial products → prioritize trust, clarity, error prevention, risk mitigation, auditability
 - Clarity over Flash: Usability and task efficiency > surface visuals
 - Data-Driven Rationale: Back recommendations with observable behavior, testable hypotheses
-- Justification Required: Every wireframe/IA choice must link to UX + Business + Compliance impact
 
 EVIDENCE & SOURCE HANDLING:
-- Output must be buildable and measurable, not only good UX
+- Output must be buildable and measurable
 - Every critical decision must include: User impact, Business impact, Technical feasibility
-- Every validation rule must include a WHY explanation, not only WHAT
-- Resilience is mandatory: Edge cases, failure states, recovery paths, accessibility (WCAG AA minimum)
-- No placeholders: No lorem ipsum - use real, production-ready microcopy
-- Source classification: VERIFIED (with source), BEST PRACTICE (widely accepted), ASSUMPTION (with confidence level)`;
+- Source classification: VERIFIED (with source URL and date), BEST PRACTICE (widely accepted), ASSUMPTION (with confidence level)
+- No placeholders: No lorem ipsum - use real, production-ready microcopy`;
+
+export const SYNDICATE_PART_SCOPES: Record<number, string> = {
+  1: `### PART 1 OF 6: DISCOVERY & PROBLEM ANALYSIS (~6,000 tokens)
+
+Execute comprehensive discovery and problem framing.
+
+OUTPUT THESE SECTIONS:
+
+## Executive Summary
+3-4 sentences capturing the core problem, recommended strategic approach, and expected outcome.
+
+## Adaptive Problem Analysis
+- **Task Type:** Exploratory (new build) OR Optimization (improving existing)
+- **User Base:** B2C / B2B / Internal / Multi-stakeholder
+- **Complexity Level:** Quick Win (1-2 weeks) / Medium (1-2 months) / Strategic (3+ months)
+- **Key Constraints:** Timeline, budget, technical, organizational, regulatory
+
+## Core Problem Statement (JTBD Lens)
+- What users are fundamentally trying to accomplish (functional, emotional, social dimensions)
+- Current pain points and gaps (mark assumptions clearly)
+- Explicit success criteria (measurable, user-outcome tied)
+
+## Assumption Ledger (5-7 assumptions)
+| # | Assumption | Confidence | Validation Plan | Business Risk if Wrong |
+|---|------------|------------|-----------------|------------------------|
+
+## Actionable Checklist
+**Immediate (This Week):** 3-5 tasks with deliverables
+**Next Steps (2 Weeks):** 3-5 milestones with dependencies
+
+## Key Findings Summary (for subsequent parts)
+150-word summary: Core problem, primary persona, industry context, top 3 assumptions, recommended direction.
+
+**End with:** \`[✅ PART 1 COMPLETE - Discovery & Problem Analysis]\``,
+
+  2: `### PART 2 OF 6: COMPETITOR DEEP-DIVE (~6,000 tokens)
+
+Execute intensive competitive research using real-time web search.
+
+CRITICAL: Use real-time search to find actual competitors, real pricing, real features, real user reviews.
+
+OUTPUT THESE SECTIONS:
+
+## Competitive Landscape Overview
+Market size/growth indicators, key trends, regulatory factors.
+
+## Competitor Deep-Dive (5 Competitors)
+For EACH competitor:
+
+### Competitor [N]: [Real Company Name]
+- **URL:** [Verified website]
+- **Positioning:** [Target audience, value prop]
+- **Pricing:** [Actual pricing from their site]
+- **UX Strengths (3-5):** Specific observations with evidence
+- **UX Weaknesses (3-5):** User complaints (cite G2, Capterra, Reddit, Twitter)
+- **Differentiator Opportunity:** What they do poorly that you can do better
+
+## Competitive Matrix
+| Feature | User's Product | Comp 1 | Comp 2 | Comp 3 | Comp 4 | Comp 5 |
+|---------|----------------|--------|--------|--------|--------|--------|
+Include 8-12 relevant features.
+
+## UX Pattern Analysis
+- Onboarding patterns (standard, innovative, missing)
+- Core workflow patterns (friction points, best-in-class)
+- Pricing/conversion patterns (free trial, freemium, demo)
+
+## Strategic Gaps Identified
+**Blue Ocean Opportunities (3-5):** Areas where NO competitor excels
+**Red Ocean to Avoid:** Fierce competition areas
+
+## Competitor Intelligence Summary (for subsequent parts)
+150 words: Top 3 competitors, primary differentiation, patterns to adopt/avoid, pricing positioning.
+
+**End with:** \`[✅ PART 2 COMPLETE - Competitor Deep-Dive]\``,
+
+  3: `### PART 3 OF 6: STRATEGIC ROADMAP (~6,000 tokens)
+
+Create detailed implementation roadmap based on discovery and competitive insights.
+
+OUTPUT THESE SECTIONS:
+
+## Strategic Approach Selection
+- **Primary Methodology:** (Lean UX, Design Sprint, JTBD, Service Design)
+- **Why this approach:** Fit for this specific problem
+- **"Behind the Decision":** Alternatives considered and rejected
+
+## Phase-by-Phase Roadmap
+Structure based on complexity (Week/Month/Quarter).
+
+For each phase:
+- **Objectives:** Primary and secondary goals
+- **Key Deliverables:** With acceptance criteria
+- **Critical Decision Points:** Stakeholders, deadlines
+- **Dependencies:** Internal and external
+- **Team Collaboration Touchpoints:** Who syncs when
+- **Risk Factors:** With mitigation strategies
+
+## Error Path Mapping (Top 7 Failure Scenarios)
+For each:
+- **What Goes Wrong:** User perspective
+- **User Impact:** Emotional response, abandonment risk (H/M/L)
+- **Recovery UX Pattern:** Real microcopy, visual treatment, interaction
+- **Instrumentation:** What to log/track
+- **Priority:** Based on likelihood × severity
+
+## Team Collaboration Model
+| Role | Responsibility | Time Allocation |
+For solo founders: Modified approach with AI tools and async practices.
+
+## Milestone Summary Table
+| Milestone | Target Date | Owner | Success Criteria | Dependencies |
+
+## Roadmap Summary (for subsequent parts)
+150 words: Timeline, critical path, biggest risks, key decisions, resource bottlenecks.
+
+**End with:** \`[✅ PART 3 COMPLETE - Strategic Roadmap]\``,
+
+  4: `### PART 4 OF 6: 5 CORE DESIGN PROMPTS (~7,000 tokens)
+
+Create 5 production-ready design prompts for core screens.
+
+These prompts will be copy-pasted directly into AI design tools (Figma AI, Lovable, v0, Galileo).
+They must be: Self-contained, Specific (real dimensions, colors, typography), Production-ready (no placeholders), Accessible (WCAG 2.1 AA), Responsive.
+
+OUTPUT 5 DETAILED DESIGN PROMPTS:
+
+### Prompt 1: Onboarding/Welcome Flow
+Full specification including:
+- Layout (exact dimensions, grid)
+- Step-by-step content (real headlines, subheadlines, CTAs)
+- Visual design (colors hex, typography, spacing, shadows)
+- Interaction states (default, hover, focus, active, disabled, loading, success, error)
+- Accessibility (focus indicators, contrast, touch targets, aria-labels)
+- Responsive behavior (desktop, tablet, mobile)
+
+### Prompt 2: Main Dashboard/Home
+[Same detailed structure]
+
+### Prompt 3: Core Action Screen
+The primary use case screen - where users accomplish their main goal.
+[Same detailed structure]
+
+### Prompt 4: Settings/Profile
+Account management and preferences.
+[Same detailed structure]
+
+### Prompt 5: Navigation/Menu System
+Global navigation (desktop and mobile).
+[Same detailed structure]
+
+For each prompt include:
+1. **Prompt Title**
+2. **Full Prompt Text** (copy-paste ready)
+3. **Expected Output**
+4. **Customization Notes**
+
+**End with:** \`[✅ PART 4 COMPLETE - 5 Core Design Prompts]\``,
+
+  5: `### PART 5 OF 6: 5 ADVANCED DESIGN PROMPTS + EDGE CASES (~7,000 tokens)
+
+Create 5 production-ready design prompts for edge cases and advanced states.
+
+Most products fail on edge cases, not happy paths. These prompts ensure complete UX coverage.
+
+OUTPUT 5 DETAILED DESIGN PROMPTS:
+
+### Prompt 6: Empty States (First-Time User Experience)
+Multiple scenarios:
+- No data yet (new user) - encouraging, action-oriented
+- No search results - helpful suggestions
+- No notifications - "all caught up" positive framing
+- Permission required - clear explanation and CTA
+
+### Prompt 7: Error States & Recovery Flows
+- Form validation errors (inline, summary)
+- API/system errors (temporary with retry, permanent with resolution)
+- 404 / Not found (creative, helpful)
+- Permission denied (clear explanation, resolution path)
+
+### Prompt 8: Loading & Skeleton Screens
+- Skeleton screens (dashboard, list, card)
+- Progress indicators (determinate, indeterminate)
+- Optimistic UI patterns
+- Lazy loading / infinite scroll
+
+### Prompt 9: Notifications & Alerts
+- Toast notifications (success, error, warning, info)
+- Modal alerts (destructive confirmation, important info)
+- Inline alerts (page-level)
+- Badge/indicator system
+
+### Prompt 10: Mobile-Specific Adaptations
+- Mobile navigation (bottom tabs, hamburger, gestures)
+- Mobile form optimization (input sizing, keyboards, sticky submit)
+- Mobile patterns (pull-to-refresh, swipe actions, bottom sheets)
+- Touch optimizations (targets, spacing, active states)
+
+For each prompt include:
+1. **Prompt Title**
+2. **Full Prompt Text** (copy-paste ready)
+3. **Expected Output**
+4. **Customization Notes**
+
+**End with:** \`[✅ PART 5 COMPLETE - 5 Advanced Design Prompts + Edge Cases]\``,
+
+  6: `### PART 6 OF 6: RISK, METRICS & STRATEGIC RATIONALE (~5,000 tokens)
+
+Complete the analysis with risk assessment, success metrics, and ROI justification.
+
+OUTPUT THESE SECTIONS:
+
+## Comprehensive Risk Matrix (8-10 risks)
+| Risk ID | Description | Likelihood | Impact | Score | Mitigation | Owner | Contingency |
+Categories: Technical, UX, Business, Operational
+
+## Success Metrics Dashboard
+**Primary KPIs (3-5 North Star Metrics):**
+| Metric | Baseline | 30-day Target | 90-day Target | Measurement |
+
+**Secondary Metrics:**
+- Engagement (DAU/WAU/MAU, session duration, feature adoption)
+- Conversion (signup-to-activation, free-to-paid, churn)
+- Satisfaction (NPS, CSAT, CES, support tickets)
+- UX-Specific (task completion, time-to-completion, error rate)
+
+## Business OKR Alignment
+| Business Priority | UX Contribution | Measurement | Timeline |
+
+## ROI Justification
+**Investment Required:**
+| Category | Cost | Timeframe | Notes |
+
+**Expected Returns:**
+- Quantitative (conversion %, churn reduction, efficiency gains)
+- Qualitative (brand, differentiation, team morale)
+- ROI calculation (payback period, 12-month ROI, break-even)
+
+## Compliance & Legal Checkpoints
+| Regulation | Applicability | Status | Required Actions | Deadline |
+
+## "Behind the Decision" Strategic Notes
+Key choices made, alternatives rejected, critical assumptions, what would change recommendation.
+
+## Final Executive Summary
+One-page brief: Opportunity, Recommendation, Key Deliverables, Investment & Returns, Critical Success Factors, Immediate Next Steps.
+
+## Verification Gate
+- [ ] All 10 design prompts use real patterns (no placeholders)
+- [ ] Competitor data is sourced and dated
+- [ ] Metrics are measurable with baselines
+- [ ] Risks have specific mitigations
+- [ ] Timeline is realistic
+- [ ] Business alignment is explicit
+
+**End with:**
+\`[✅ PART 6 COMPLETE - Risk, Metrics & Strategic Rationale]\`
+
+\`[✅✅✅ FULL APEX ANALYSIS COMPLETE ✅✅✅]\``
+};
+
+export function getSyndicateInitialPrompt(problem: string): string {
+  return `═══════════════════════════════════════════════════════════════════
+🔥 APEX STRATEGIC ANALYSIS - SYNDICATE TIER (Part 1 of 6)
+═══════════════════════════════════════════════════════════════════
+
+USER PROBLEM/IDEA:
+${problem}
+
+═══════════════════════════════════════════════════════════════════
+ADAPTIVE INTELLIGENCE (Silently detect and adapt to):
+
+Industry Detection:
+- Fintech/Crypto/Web3: PCI-DSS, KYC/AML, wallet integration, trust signals, security-first UX
+- Healthcare: HIPAA, patient privacy, clinical workflows, accessibility priority
+- E-commerce: Conversion optimization, cart abandonment, trust badges, mobile-first checkout
+- SaaS/B2B: Onboarding flows, feature discovery, enterprise SSO, admin dashboards, multi-tenant
+- Marketplace: Two-sided UX, trust/safety, review systems, balanced incentives
+- Internal Tools: Efficiency-first, power user shortcuts, data density, bulk operations, keyboard nav
+
+User Persona Detection:
+- Solo Founder/Startup: Lean UX, MVP-first, no-code tools, speed over perfection
+- Design Lead/Team: Collaboration, design system integration, Figma handoff specs
+- PM/Product Manager: Business metrics, OKRs, stakeholder communication, roadmaps
+- Enterprise/Corporate: Governance, audit trails, legal review, change management
+- Web3/Crypto Native: Wallet-first flows, token-gated access, on-chain proofs, decentralized identity
+
+═══════════════════════════════════════════════════════════════════
+${SYNDICATE_PART_SCOPES[1]}`;
+}
+
+export function getSyndicateContinuePrompt(partNumber: number, previousSummary: string): string {
+  return `═══════════════════════════════════════════════════════════════════
+🔥 APEX STRATEGIC ANALYSIS - SYNDICATE TIER (Part ${partNumber} of 6)
+═══════════════════════════════════════════════════════════════════
+
+KEY FINDINGS FROM PREVIOUS PARTS:
+${previousSummary}
+
+═══════════════════════════════════════════════════════════════════
+${SYNDICATE_PART_SCOPES[partNumber]}`;
+}
 
 // Tier configuration for multi-part analysis
 export const TIER_PART_CONFIG = {
-  observer: { parts: 1, tokensPerPart: 4000 },
-  insider: { parts: 2, tokensPerPart: 6000 },
-  syndicate: { parts: 4, tokensPerPart: 7000 },
+  observer: { parts: 1, tokensPerPart: 3000 },
+  insider: { parts: 2, tokensPerPart: 5000 },
+  syndicate: { parts: 6, tokensPerPart: 6000 },
 } as const;
 
 // Helper to get tier-specific configuration
@@ -379,9 +634,9 @@ export function getTierPromptConfig(tier: Tier) {
     case "full":
       return {
         systemPrompt: SYNDICATE_SYSTEM_PROMPT,
-        parts: 4,
-        getInitialPrompt: null, // Uses existing APEX prompts
-        getContinuePrompt: null,
+        parts: 6,
+        getInitialPrompt: getSyndicateInitialPrompt,
+        getContinuePrompt: getSyndicateContinuePrompt,
       };
     default:
       throw new Error(`Unknown tier: ${tier}`);

@@ -97,19 +97,23 @@ export const analysisResults = mysqlTable("analysis_results", {
   problemStatement: text("problemStatement").notNull(),
   // For standard/medium tier - single result
   singleResult: text("singleResult"),
-  // For full/premium tier - 4 parts
+  // For full/premium tier - 6 parts (Syndicate APEX analysis)
   part1: text("part1"),
   part2: text("part2"),
   part3: text("part3"),
   part4: text("part4"),
+  part5: text("part5"),
+  part6: text("part6"),
   fullMarkdown: text("fullMarkdown"),
   totalTokens: int("totalTokens"),
   // Progress tracking for APEX real-time updates
-  currentPart: int("currentPart").default(0), // 0 = not started, 1-4 = current part being processed
+  currentPart: int("currentPart").default(0), // 0 = not started, 1-6 = current part being processed
   part1Status: progressStatusEnum.default("pending"),
   part2Status: progressStatusEnum.default("pending"),
   part3Status: progressStatusEnum.default("pending"),
   part4Status: progressStatusEnum.default("pending"),
+  part5Status: progressStatusEnum.default("pending"),
+  part6Status: progressStatusEnum.default("pending"),
   part1StartedAt: timestamp("part1StartedAt"),
   part1CompletedAt: timestamp("part1CompletedAt"),
   part2StartedAt: timestamp("part2StartedAt"),
@@ -118,6 +122,10 @@ export const analysisResults = mysqlTable("analysis_results", {
   part3CompletedAt: timestamp("part3CompletedAt"),
   part4StartedAt: timestamp("part4StartedAt"),
   part4CompletedAt: timestamp("part4CompletedAt"),
+  part5StartedAt: timestamp("part5StartedAt"),
+  part5CompletedAt: timestamp("part5CompletedAt"),
+  part6StartedAt: timestamp("part6StartedAt"),
+  part6CompletedAt: timestamp("part6CompletedAt"),
   estimatedCompletionAt: timestamp("estimatedCompletionAt"),
   generatedAt: timestamp("generatedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

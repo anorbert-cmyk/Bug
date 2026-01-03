@@ -62,9 +62,11 @@ const TIER_INFO = {
 
 const PART_CONFIG = [
   { number: 1, name: "Discovery & Problem Analysis", icon: Target, color: "text-blue-500", bgColor: "bg-blue-500", gradient: "from-blue-500/20 to-cyan-500/20", borderColor: "border-blue-500/30", description: "Deep dive into the problem space and user needs" },
-  { number: 2, name: "Strategic Design & Roadmap", icon: Layers, color: "text-purple-500", bgColor: "bg-purple-500", gradient: "from-purple-500/20 to-pink-500/20", borderColor: "border-purple-500/30", description: "Design strategy and implementation roadmap" },
-  { number: 3, name: "AI Toolkit & Figma Prompts", icon: Lightbulb, color: "text-yellow-500", bgColor: "bg-yellow-500", gradient: "from-yellow-500/20 to-orange-500/20", borderColor: "border-yellow-500/30", description: "Practical tools and 10 production-ready prompts" },
-  { number: 4, name: "Risk, Metrics & Rationale", icon: AlertTriangle, color: "text-red-500", bgColor: "bg-red-500", gradient: "from-red-500/20 to-rose-500/20", borderColor: "border-red-500/30", description: "Risk assessment and success metrics" },
+  { number: 2, name: "Competitor Deep-Dive", icon: Globe, color: "text-cyan-500", bgColor: "bg-cyan-500", gradient: "from-cyan-500/20 to-teal-500/20", borderColor: "border-cyan-500/30", description: "Intensive competitive research with real-time data" },
+  { number: 3, name: "Strategic Roadmap", icon: Layers, color: "text-purple-500", bgColor: "bg-purple-500", gradient: "from-purple-500/20 to-pink-500/20", borderColor: "border-purple-500/30", description: "Phase-by-phase implementation roadmap" },
+  { number: 4, name: "5 Core Design Prompts", icon: Palette, color: "text-yellow-500", bgColor: "bg-yellow-500", gradient: "from-yellow-500/20 to-orange-500/20", borderColor: "border-yellow-500/30", description: "Production-ready prompts for core screens" },
+  { number: 5, name: "5 Advanced Design Prompts", icon: Lightbulb, color: "text-green-500", bgColor: "bg-green-500", gradient: "from-green-500/20 to-emerald-500/20", borderColor: "border-green-500/30", description: "Edge cases, error states, and mobile adaptations" },
+  { number: 6, name: "Risk, Metrics & ROI", icon: AlertTriangle, color: "text-red-500", bgColor: "bg-red-500", gradient: "from-red-500/20 to-rose-500/20", borderColor: "border-red-500/30", description: "Risk assessment, success metrics, and ROI justification" },
 ];
 
 // Collapsible Section Component
@@ -490,17 +492,19 @@ export default function AnalysisResult() {
   const tierInfo = session ? TIER_INFO[session.tier as keyof typeof TIER_INFO] : null;
   const isMultiPart = session?.tier === "full";
   
-  // Extract progress status from result
+  // Extract progress status from result (6 parts for Syndicate tier)
   const part1Status = (result?.part1Status as ProgressStatus) || "pending";
   const part2Status = (result?.part2Status as ProgressStatus) || "pending";
   const part3Status = (result?.part3Status as ProgressStatus) || "pending";
   const part4Status = (result?.part4Status as ProgressStatus) || "pending";
+  const part5Status = (result?.part5Status as ProgressStatus) || "pending";
+  const part6Status = (result?.part6Status as ProgressStatus) || "pending";
   const currentPart = result?.currentPart || 0;
   const estimatedCompletionAt = result?.estimatedCompletionAt;
   
-  // Calculate progress for multi-part analysis
-  const completedParts = [part1Status, part2Status, part3Status, part4Status].filter(s => s === "completed").length;
-  const progressPercent = isMultiPart ? (completedParts / 4) * 100 : (result?.singleResult ? 100 : 0);
+  // Calculate progress for multi-part analysis (6 parts for Syndicate)
+  const completedParts = [part1Status, part2Status, part3Status, part4Status, part5Status, part6Status].filter(s => s === "completed").length;
+  const progressPercent = isMultiPart ? (completedParts / 6) * 100 : (result?.singleResult ? 100 : 0);
 
   // Update time remaining countdown
   useEffect(() => {
@@ -552,9 +556,11 @@ export default function AnalysisResult() {
       
       if (isMultiPart) {
         if (result.part1) content.parts.push({ title: "Part 1: Discovery & Problem Analysis", content: result.part1 });
-        if (result.part2) content.parts.push({ title: "Part 2: Strategic Design & Roadmap", content: result.part2 });
-        if (result.part3) content.parts.push({ title: "Part 3: AI Toolkit & Figma Prompts", content: result.part3 });
-        if (result.part4) content.parts.push({ title: "Part 4: Risk, Metrics & Rationale", content: result.part4 });
+        if (result.part2) content.parts.push({ title: "Part 2: Competitor Deep-Dive", content: result.part2 });
+        if (result.part3) content.parts.push({ title: "Part 3: Strategic Roadmap", content: result.part3 });
+        if (result.part4) content.parts.push({ title: "Part 4: 5 Core Design Prompts", content: result.part4 });
+        if (result.part5) content.parts.push({ title: "Part 5: 5 Advanced Design Prompts", content: result.part5 });
+        if (result.part6) content.parts.push({ title: "Part 6: Risk, Metrics & ROI", content: result.part6 });
       } else if (result.singleResult) {
         content.parts.push({ title: "Analysis Result", content: result.singleResult });
       }
@@ -603,13 +609,15 @@ export default function AnalysisResult() {
     );
   }
 
-  // Get status for a specific part
+  // Get status for a specific part (6 parts for Syndicate)
   const getPartStatus = (partNum: number): ProgressStatus => {
     switch (partNum) {
       case 1: return part1Status;
       case 2: return part2Status;
       case 3: return part3Status;
       case 4: return part4Status;
+      case 5: return part5Status;
+      case 6: return part6Status;
       default: return "pending";
     }
   };
@@ -1021,10 +1029,12 @@ export default function AnalysisResult() {
                   </div>
                   <div className="font-mono text-xs text-muted-foreground space-y-1">
                     {completedParts >= 1 && <p><span className="text-green-400">[✓]</span> Part 1: Discovery complete</p>}
-                    {completedParts >= 2 && <p><span className="text-green-400">[✓]</span> Part 2: Strategy mapped</p>}
-                    {completedParts >= 3 && <p><span className="text-green-400">[✓]</span> Part 3: AI toolkit generated</p>}
-                    {completedParts >= 4 && <p><span className="text-green-400">[✓]</span> Part 4: Risk analysis complete</p>}
-                    {currentPart > 0 && currentPart <= 4 && getPartStatus(currentPart) === "in_progress" && (
+                    {completedParts >= 2 && <p><span className="text-green-400">[✓]</span> Part 2: Competitor analysis complete</p>}
+                    {completedParts >= 3 && <p><span className="text-green-400">[✓]</span> Part 3: Roadmap generated</p>}
+                    {completedParts >= 4 && <p><span className="text-green-400">[✓]</span> Part 4: Core prompts ready</p>}
+                    {completedParts >= 5 && <p><span className="text-green-400">[✓]</span> Part 5: Advanced prompts ready</p>}
+                    {completedParts >= 6 && <p><span className="text-green-400">[✓]</span> Part 6: Risk & ROI complete</p>}
+                    {currentPart > 0 && currentPart <= 6 && getPartStatus(currentPart) === "in_progress" && (
                       <p className="text-cyan-400 animate-pulse">
                         [→] Processing Part {currentPart}: {PART_CONFIG[currentPart - 1]?.name}...
                       </p>
@@ -1060,7 +1070,7 @@ export default function AnalysisResult() {
             {isMultiPart ? (
               /* Multi-Part Results (Full Tier) */
               <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="grid w-full grid-cols-5 h-auto p-1">
+                <TabsList className="grid w-full grid-cols-4 sm:grid-cols-7 h-auto p-1 gap-1">
                   <TabsTrigger value="overview" className="text-xs sm:text-sm py-2">
                     <FileText className="h-4 w-4 mr-1 hidden sm:inline" />
                     Overview
@@ -1090,7 +1100,7 @@ export default function AnalysisResult() {
                     <CardContent className="prose prose-invert max-w-none">
                       {result.fullMarkdown ? (
                         <Streamdown>{result.fullMarkdown}</Streamdown>
-                      ) : (result.part1 || result.part2 || result.part3 || result.part4) ? (
+                      ) : (result.part1 || result.part2 || result.part3 || result.part4 || result.part5 || result.part6) ? (
                         <div className="space-y-8">
                           {result.part1 && (
                             <div>
@@ -1100,20 +1110,32 @@ export default function AnalysisResult() {
                           )}
                           {result.part2 && (
                             <div>
-                              <h2 className="text-xl font-bold text-purple-400 mb-4">Part 2: Strategic Design & Roadmap</h2>
+                              <h2 className="text-xl font-bold text-cyan-400 mb-4">Part 2: Competitor Deep-Dive</h2>
                               <Streamdown>{result.part2}</Streamdown>
                             </div>
                           )}
                           {result.part3 && (
                             <div>
-                              <h2 className="text-xl font-bold text-yellow-400 mb-4">Part 3: AI Toolkit & Figma Prompts</h2>
+                              <h2 className="text-xl font-bold text-purple-400 mb-4">Part 3: Strategic Roadmap</h2>
                               <Streamdown>{result.part3}</Streamdown>
                             </div>
                           )}
                           {result.part4 && (
                             <div>
-                              <h2 className="text-xl font-bold text-red-400 mb-4">Part 4: Risk, Metrics & Rationale</h2>
+                              <h2 className="text-xl font-bold text-yellow-400 mb-4">Part 4: 5 Core Design Prompts</h2>
                               <Streamdown>{result.part4}</Streamdown>
+                            </div>
+                          )}
+                          {result.part5 && (
+                            <div>
+                              <h2 className="text-xl font-bold text-green-400 mb-4">Part 5: 5 Advanced Design Prompts</h2>
+                              <Streamdown>{result.part5}</Streamdown>
+                            </div>
+                          )}
+                          {result.part6 && (
+                            <div>
+                              <h2 className="text-xl font-bold text-red-400 mb-4">Part 6: Risk, Metrics & ROI</h2>
+                              <Streamdown>{result.part6}</Streamdown>
                             </div>
                           )}
                         </div>
@@ -1128,7 +1150,7 @@ export default function AnalysisResult() {
                 </TabsContent>
 
                 {PART_CONFIG.map((part) => {
-                  const partKey = `part${part.number}` as "part1" | "part2" | "part3" | "part4";
+                  const partKey = `part${part.number}` as "part1" | "part2" | "part3" | "part4" | "part5" | "part6";
                   const partContent = result[partKey];
                   
                   return (

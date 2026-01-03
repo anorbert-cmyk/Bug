@@ -73,11 +73,13 @@ describe("perplexityService", () => {
 
       await generateMultiPartAnalysis("Test problem", callbacks);
       
-      expect(onPartComplete).toHaveBeenCalledTimes(4);
+      expect(onPartComplete).toHaveBeenCalledTimes(6); // Updated from 4 to 6 for Syndicate tier
       expect(onPartComplete).toHaveBeenCalledWith(1, "Mock analysis response");
       expect(onPartComplete).toHaveBeenCalledWith(2, "Mock analysis response");
       expect(onPartComplete).toHaveBeenCalledWith(3, "Mock analysis response");
       expect(onPartComplete).toHaveBeenCalledWith(4, "Mock analysis response");
+      expect(onPartComplete).toHaveBeenCalledWith(5, "Mock analysis response");
+      expect(onPartComplete).toHaveBeenCalledWith(6, "Mock analysis response");
     });
 
     it("should call onComplete when all parts are done", async () => {

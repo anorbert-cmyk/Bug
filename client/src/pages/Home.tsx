@@ -350,21 +350,22 @@ export default function Home() {
       {/* Hero Section */}
       <section className="pt-28 pb-24 relative z-10">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="logic-badge mb-10">
-            <Zap className="w-3.5 h-3.5" />
-            LOGIC_ENGINE_V8: READY FOR DEPLOYMENT
+          {/* Research-Backed Trust Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 mb-10">
+            <span className="text-lg">🔬</span>
+            <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">Powered by Research • All recommendations cite verified sources</span>
           </div>
 
           <h1 className="text-5xl md:text-8xl font-bold tracking-tighter mb-8 leading-[0.95]">
-            Stop building in the dark.
+            <span className="text-red-500">70%</span> of digital products fail.
             <br />
-            <span className="text-gradient-primary">Validate your idea today.</span>
+            <span className="text-gradient-primary">Don't be one of them.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed font-light tracking-wide">
-            Transform your raw problem statement into an executable strategy, market
-            analysis, and MVP roadmap in{" "}
-            <strong className="text-foreground font-medium">under 24 hours</strong>.
+            Get enterprise-grade UX strategy in{" "}
+            <strong className="text-foreground font-medium">24-72 hours</strong>. Every recommendation backed by research from{" "}
+            <strong className="text-foreground font-medium">Nielsen Norman Group, Baymard Institute, and Forrester</strong>.
           </p>
 
           <div className="flex flex-col gap-4 justify-center items-center">
@@ -377,26 +378,87 @@ export default function Home() {
               Start Analysis
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
-              <CheckCircle className="w-4 h-4 text-green-500" />
-              <span>Zero-Knowledge Privacy</span>
+            <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span>Zero-Knowledge Privacy</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-cyan-500" />
+                <span>Research-Backed</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Info Box */}
-      <div className="max-w-3xl mx-auto px-4 mb-24 relative z-10">
-        <div className="glass-panel p-6 text-center">
-          <p className="text-sm text-muted-foreground leading-relaxed font-light tracking-wide">
-            <ShieldCheck className="w-4 h-4 text-primary inline mr-2" />
-            <strong className="text-foreground font-medium">Why ValidateStrategy?</strong> Unlike
-            generic chat bots, our engine uses a rigorous, multi-agent validation protocol to
-            stress-test your ideas against real-world market constraints, giving you a
-            battle-tested roadmap, not just text.
-          </p>
+      {/* Why Strategy Wins - Statistics Section */}
+      <section className="py-24 relative z-10">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 font-playfair">
+              The Cost of Building Without Strategy
+            </h2>
+            <p className="text-muted-foreground font-mono text-xs uppercase tracking-[0.2em]">
+              Why research-backed validation matters
+            </p>
+          </div>
+
+          {/* Statistics Grid - 4 Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
+            {/* Card 1: Failure Rate */}
+            <div className="glass-panel p-6 text-center group hover:border-red-500/30 transition-all duration-300">
+              <div className="text-4xl mb-3">🚫</div>
+              <div className="text-4xl md:text-5xl font-bold text-red-500 mb-2">70%</div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                of products fail due to poor UX
+              </p>
+              <p className="text-[10px] text-muted-foreground/60 mt-2 font-mono">Industry research</p>
+            </div>
+
+            {/* Card 2: User Abandonment */}
+            <div className="glass-panel p-6 text-center group hover:border-amber-500/30 transition-all duration-300">
+              <div className="text-4xl mb-3">⚠️</div>
+              <div className="text-4xl md:text-5xl font-bold text-amber-500 mb-2">88%</div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                won't return after a bad experience
+              </p>
+              <p className="text-[10px] text-muted-foreground/60 mt-2 font-mono">Baymard Institute</p>
+            </div>
+
+            {/* Card 3: Lost Revenue */}
+            <div className="glass-panel p-6 text-center group hover:border-red-500/30 transition-all duration-300">
+              <div className="text-4xl mb-3">💸</div>
+              <div className="text-4xl md:text-5xl font-bold text-red-400 mb-2">$2.6B</div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                lost annually to poor UX globally
+              </p>
+              <p className="text-[10px] text-muted-foreground/60 mt-2 font-mono">UX research compilation</p>
+            </div>
+
+            {/* Card 4: ROI Potential */}
+            <div className="glass-panel p-6 text-center group hover:border-green-500/30 transition-all duration-300">
+              <div className="text-4xl mb-3">📈</div>
+              <div className="text-4xl md:text-5xl font-bold text-green-500 mb-2">$100</div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                return per $1 invested in UX
+              </p>
+              <p className="text-[10px] text-muted-foreground/60 mt-2 font-mono">Forrester Research</p>
+            </div>
+          </div>
+
+          {/* Section Footer */}
+          <div className="max-w-3xl mx-auto">
+            <div className="glass-panel p-6 text-center border-cyan-500/20">
+              <p className="text-sm text-muted-foreground leading-relaxed font-light tracking-wide">
+                <ShieldCheck className="w-4 h-4 text-cyan-500 inline mr-2" />
+                Every recommendation we provide is backed by research from world-leading UX research firms. 
+                <strong className="text-foreground font-medium"> No guesswork. No opinions. Just verified, actionable strategy.</strong>
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* How It Works - Process Section */}
       <section className="py-32 relative z-10">
@@ -548,9 +610,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 items-center">
-            {/* Tier 1: Observer */}
-            <div className="pricing-card pricing-card-muted">
+          <div className="grid md:grid-cols-3 gap-6 items-stretch">
+            {/* Tier 1: Observer - Muted/Decoy */}
+            <div className="pricing-card pricing-card-muted opacity-90 scale-[0.97] hover:opacity-100 hover:scale-100 transition-all duration-300">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Eye className="w-5 h-5 text-muted-foreground" />
@@ -559,15 +621,19 @@ export default function Home() {
                   </h3>
                 </div>
                 <span className="px-2 py-1 text-[10px] font-bold bg-muted border border-border rounded-full text-muted-foreground tracking-wider">
-                  SANITY CHECK
+                  QUICK VALIDATION
                 </span>
               </div>
 
               <h4 className="text-xl font-bold mb-2 font-playfair">Quick Sanity Check</h4>
-              <p className="text-xs text-muted-foreground mb-4">Is your idea worth exploring further? Get clarity in 24 hours.</p>
+              <p className="text-xs text-muted-foreground mb-4">Is your idea worth exploring? Get clarity in 24 hours.</p>
 
+              {/* Agency Value Anchor */}
+              <div className="mb-4">
+                <span className="text-sm text-muted-foreground line-through">$1,500 agency value</span>
+              </div>
               <div className="mb-6">
-                <span className="text-4xl font-bold font-playfair">${TIER_CONFIGS.standard.priceUsd}</span>
+                <span className="text-4xl font-bold font-playfair text-green-400">${TIER_CONFIGS.standard.priceUsd}</span>
                 <span className="text-muted-foreground ml-2">USD</span>
               </div>
 
@@ -590,7 +656,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-muted-foreground" />
-                  Within 24 Hours
+                  24-Hour Delivery
                 </li>
               </ul>
 
@@ -601,30 +667,34 @@ export default function Home() {
                   className="w-full btn-secondary"
                   variant="outline"
                 >
-                  Get Sanity Check
+                  Get Sanity Check →
                 </Button>
               </div>
               
-              <p className="text-[10px] text-muted-foreground text-center mt-4">Perfect for early exploration and quick validation</p>
+              <p className="text-[10px] text-muted-foreground text-center mt-4">Perfect for early-stage validation</p>
             </div>
 
-            {/* Tier 2: Insider (Highlighted) */}
-            <div className="pricing-card-highlight">
+            {/* Tier 2: Insider (Highlighted - 15% larger) */}
+            <div className="pricing-card-highlight scale-[1.03] md:scale-[1.05] shadow-2xl">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-primary" />
                   <h3 className="text-sm font-bold uppercase tracking-[0.1em]">Insider</h3>
                 </div>
-                <span className="px-2 py-1 text-[10px] font-bold bg-primary/20 border border-primary/40 rounded-full text-primary tracking-wider">
-                  MOST POPULAR
+                <span className="px-3 py-1.5 text-[10px] font-bold bg-primary/30 border-2 border-primary/60 rounded-full text-primary tracking-wider animate-pulse">
+                  ⭐ MOST POPULAR
                 </span>
               </div>
 
-              <h4 className="text-2xl font-bold mb-2 font-playfair">Your 90-Day Roadmap</h4>
-              <p className="text-xs text-muted-foreground mb-4">From validated idea to execution plan with clear milestones and risk mitigation.</p>
+              <h4 className="text-2xl font-bold mb-2 font-playfair">Your Strategic Roadmap</h4>
+              <p className="text-xs text-muted-foreground mb-4">From validated idea to execution plan with research-backed recommendations.</p>
 
+              {/* Agency Value Anchor */}
+              <div className="mb-4">
+                <span className="text-sm text-muted-foreground line-through">$5,000 agency value</span>
+              </div>
               <div className="mb-6">
-                <span className="text-6xl font-bold font-playfair">${TIER_CONFIGS.medium.priceUsd}</span>
+                <span className="text-6xl font-bold font-playfair text-green-400">${TIER_CONFIGS.medium.priceUsd}</span>
                 <span className="text-muted-foreground ml-2">USD</span>
               </div>
 
@@ -651,10 +721,6 @@ export default function Home() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-primary" />
-                  Team Collaboration Model
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-primary" />
                   5 Critical Risk Mitigations
                 </li>
                 <li className="flex items-center gap-2">
@@ -663,7 +729,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-primary" />
-                  24h Delivery
+                  48-Hour Delivery
                 </li>
               </ul>
 
@@ -671,19 +737,20 @@ export default function Home() {
                 <Button
                   onClick={() => handleStartAnalysis("medium")}
                   disabled={!problemStatement.trim() || createSession.isPending}
-                  className="w-full btn-primary"
+                  className="w-full btn-primary text-lg py-6"
                 >
-                  Get My Roadmap
+                  Get My Blueprint →
                 </Button>
               </div>
               
-              <p className="text-[10px] text-muted-foreground text-center mt-4">Ideal for founders ready to execute</p>
+              <p className="text-[10px] text-muted-foreground text-center mt-4">Ideal for founders ready to build</p>
             </div>
 
-            {/* Tier 3: Syndicate - APEX */}
-            <div className="pricing-card relative overflow-hidden">
+            {/* Tier 3: Syndicate - APEX with Premium Glow */}
+            <div className="pricing-card relative overflow-hidden border-2 border-purple-500/40 shadow-[0_0_30px_rgba(168,85,247,0.15)]">
               {/* APEX Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-purple-500/5 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-purple-500/10 pointer-events-none" />
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
               
               <div className="relative">
                 <div className="flex items-center justify-between mb-4">
@@ -694,25 +761,29 @@ export default function Home() {
                     </h3>
                   </div>
                   <span className="px-2 py-1 text-[10px] font-bold bg-purple-500/20 border border-purple-500/40 rounded-full text-purple-400 tracking-wider">
-                    APEX
+                    👑 APEX
                   </span>
                 </div>
 
                 <h4 className="text-xl font-bold mb-2 font-playfair text-purple-400">Complete UX Strategy</h4>
-                <p className="text-xs text-muted-foreground mb-4">Enterprise-grade 4-part analysis with 10 production-ready design prompts you can build from today.</p>
+                <p className="text-xs text-muted-foreground mb-4">Enterprise-grade 6-part analysis with 10 production-ready design prompts. Every claim verified with research citations.</p>
                 
-                {/* State-of-the-Art AI Badge */}
+                {/* Research-Backed Badge */}
                 <div className="flex items-center gap-2 mb-4 px-3 py-2 bg-purple-950/50 dark:bg-purple-950/50 bg-purple-100 rounded-lg border border-purple-500/20 dark:border-purple-500/20 border-purple-300">
-                  <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-                  <span className="text-[10px] font-mono text-purple-700 dark:text-purple-400">Powered by State-of-the-Art AI</span>
+                  <span className="text-sm">🔬</span>
+                  <span className="text-[10px] font-mono text-purple-700 dark:text-purple-400">Every claim verified with research citations</span>
                 </div>
 
+                {/* Agency Value Anchor */}
+                <div className="mb-4">
+                  <span className="text-sm text-muted-foreground line-through">$15,000+ agency value</span>
+                </div>
                 <div className="mb-6">
-                  <span className="text-4xl font-bold font-playfair">${TIER_CONFIGS.full.priceUsd}</span>
+                  <span className="text-4xl font-bold font-playfair text-green-400">${TIER_CONFIGS.full.priceUsd}</span>
                   <span className="text-muted-foreground ml-2">USD</span>
                 </div>
 
-                <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
+                <ul className="space-y-3 mb-6 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-purple-400" />
                     Everything in Insider, plus:
@@ -723,11 +794,11 @@ export default function Home() {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-purple-400" />
-                    <span className="font-semibold">10 Production-Ready Design Prompts</span>
+                    <span className="font-semibold">10 Production-Ready Figma Prompts</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-purple-400" />
-                    Copy-Paste into Any Design Tool
+                    Live Competitor Deep Research (Perplexity-Powered)
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-purple-400" />
@@ -739,9 +810,33 @@ export default function Home() {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-purple-400" />
-                    Priority Delivery
+                    Expected ROI Calculation
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-purple-400" />
+                    Verification & Integrity Gate
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-purple-400" />
+                    72-Hour Priority Delivery
                   </li>
                 </ul>
+
+                {/* Unique Selling Point Boxes */}
+                <div className="grid grid-cols-3 gap-2 mb-6">
+                  <div className="text-center p-2 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                    <span className="text-lg">🔬</span>
+                    <p className="text-[9px] text-purple-400 mt-1">Research-Backed</p>
+                  </div>
+                  <div className="text-center p-2 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                    <span className="text-lg">📊</span>
+                    <p className="text-[9px] text-purple-400 mt-1">ROI Included</p>
+                  </div>
+                  <div className="text-center p-2 bg-purple-500/10 rounded-lg border border-purple-500/20">
+                    <span className="text-lg">✅</span>
+                    <p className="text-[9px] text-purple-400 mt-1">Verified Claims</p>
+                  </div>
+                </div>
 
                 <div className="space-y-3">
                   <Button
@@ -749,7 +844,7 @@ export default function Home() {
                     disabled={!problemStatement.trim() || createSession.isPending}
                     className="w-full bg-purple-600 hover:bg-purple-500 border-0"
                   >
-                    Get Full APEX Analysis
+                    Start APEX Analysis →
                   </Button>
                 </div>
                 
@@ -760,6 +855,151 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Research-Backed Methodology Section */}
+      <section className="py-24 relative z-10 bg-muted/10">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 font-playfair">
+              Built on Research, Not Assumptions
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Our analysis methodology is derived from 15+ years of UX research and validated by data from:
+            </p>
+          </div>
+
+          {/* Research Logo/Name Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+            <div className="glass-panel p-6 text-center">
+              <div className="text-2xl font-bold text-cyan-400 mb-2">Nielsen Norman</div>
+              <p className="text-xs text-muted-foreground">83% ROI on UX investments</p>
+            </div>
+            <div className="glass-panel p-6 text-center">
+              <div className="text-2xl font-bold text-amber-400 mb-2">Baymard Institute</div>
+              <p className="text-xs text-muted-foreground">35% conversion increase potential</p>
+            </div>
+            <div className="glass-panel p-6 text-center">
+              <div className="text-2xl font-bold text-green-400 mb-2">Forrester Research</div>
+              <p className="text-xs text-muted-foreground">$100 per $1 UX ROI</p>
+            </div>
+            <div className="glass-panel p-6 text-center">
+              <div className="text-2xl font-bold text-purple-400 mb-2">IDEO</div>
+              <p className="text-xs text-muted-foreground">Human-centered design methodology</p>
+            </div>
+          </div>
+
+          {/* Trust Statement */}
+          <div className="max-w-4xl mx-auto">
+            <div className="glass-panel p-6 border-cyan-500/20">
+              <p className="text-sm text-muted-foreground leading-relaxed text-center">
+                Every recommendation includes source classification:
+              </p>
+              <div className="flex flex-wrap justify-center gap-4 mt-4">
+                <div className="flex items-center gap-2 px-3 py-2 bg-green-500/10 rounded-lg border border-green-500/20">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span className="text-xs font-mono text-green-400">VERIFIED</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
+                  <CheckCircle className="w-4 h-4 text-cyan-500" />
+                  <span className="text-xs font-mono text-cyan-400">BEST PRACTICE</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                  <CheckCircle className="w-4 h-4 text-amber-500" />
+                  <span className="text-xs font-mono text-amber-400">ASSUMPTION</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Comparison Table */}
+      <section className="py-24 relative z-10">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 font-playfair">
+              Compare All Features
+            </h2>
+            <p className="text-muted-foreground font-mono text-xs uppercase tracking-[0.2em]">
+              Choose the right tier for your needs
+            </p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full glass-panel">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left p-4 font-mono text-xs uppercase tracking-wider text-muted-foreground">Feature</th>
+                  <th className="text-center p-4 font-mono text-xs uppercase tracking-wider text-muted-foreground">Observer $49</th>
+                  <th className="text-center p-4 font-mono text-xs uppercase tracking-wider text-primary bg-primary/5">Insider $99</th>
+                  <th className="text-center p-4 font-mono text-xs uppercase tracking-wider text-purple-400">Syndicate $199</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                <tr className="border-b border-border/50">
+                  <td className="p-4">Problem Analysis</td>
+                  <td className="p-4 text-center text-muted-foreground">Basic</td>
+                  <td className="p-4 text-center bg-primary/5">Full</td>
+                  <td className="p-4 text-center text-purple-400">Full + Research</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4">Pain Points</td>
+                  <td className="p-4 text-center text-muted-foreground">3</td>
+                  <td className="p-4 text-center bg-primary/5">5+</td>
+                  <td className="p-4 text-center text-purple-400">7+ validated</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4">Competitor Research</td>
+                  <td className="p-4 text-center text-muted-foreground">—</td>
+                  <td className="p-4 text-center bg-primary/5">3-5 live</td>
+                  <td className="p-4 text-center text-purple-400">Deep dive</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4">Strategic Roadmap</td>
+                  <td className="p-4 text-center text-muted-foreground">—</td>
+                  <td className="p-4 text-center bg-primary/5">Weekly</td>
+                  <td className="p-4 text-center text-purple-400">Weekly + Deps</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4">Risk Mitigation</td>
+                  <td className="p-4 text-center text-muted-foreground">—</td>
+                  <td className="p-4 text-center bg-primary/5">5 risks</td>
+                  <td className="p-4 text-center text-purple-400">7+ with Plan B</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4">Figma Prompts</td>
+                  <td className="p-4 text-center text-muted-foreground">—</td>
+                  <td className="p-4 text-center bg-primary/5">—</td>
+                  <td className="p-4 text-center text-purple-400">10 screens</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4">ROI Calculation</td>
+                  <td className="p-4 text-center text-muted-foreground">—</td>
+                  <td className="p-4 text-center bg-primary/5">—</td>
+                  <td className="p-4 text-center text-purple-400">Included</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4">Research Citations</td>
+                  <td className="p-4 text-center text-muted-foreground">—</td>
+                  <td className="p-4 text-center bg-primary/5">Key claims</td>
+                  <td className="p-4 text-center text-purple-400">Full verification</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4">Delivery</td>
+                  <td className="p-4 text-center text-muted-foreground">24h</td>
+                  <td className="p-4 text-center bg-primary/5">48h</td>
+                  <td className="p-4 text-center text-purple-400">72h Priority</td>
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold">Agency Value</td>
+                  <td className="p-4 text-center text-muted-foreground line-through">$1,500</td>
+                  <td className="p-4 text-center bg-primary/5 line-through">$5,000</td>
+                  <td className="p-4 text-center text-purple-400 line-through">$15,000+</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
       {/* Trusted By Section */}
       <section className="py-24 relative z-10 border-y border-border bg-muted/20">

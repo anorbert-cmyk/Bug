@@ -92,7 +92,7 @@ describe("tierPromptService", () => {
     it("should have a valid system prompt", () => {
       expect(SYNDICATE_SYSTEM_PROMPT).toBeDefined();
       expect(SYNDICATE_SYSTEM_PROMPT).toContain("elite UX strategist");
-      expect(SYNDICATE_SYSTEM_PROMPT).toContain("4 parts");
+      expect(SYNDICATE_SYSTEM_PROMPT).toContain("6 parts"); // Updated from 4 to 6 for enhanced Syndicate tier
     });
   });
 
@@ -117,14 +117,14 @@ describe("tierPromptService", () => {
     it("should return correct config for Syndicate tier", () => {
       const config = getTierPromptConfig("full");
       
-      expect(config.parts).toBe(4);
+      expect(config.parts).toBe(6); // Updated from 4 to 6 for enhanced Syndicate tier
       expect(config.systemPrompt).toBe(SYNDICATE_SYSTEM_PROMPT);
     });
 
     it("should have correct part counts in TIER_PART_CONFIG", () => {
       expect(TIER_PART_CONFIG.observer.parts).toBe(1);
       expect(TIER_PART_CONFIG.insider.parts).toBe(2);
-      expect(TIER_PART_CONFIG.syndicate.parts).toBe(4);
+      expect(TIER_PART_CONFIG.syndicate.parts).toBe(6); // Updated from 4 to 6 for enhanced Syndicate tier
     });
   });
 });

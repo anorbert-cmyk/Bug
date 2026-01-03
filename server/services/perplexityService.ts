@@ -13,6 +13,10 @@ import {
   getInsiderInitialPrompt,
   getInsiderContinuePrompt,
   getTierPromptConfig,
+  SYNDICATE_SYSTEM_PROMPT,
+  SYNDICATE_PART_SCOPES,
+  getSyndicateInitialPrompt,
+  getSyndicateContinuePrompt,
 } from "./tierPromptService";
 
 // ===========================================
@@ -475,6 +479,8 @@ export interface MultiPartResult {
   part2: string;
   part3: string;
   part4: string;
+  part5: string;
+  part6: string;
   fullMarkdown: string;
   generatedAt: number;
 }
@@ -623,6 +629,8 @@ export async function generateInsiderAnalysis(
         part2: result.part2,
         part3: "",
         part4: "",
+        part5: "",
+        part6: "",
         fullMarkdown: result.fullMarkdown,
         generatedAt: result.generatedAt,
       });
@@ -642,7 +650,16 @@ export async function generateInsiderAnalysis(
 
 /**
  * Generate multi-part sequential analysis for Full/Premium (Syndicate) tier
- * Maintains conversation context across all 4 parts
+ * Maintains conversation context across all 6 parts for maximum content quality
+ * 
+ * 6-Part Structure:
+ * - Part 1: Discovery & Problem Analysis (~6,000 tokens)
+ * - Part 2: Competitor Deep-Dive (~6,000 tokens) - intensive Perplexity search
+ * - Part 3: Strategic Roadmap (~6,000 tokens)
+ * - Part 4: 5 Core Design Prompts (~7,000 tokens)
+ * - Part 5: 5 Advanced Design Prompts + Edge Cases (~7,000 tokens)
+ * - Part 6: Risk, Metrics & ROI (~5,000 tokens)
+ * Total: ~37,000 tokens output
  */
 export async function generateMultiPartAnalysis(
   problemStatement: string,
@@ -660,24 +677,36 @@ export async function generateMultiPartAnalysis(
     part2: "",
     part3: "",
     part4: "",
+    part5: "",
+    part6: "",
     fullMarkdown: "",
     generatedAt: 0,
   };
 
-  // Conversation history to maintain context
+  // Conversation history to maintain context using Syndicate-specific system prompt
   const conversationHistory: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
-    { role: "system", content: MULTI_PART_SYSTEM_PROMPT },
+    { role: "system", content: SYNDICATE_SYSTEM_PROMPT },
   ];
 
-  try {
-    // Process each of the 4 parts sequentially
-    for (let partNum = 1; partNum <= 4; partNum++) {
-      console.log(`[Perplexity] Starting Part ${partNum}/4 generation`);
+  // Part titles for logging and markdown assembly
+  const partTitles: Record<number, string> = {
+    1: "Discovery & Problem Analysis",
+    2: "Competitor Deep-Dive",
+    3: "Strategic Roadmap",
+    4: "5 Core Design Prompts",
+    5: "5 Advanced Design Prompts + Edge Cases",
+    6: "Risk, Metrics & Strategic Rationale",
+  };
 
-      // Build the prompt for this part
+  try {
+    // Process each of the 6 parts sequentially
+    for (let partNum = 1; partNum <= 6; partNum++) {
+      console.log(`[Perplexity] Starting Syndicate Part ${partNum}/6: ${partTitles[partNum]}`);
+
+      // Build the prompt for this part using Syndicate-specific prompts
       const userPrompt = partNum === 1 
-        ? getMultiPartInitialPrompt(sanitized)
-        : getMultiPartContinuePrompt(partNum as 2 | 3 | 4);
+        ? getSyndicateInitialPrompt(sanitized)
+        : getSyndicateContinuePrompt(partNum, extractPreviousSummary(result, partNum - 1));
 
       // Add user prompt to conversation history
       conversationHistory.push({ role: "user", content: userPrompt });
@@ -690,8 +719,8 @@ export async function generateMultiPartAnalysis(
       const rawContent = response.choices[0]?.message?.content;
       const partContent = typeof rawContent === "string" ? rawContent : "";
 
-      // Store the result
-      const partKey = `part${partNum}` as keyof Pick<MultiPartResult, "part1" | "part2" | "part3" | "part4">;
+      // Store the result using dynamic key
+      const partKey = `part${partNum}` as keyof Pick<MultiPartResult, "part1" | "part2" | "part3" | "part4" | "part5" | "part6">;
       result[partKey] = partContent;
 
       // Add assistant response to conversation history for next part
@@ -700,24 +729,30 @@ export async function generateMultiPartAnalysis(
       // Notify part completion
       callbacks?.onPartComplete?.(partNum, partContent);
 
-      console.log(`[Perplexity] Completed Part ${partNum}/4, length: ${partContent.length}`);
+      console.log(`[Perplexity] Completed Syndicate Part ${partNum}/6, length: ${partContent.length}`);
     }
 
-    // Combine all parts into full markdown
+    // Combine all 6 parts into full markdown
     result.fullMarkdown = [
-      "# 🎯 Comprehensive UX Strategy Analysis\n",
+      "# 🔥 APEX Strategic Analysis - Syndicate Tier\n",
       "---\n",
-      "## Part 1: Discovery & Problem Analysis\n",
+      `## Part 1: ${partTitles[1]}\n`,
       result.part1,
       "\n---\n",
-      "## Part 2: Strategic Design & Roadmap\n",
+      `## Part 2: ${partTitles[2]}\n`,
       result.part2,
       "\n---\n",
-      "## Part 3: AI Toolkit & Figma Prompts\n",
+      `## Part 3: ${partTitles[3]}\n`,
       result.part3,
       "\n---\n",
-      "## Part 4: Risk, Metrics & Rationale\n",
+      `## Part 4: ${partTitles[4]}\n`,
       result.part4,
+      "\n---\n",
+      `## Part 5: ${partTitles[5]}\n`,
+      result.part5,
+      "\n---\n",
+      `## Part 6: ${partTitles[6]}\n`,
+      result.part6,
     ].join("\n");
 
     result.generatedAt = Date.now();
@@ -725,23 +760,54 @@ export async function generateMultiPartAnalysis(
     // Notify completion
     callbacks?.onComplete?.(result);
 
-    console.log(`[Perplexity] Multi-part analysis completed, total length: ${result.fullMarkdown.length}`);
+    console.log(`[Perplexity] Syndicate 6-part analysis completed, total length: ${result.fullMarkdown.length}`);
 
     return result;
 
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error));
-    console.error("[Perplexity] Multi-part analysis failed:", err);
+    console.error("[Perplexity] Syndicate multi-part analysis failed:", err);
     callbacks?.onError?.(err);
     throw err;
   }
 }
 
 /**
+ * Extract summary from previous parts to provide context for subsequent parts
+ */
+function extractPreviousSummary(result: MultiPartResult, upToPart: number): string {
+  const summaries: string[] = [];
+  
+  // Extract key findings from each completed part
+  const partKeys = ['part1', 'part2', 'part3', 'part4', 'part5'] as const;
+  const partDescriptions = [
+    'Discovery & Problem Analysis',
+    'Competitor Deep-Dive',
+    'Strategic Roadmap',
+    'Core Design Prompts',
+    'Advanced Design Prompts',
+  ];
+  
+  for (let i = 0; i < upToPart && i < partKeys.length; i++) {
+    const partContent = result[partKeys[i]];
+    if (partContent) {
+      // Extract the summary section if it exists, otherwise use first 500 chars
+      const summaryMatch = partContent.match(/## (?:Key Findings Summary|Summary|Roadmap Summary|Competitor Intelligence Summary)[\s\S]*?(?=\n## |\n\[✅|$)/i);
+      const summary = summaryMatch 
+        ? summaryMatch[0].substring(0, 600) 
+        : partContent.substring(0, 400) + '...';
+      summaries.push(`**Part ${i + 1} (${partDescriptions[i]}):**\n${summary}`);
+    }
+  }
+  
+  return summaries.join('\n\n');
+}
+
+/**
  * Generate analysis based on tier
- * - Observer (standard): Single-part quick validation
- * - Insider (medium): 2-part strategic blueprint
- * - Syndicate (full): 4-part comprehensive APEX analysis
+ * - Observer (standard): Single-part quick validation (~3,000 tokens)
+ * - Insider (medium): 2-part strategic blueprint (~10,000 tokens)
+ * - Syndicate (full): 6-part comprehensive APEX analysis (~37,000 tokens)
  */
 export async function generateAnalysis(
   problemStatement: string,
@@ -760,7 +826,7 @@ export async function generateAnalysis(
       return generateInsiderAnalysis(problemStatement, callbacks);
     
     case "full":
-      // Syndicate tier: 4-part comprehensive APEX analysis
+      // Syndicate tier: 6-part comprehensive APEX analysis
       return generateMultiPartAnalysis(problemStatement, callbacks);
     
     default:

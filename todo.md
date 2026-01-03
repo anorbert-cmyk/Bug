@@ -523,3 +523,97 @@
 - [ ] Update Insider pricing card features in Home.tsx
 - [ ] Replace Insider masterprompt with new version
 - [ ] Update tierPromptService.ts with new Insider prompts
+
+
+## Syndicate 6-Part API Structure - January 3, 2026
+- [ ] Create Part 1 masterprompt: Discovery & Problem Analysis
+- [ ] Create Part 2 masterprompt: Competitor Deep-Dive
+- [ ] Create Part 3 masterprompt: Strategic Roadmap
+- [ ] Create Part 4 masterprompt: 5 Core Design Prompts
+- [ ] Create Part 5 masterprompt: 5 Advanced Design Prompts + States
+- [ ] Create Part 6 masterprompt: Risk + Metrics + ROI
+- [ ] Update tierPromptService.ts with 6-part structure
+- [ ] Update perplexityService.ts generateMultiPartAnalysis for 6 parts
+- [ ] Update frontend progress display for 6 parts
+- [ ] Update tests for new structure
+
+
+## Frontend Copy & Design Update - January 3, 2026
+- [ ] Update Hero headline with 70% failure stat
+- [ ] Add Research-Backed trust badge to hero
+- [ ] Update OBSERVER card: Quick Sanity Check, $1500 agency value
+- [ ] Update INSIDER card: 48h delivery, $5000 agency value
+- [ ] Update SYNDICATE card: agency value anchor $15000+
+- [ ] Add Why Strategy Wins statistics section (4 cards)
+- [ ] Add Research-Backed Methodology trust section
+- [ ] Add Feature Comparison Table below pricing
+- [ ] Update all CTA button text
+- [ ] Add agency value strikethrough styling
+- [ ] Make INSIDER card visually largest (15% bigger)
+
+## ValidateStrategy.com Frontend Copy & Design Changes - January 2025
+
+### Hero Section
+- [x] Update headline to "70% of digital products fail. Don't be one of them."
+- [x] Update subheadline with research credibility message
+- [x] Add "Research-Backed" trust badge (🔬 Powered by Research)
+
+### Pricing Cards - Observer ($49)
+- [x] Add "QUICK VALIDATION" badge
+- [x] Update headline to "Quick Sanity Check"
+- [x] Update subheadline to "Is your idea worth exploring? Get clarity in 24 hours."
+- [x] Update features list (Problem Statement Analysis, Top 3 Pain Points, Viability Score, etc.)
+- [x] Add agency value anchor ($1,500 strikethrough)
+- [x] Update footer to "Perfect for early-stage validation"
+- [x] Update CTA to "Get Sanity Check →"
+
+### Pricing Cards - Insider ($99) ⭐ MOST POPULAR
+- [x] Add "MOST POPULAR" badge prominently with animation
+- [x] Update headline to "Your Strategic Roadmap"
+- [x] Update subheadline with research-backed message
+- [x] Update features (Everything in Observer + Discovery, Competitor Research, Roadmap, etc.)
+- [x] Add agency value anchor ($5,000 strikethrough)
+- [x] Update footer to "Ideal for founders ready to build"
+- [x] Update CTA to "Get My Blueprint →"
+- [x] Make card 15% larger than others (visual hierarchy)
+
+### Pricing Cards - Syndicate ($199)- [x] Add "👑 APEX" badge
+- [x] Update headline to "Complete UX Strategy"
+- [x] Update subheadline with enterprise-grade 6-part analysis message
+- [x] Update features (Everything in Insider + AI Toolkit, 10 Figma Prompts, ROI Calculation, etc.)
+- [x] Add unique selling point boxes (Research-Backed, ROI Included, Verified Claims)
+- [x] Add agency value anchor ($15,000+ strikethrough)
+- [x] Update footer to "For teams building production-ready products"
+- [x] Update CTA to "Start APEX Analysis →"
+- [x] Add premium border/glow effect
+
+### New Section: "Why Strategy Wins" (Statistics Grid)
+
+- [x] Add section below Hero, above Pricing
+- [x] Add headline "The Cost of Building Without Strategy"
+- [x] Add 4 statistics cards:
+  - 🚫 70% failure rate
+  - ⚠️ 88% user abandonment (Baymard)
+  - 💸 $2.6B lost annually
+  - 📈 $100 ROI per $1 (Forrester)
+- [x] Add section footer with research credibility message
+
+### New Section: "Research-Backed Methodology" (Trust Section)
+- [x] Add section headline "Built on Research, Not Assumptions"
+- [x] Add research logo/name grid (Nielsen Norman, Baymard, Forrester, IDEO)
+- [x] Add trust statement with source classification (VERIFIED, BEST PRACTICE, ASSUMPTION)
+
+### Feature Comparison Table
+- [x] Add comparison table below pricing cards
+- [x] Include all features across tiers
+- [x] Show delivery times and agency values
+
+### Visual Elements
+- [x] Implement agency value strikethrough styling
+- [x] Add research citation badge to Syndicate card
+- [x] Implement visual hierarchy (Observer muted, Insider largest, Syndicate premium)
+
+### Mobile Optimization
+- [x] Ensure statistics section is 2x2 grid on mobile
+- [ ] Stack pricing cards vertically with Insider first (optional enhancement)
+- [ ] Make trust badges sticky in header (optional enhancement)

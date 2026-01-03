@@ -78,6 +78,13 @@
       "when": 1767438437754,
       "tag": "0010_damp_kulan_gath",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1767449269283,
+      "tag": "0011_abandoned_pestilence",
+      "breakpoints": true
     }
   ]
 }
