@@ -394,8 +394,8 @@ export default function DemoAnalysis() {
       const progress = (scrollTop / docHeight) * 100;
       setScrollProgress(progress);
 
-      // Trigger email gate at 50% scroll if not already unlocked
-      if (progress >= 50 && !isUnlocked && !hasTriggeredGate) {
+      // Trigger email gate at 5% scroll if not already unlocked
+      if (progress >= 5 && !isUnlocked && !hasTriggeredGate) {
         setShowEmailGate(true);
         setHasTriggeredGate(true);
       }

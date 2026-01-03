@@ -461,3 +461,7 @@
 - [x] Payment success page with polling (already existed)
 - [x] Email verification page created (/verify-email)
 - [x] All tests passing (135/135)
+
+
+## Email Gate Trigger Update - January 3, 2026
+- [x] Change email gate scroll trigger from 50% to 5%
