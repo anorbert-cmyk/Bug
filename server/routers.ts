@@ -87,6 +87,30 @@ import {
   RetryPriority,
   withRetry
 } from "./services/analysisHelpers";
+import {
+  recordMetricToDB,
+  recordAnalysisRequestToDB,
+  recordSuccessToDB,
+  recordFailureToDB,
+  getRecentHistoricalMetrics,
+  getErrorSummary,
+  runHourlyAggregation
+} from "./services/metricsPersistence";
+import {
+  alertCircuitBreakerOpen,
+  alertHighFailureRate,
+  alertCriticalError,
+  recordRequestForFailureRate,
+  getFailureRateStats,
+  onCircuitBreakerStateChange
+} from "./services/adminAlerts";
+import {
+  addToRetryQueueDB,
+  getQueueStats,
+  startRetryQueueProcessor,
+  stopRetryQueueProcessor,
+  isProcessorRunning
+} from "./services/retryQueueProcessor";
 
 // Zod schemas
 const tierSchema = z.enum(["standard", "medium", "full"]);
@@ -809,6 +833,137 @@ export const appRouter = router({
         perplexityCircuitBreaker.forceReset();
         
         return { success: true, message: "Circuit breaker reset to CLOSED state" };
+      }),
+
+    // Get historical metrics (admin action)
+    getHistoricalMetrics: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+        hours: z.number().optional().default(24),
+      }))
+      .query(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const historicalMetrics = await getRecentHistoricalMetrics(input.hours);
+        const failureRateStats = getFailureRateStats();
+        
+        return {
+          ...historicalMetrics,
+          currentFailureRate: failureRateStats,
+        };
+      }),
+
+    // Get error summary (admin action)
+    getErrorSummary: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+        hours: z.number().optional().default(24),
+      }))
+      .query(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const end = new Date();
+        const start = new Date(end.getTime() - input.hours * 60 * 60 * 1000);
+        const errorSummary = await getErrorSummary({ start, end });
+        
+        return { errors: errorSummary };
+      }),
+
+    // Get retry queue stats (admin action)
+    getRetryQueueStats: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const queueStats = await getQueueStats();
+        const processorRunning = isProcessorRunning();
+        
+        return {
+          ...queueStats,
+          processorRunning,
+        };
+      }),
+
+    // Start/stop retry queue processor (admin action)
+    toggleRetryProcessor: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+        action: z.enum(["start", "stop"]),
+      }))
+      .mutation(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        if (input.action === "start") {
+          startRetryQueueProcessor();
+          return { success: true, message: "Retry queue processor started" };
+        } else {
+          stopRetryQueueProcessor();
+          return { success: true, message: "Retry queue processor stopped" };
+        }
+      }),
+
+    // Trigger hourly metrics aggregation (admin action)
+    triggerMetricsAggregation: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        await runHourlyAggregation();
+        return { success: true, message: "Hourly metrics aggregation triggered" };
       }),
   }),
 

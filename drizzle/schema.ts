@@ -283,3 +283,108 @@ export const emailOpens = mysqlTable("email_opens", {
 
 export type EmailOpen = typeof emailOpens.$inferSelect;
 export type InsertEmailOpen = typeof emailOpens.$inferInsert;
+
+
+/**
+ * Analysis metrics - persisted metrics for long-term analytics
+ */
+export const analysisMetrics = mysqlTable("analysis_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull(),
+  tier: tierEnum.notNull(),
+  eventType: mysqlEnum("eventType", ["request", "part_complete", "success", "failure", "retry", "partial_success"]).notNull(),
+  durationMs: int("durationMs"),
+  partNumber: int("partNumber"), // For part_complete events
+  errorCode: varchar("errorCode", { length: 64 }),
+  errorMessage: text("errorMessage"),
+  metadata: json("metadata"), // Additional context
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AnalysisMetric = typeof analysisMetrics.$inferSelect;
+export type InsertAnalysisMetric = typeof analysisMetrics.$inferInsert;
+
+/**
+ * Retry queue - persistent queue for failed analyses awaiting retry
+ */
+export const retryQueue = mysqlTable("retry_queue", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull().unique(),
+  tier: tierEnum.notNull(),
+  problemStatement: text("problemStatement").notNull(),
+  email: varchar("email", { length: 320 }),
+  retryCount: int("retryCount").default(0).notNull(),
+  maxRetries: int("maxRetries").default(5).notNull(),
+  priority: int("priority").default(1).notNull(), // 1=LOW, 2=MEDIUM, 3=HIGH
+  lastError: text("lastError"),
+  lastAttemptAt: timestamp("lastAttemptAt"),
+  nextRetryAt: timestamp("nextRetryAt"),
+  status: mysqlEnum("queueStatus", ["pending", "processing", "completed", "failed", "cancelled"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RetryQueueItem = typeof retryQueue.$inferSelect;
+export type InsertRetryQueueItem = typeof retryQueue.$inferInsert;
+
+/**
+ * Circuit breaker state - persistent state for circuit breaker
+ */
+export const circuitBreakerState = mysqlTable("circuit_breaker_state", {
+  id: int("id").autoincrement().primaryKey(),
+  serviceName: varchar("serviceName", { length: 64 }).notNull().unique(),
+  state: mysqlEnum("cbState", ["closed", "open", "half_open"]).default("closed").notNull(),
+  failureCount: int("failureCount").default(0).notNull(),
+  successCount: int("successCount").default(0).notNull(),
+  lastFailureAt: timestamp("lastFailureAt"),
+  lastSuccessAt: timestamp("lastSuccessAt"),
+  openedAt: timestamp("openedAt"),
+  halfOpenAt: timestamp("halfOpenAt"),
+  resetAt: timestamp("resetAt"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CircuitBreakerState = typeof circuitBreakerState.$inferSelect;
+export type InsertCircuitBreakerState = typeof circuitBreakerState.$inferInsert;
+
+/**
+ * Admin notifications log - tracks sent admin notifications
+ */
+export const adminNotifications = mysqlTable("admin_notifications", {
+  id: int("id").autoincrement().primaryKey(),
+  notificationType: mysqlEnum("notificationType", ["circuit_breaker_open", "high_failure_rate", "critical_error", "system_alert"]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  severity: mysqlEnum("severity", ["info", "warning", "critical"]).default("info").notNull(),
+  metadata: json("metadata"),
+  sentAt: timestamp("sentAt").defaultNow().notNull(),
+  acknowledgedAt: timestamp("acknowledgedAt"),
+  acknowledgedBy: varchar("acknowledgedBy", { length: 42 }), // Admin wallet address
+});
+
+export type AdminNotification = typeof adminNotifications.$inferSelect;
+export type InsertAdminNotification = typeof adminNotifications.$inferInsert;
+
+/**
+ * Hourly metrics aggregation - pre-computed hourly stats for dashboard
+ */
+export const hourlyMetrics = mysqlTable("hourly_metrics", {
+  id: int("id").autoincrement().primaryKey(),
+  hourStart: timestamp("hourStart").notNull(),
+  totalRequests: int("totalRequests").default(0).notNull(),
+  successfulRequests: int("successfulRequests").default(0).notNull(),
+  failedRequests: int("failedRequests").default(0).notNull(),
+  partialSuccesses: int("partialSuccesses").default(0).notNull(),
+  retriedRequests: int("retriedRequests").default(0).notNull(),
+  avgDurationMs: int("avgDurationMs"),
+  p50DurationMs: int("p50DurationMs"),
+  p95DurationMs: int("p95DurationMs"),
+  p99DurationMs: int("p99DurationMs"),
+  tierStandard: int("tierStandard").default(0).notNull(),
+  tierMedium: int("tierMedium").default(0).notNull(),
+  tierFull: int("tierFull").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type HourlyMetric = typeof hourlyMetrics.$inferSelect;
+export type InsertHourlyMetric = typeof hourlyMetrics.$inferInsert;
