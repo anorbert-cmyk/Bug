@@ -353,7 +353,11 @@ export async function getTransactionHistory(limit = 100): Promise<Purchase[]> {
 
 // ============ EMAIL SUBSCRIBER FUNCTIONS ============
 
-export async function saveEmailSubscriber(email: string, source: string = "demo_gate"): Promise<{ success: boolean; isNew: boolean; subscriberId?: number }> {
+export async function saveEmailSubscriber(
+  email: string, 
+  source: string = "demo_gate",
+  verificationToken?: string
+): Promise<{ success: boolean; isNew: boolean; subscriberId?: number; isVerified?: boolean }> {
   const db = await getDb();
   if (!db) {
     console.warn("[Database] Cannot save email subscriber: database not available");
@@ -365,25 +369,73 @@ export async function saveEmailSubscriber(email: string, source: string = "demo_
     const existing = await db.select().from(emailSubscribers).where(eq(emailSubscribers.email, email)).limit(1);
     
     if (existing.length > 0) {
-      // Email already exists, just return success
-      return { success: true, isNew: false, subscriberId: existing[0].id };
+      // Email already exists, return with verification status
+      return { 
+        success: true, 
+        isNew: false, 
+        subscriberId: existing[0].id,
+        isVerified: existing[0].isVerified 
+      };
     }
 
-    // Insert new subscriber
+    // Insert new subscriber with verification token
     const result = await db.insert(emailSubscribers).values({
       email,
       source,
+      verificationToken,
+      verificationSentAt: verificationToken ? new Date() : undefined,
+      isVerified: false,
     });
 
     // Get the inserted subscriber ID
     const newSubscriber = await db.select().from(emailSubscribers).where(eq(emailSubscribers.email, email)).limit(1);
     const subscriberId = newSubscriber[0]?.id;
 
-    return { success: true, isNew: true, subscriberId };
+    return { success: true, isNew: true, subscriberId, isVerified: false };
   } catch (error) {
     console.error("[Database] Error saving email subscriber:", error);
     return { success: false, isNew: false };
   }
+}
+
+export async function verifyEmailSubscriber(token: string): Promise<{ success: boolean; email?: string }> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot verify email subscriber: database not available");
+    return { success: false };
+  }
+
+  try {
+    // Find subscriber by verification token
+    const subscriber = await db.select().from(emailSubscribers)
+      .where(eq(emailSubscribers.verificationToken, token))
+      .limit(1);
+    
+    if (subscriber.length === 0) {
+      return { success: false };
+    }
+
+    // Update subscriber as verified
+    await db.update(emailSubscribers)
+      .set({ 
+        isVerified: true, 
+        verifiedAt: new Date(),
+        verificationToken: null // Clear token after use
+      })
+      .where(eq(emailSubscribers.id, subscriber[0].id));
+
+    return { success: true, email: subscriber[0].email };
+  } catch (error) {
+    console.error("[Database] Error verifying email subscriber:", error);
+    return { success: false };
+  }
+}
+
+export async function getEmailSubscriberByEmail(email: string): Promise<EmailSubscriber | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(emailSubscribers).where(eq(emailSubscribers.email, email)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
 }
 
 export async function getAllEmailSubscribers(): Promise<EmailSubscriber[]> {

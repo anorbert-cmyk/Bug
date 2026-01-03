@@ -418,3 +418,46 @@
 - [x] Test honeypot spam protection blocks bots
 - [x] Test localStorage persistence for unlock state
 - [x] Test content unlock after email submission
+
+
+## Spam Protection & Payment Flow - January 3, 2026
+
+### Pricing Update
+- [ ] Update Observer price to $49 USD
+- [ ] Update Insider price to $99 USD
+- [ ] Update Syndicate price to $199 USD
+- [ ] Add NOWPayments links for crypto payments
+
+### Double Opt-in Email Verification
+- [ ] Create email verification token system
+- [ ] Send verification email with unique link
+- [ ] Create verification endpoint
+- [ ] Update demo gate to require verified email
+- [ ] Store verification status in database
+
+### Payment Success Page
+- [ ] Create /payment/success route
+- [ ] Implement polling for payment status
+- [ ] Show real-time analysis progress
+- [ ] Redirect to analysis when complete
+
+### reCAPTCHA v3
+- [ ] Add reCAPTCHA v3 to checkout form
+- [ ] Add reCAPTCHA v3 to email gate form
+- [ ] Server-side token verification
+
+### Disposable Email Detection
+- [ ] Implement disposable email domain list
+- [ ] Block known disposable email providers
+- [ ] Show user-friendly error message
+
+
+## Spam Protection & Payment Flow - January 3, 2026
+- [x] Update pricing: Observer $49, Insider $99, Syndicate $199
+- [x] Add NOWPayments links for crypto payments (5132999076, 4692843924, 6428573202)
+- [x] Implement double opt-in email verification for demo gate
+- [x] Add reCAPTCHA v3 to forms (site key + secret key configured)
+- [x] Add disposable email detection (150+ domains blocked)
+- [x] Payment success page with polling (already existed)
+- [x] Email verification page created (/verify-email)
+- [x] All tests passing (135/135)

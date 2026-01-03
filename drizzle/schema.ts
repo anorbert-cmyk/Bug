@@ -182,6 +182,11 @@ export const emailSubscribers = mysqlTable("email_subscribers", {
   subscribedAt: timestamp("subscribedAt").defaultNow().notNull(),
   isActive: boolean("isActive").default(true).notNull(),
   unsubscribedAt: timestamp("unsubscribedAt"),
+  // Double opt-in verification
+  verificationToken: varchar("verificationToken", { length: 64 }),
+  verificationSentAt: timestamp("verificationSentAt"),
+  isVerified: boolean("isVerified").default(false).notNull(),
+  verifiedAt: timestamp("verifiedAt"),
 });
 
 export type EmailSubscriber = typeof emailSubscribers.$inferSelect;

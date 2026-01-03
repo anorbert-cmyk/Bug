@@ -39,6 +39,7 @@ import {
   Plus
 } from "lucide-react";
 import { NewAnalysisModal } from "@/components/NewAnalysisModal";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 // Part configuration with colors and icons
 const PART_CONFIG = [
@@ -152,11 +153,13 @@ function FigmaPromptCard({
 function EmailGateModal({ 
   isOpen, 
   onSubmit, 
-  isSubmitting 
+  isSubmitting,
+  showVerificationMessage = false
 }: { 
   isOpen: boolean; 
   onSubmit: (email: string) => void;
   isSubmitting: boolean;
+  showVerificationMessage?: boolean;
 }) {
   const [email, setEmail] = useState("");
   const [honeypot, setHoneypot] = useState("");
@@ -172,6 +175,50 @@ function EmailGateModal({
   };
 
   if (!isOpen) return null;
+  
+  // Show verification sent message
+  if (showVerificationMessage) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="relative w-full max-w-md">
+          <div className="absolute -inset-1 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 rounded-2xl blur-lg opacity-30 animate-pulse" />
+          
+          <Card className="relative bg-background/95 backdrop-blur border-green-500/30">
+            <CardContent className="pt-8 pb-6 px-6">
+              <div className="text-center space-y-4">
+                <div className="relative mx-auto w-16 h-16">
+                  <div className="absolute inset-0 bg-green-500/20 rounded-full blur-xl" />
+                  <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 flex items-center justify-center">
+                    <Mail className="h-8 w-8 text-green-400" />
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500 animate-ping" />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-500" />
+                </div>
+
+                <div>
+                  <h2 className="text-2xl font-bold text-green-400">Check Your Email</h2>
+                  <p className="text-muted-foreground mt-2">
+                    We've sent a verification link to your email. Click the link to unlock the full demo.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <p className="text-sm text-green-300">
+                    <CheckCircle2 className="h-4 w-4 inline mr-2" />
+                    The link expires in 24 hours
+                  </p>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  Didn't receive the email? Check your spam folder or try again.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -327,6 +374,9 @@ export default function DemoAnalysis() {
 
   // Fetch demo analysis from database
   const { data: demoData, isLoading, error } = trpc.demo.getAnalysis.useQuery();
+  
+  // reCAPTCHA hook
+  const { executeRecaptcha, isConfigured: isRecaptchaConfigured } = useRecaptcha();
 
   // Check localStorage for previous unlock
   useEffect(() => {
@@ -355,21 +405,50 @@ export default function DemoAnalysis() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isUnlocked, hasTriggeredGate]);
 
-  // tRPC mutation for saving email
-  const subscribeEmail = trpc.emailSubscriber.subscribe.useMutation({
-    onSuccess: () => {
+  // State for verification message
+  const [showVerificationMessage, setShowVerificationMessage] = useState(false);
+
+  // Check if email is already verified on mount
+  useEffect(() => {
+    const emailVerified = localStorage.getItem("demo_analysis_email_verified");
+    if (emailVerified === "true") {
       setIsUnlocked(true);
-      setShowEmailGate(false);
-      localStorage.setItem("demo_analysis_unlocked", "true");
-      toast.success("Demo unlocked! Check your email for exclusive insights.");
+    }
+  }, []);
+
+  // tRPC mutation for saving email (now with double opt-in)
+  const subscribeEmail = trpc.emailSubscriber.subscribe.useMutation({
+    onSuccess: (data) => {
+      if (data.isVerified) {
+        // Email already verified - unlock immediately
+        setIsUnlocked(true);
+        setShowEmailGate(false);
+        localStorage.setItem("demo_analysis_unlocked", "true");
+        localStorage.setItem("demo_analysis_email_verified", "true");
+        toast.success("Welcome back! Demo unlocked.");
+      } else if (data.needsVerification) {
+        // Show verification sent message
+        setShowVerificationMessage(true);
+        toast.success("Verification email sent! Check your inbox.");
+      }
     },
     onError: (error) => {
       toast.error(error.message || "Failed to subscribe. Please try again.");
     },
   });
 
-  const handleEmailSubmit = (email: string) => {
-    subscribeEmail.mutate({ email, source: "demo_analysis_gate" });
+  const handleEmailSubmit = async (email: string) => {
+    // Get reCAPTCHA token if configured
+    let recaptchaToken: string | null = null;
+    if (isRecaptchaConfigured) {
+      recaptchaToken = await executeRecaptcha("email_subscribe");
+    }
+    
+    subscribeEmail.mutate({ 
+      email, 
+      source: "demo_analysis_gate",
+      recaptchaToken: recaptchaToken || undefined
+    });
   };
 
   // Parse content from database
@@ -463,9 +542,10 @@ export default function DemoAnalysis() {
     <div className="min-h-screen bg-background">
       {/* Email Gate Modal */}
       <EmailGateModal 
-        isOpen={showEmailGate} 
+        isOpen={showEmailGate || showVerificationMessage} 
         onSubmit={handleEmailSubmit}
         isSubmitting={subscribeEmail.isPending}
+        showVerificationMessage={showVerificationMessage}
       />
 
       {/* Header */}

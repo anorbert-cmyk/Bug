@@ -21,8 +21,8 @@ import {
 } from "lucide-react";
 
 const TIER_INFO = {
-  standard: { name: "Observer", price: 29, badge: "tier-badge-standard", icon: "👁️" },
-  medium: { name: "Insider", price: 79, badge: "tier-badge-medium", icon: "🔮" },
+  standard: { name: "Observer", price: 49, badge: "tier-badge-standard", icon: "👁️" },
+  medium: { name: "Insider", price: 99, badge: "tier-badge-medium", icon: "🔮" },
   full: { name: "Syndicate", price: 199, badge: "tier-badge-full", icon: "⚡" },
 };
 

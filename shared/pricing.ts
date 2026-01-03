@@ -20,7 +20,7 @@ export const TIER_CONFIGS: Record<Tier, TierConfig> = {
     id: "standard",
     name: "Observer",
     displayName: "Observer Tier",
-    priceUsd: 29,
+    priceUsd: 49,
     description: "Essential UX insights for quick validation",
     features: [
       "Single-pass AI analysis",
@@ -35,7 +35,7 @@ export const TIER_CONFIGS: Record<Tier, TierConfig> = {
     id: "medium",
     name: "Insider",
     displayName: "Insider Tier",
-    priceUsd: 79,
+    priceUsd: 99,
     description: "Comprehensive analysis with strategic insights",
     features: [
       "Enhanced AI analysis",

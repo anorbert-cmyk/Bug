@@ -13,6 +13,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import History from "./pages/History";
 import MyAnalyses from "./pages/MyAnalyses";
 import DemoAnalysis from "./pages/DemoAnalysis";
+import VerifyEmail from "./pages/VerifyEmail";
 
 function Router() {
   return (
@@ -26,6 +27,7 @@ function Router() {
       <Route path="/history" component={History} />
       <Route path="/my-analyses" component={MyAnalyses} />
       <Route path="/demo-analysis" component={DemoAnalysis} />
+      <Route path="/verify-email" component={VerifyEmail} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
