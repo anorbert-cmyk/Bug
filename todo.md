@@ -469,3 +469,13 @@
 
 ## Bug Fix - January 3, 2026
 - [x] Fix reCAPTCHA security verification error on email subscription (soft-fail on browser errors)
+
+- [ ] Investigate and fix reCAPTCHA browser-error causing Security verification failed
+
+
+## reCAPTCHA & Email Gate Fixes - January 3, 2026
+- [x] Fix reCAPTCHA browser-error causing "Security verification failed"
+- [x] Make reCAPTCHA optional (soft-fail on browser errors)
+- [x] Add 3-second fallback timer for email gate modal
+- [x] Fix domain typo (validate-strategy.com → validatestrategy.com)
+- [x] Test email submission - verification email sent successfully

@@ -416,6 +416,22 @@ export default function DemoAnalysis() {
     }
   }, []);
 
+  // Trigger email gate after 3 seconds if not unlocked (fallback for scroll issues)
+  useEffect(() => {
+    const unlocked = localStorage.getItem("demo_analysis_unlocked");
+    const verified = localStorage.getItem("demo_analysis_email_verified");
+    if (unlocked === "true" || verified === "true") return;
+    
+    const timer = setTimeout(() => {
+      if (!isUnlocked && !hasTriggeredGate) {
+        setShowEmailGate(true);
+        setHasTriggeredGate(true);
+      }
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, [isUnlocked, hasTriggeredGate]);
+
   // tRPC mutation for saving email (now with double opt-in)
   const subscribeEmail = trpc.emailSubscriber.subscribe.useMutation({
     onSuccess: (data) => {

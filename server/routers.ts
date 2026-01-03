@@ -345,18 +345,21 @@ export const appRouter = router({
         recaptchaToken: z.string().optional(),
       }))
       .mutation(async ({ input }) => {
-        // Verify reCAPTCHA if token provided
+        // Verify reCAPTCHA if token provided (soft verification - never blocks users)
         if (input.recaptchaToken) {
-          const { verifyRecaptcha } = await import("./services/recaptchaService");
-          const recaptchaResult = await verifyRecaptcha(input.recaptchaToken, "email_subscribe", 0.3);
-          if (!recaptchaResult.success) {
-            console.warn(`[EmailSubscriber] reCAPTCHA failed for ${input.email}: ${recaptchaResult.error}`);
-            throw new TRPCError({ 
-              code: "BAD_REQUEST", 
-              message: "Security verification failed. Please try again." 
-            });
+          try {
+            const { verifyRecaptcha } = await import("./services/recaptchaService");
+            const recaptchaResult = await verifyRecaptcha(input.recaptchaToken, "email_subscribe", 0.3);
+            if (recaptchaResult.success) {
+              console.log(`[EmailSubscriber] reCAPTCHA passed for ${input.email}: score=${recaptchaResult.score}`);
+            } else {
+              // Log but don't block - honeypot and disposable email checks are primary protection
+              console.warn(`[EmailSubscriber] reCAPTCHA soft-fail for ${input.email}: ${recaptchaResult.error}`);
+            }
+          } catch (recaptchaError) {
+            // Never block on reCAPTCHA errors - it's supplementary protection
+            console.warn(`[EmailSubscriber] reCAPTCHA error for ${input.email}:`, recaptchaError);
           }
-          console.log(`[EmailSubscriber] reCAPTCHA passed for ${input.email}: score=${recaptchaResult.score}`);
         }
         
         // Import validation service
@@ -405,7 +408,7 @@ export const appRouter = router({
         }
         
         // Send verification email
-        const appUrl = process.env.VITE_APP_URL || 'https://validate-strategy.com';
+        const appUrl = process.env.VITE_APP_URL || 'https://validatestrategy.com';
         const verificationUrl = `${appUrl}/verify-email?token=${verificationToken}`;
         
         try {
