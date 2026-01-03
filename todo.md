@@ -479,3 +479,11 @@
 - [x] Add 3-second fallback timer for email gate modal
 - [x] Fix domain typo (validate-strategy.com → validatestrategy.com)
 - [x] Test email submission - verification email sent successfully
+
+
+## Pricing Cards Update - January 3, 2026
+- [x] Update Observer card: "Validate Your Idea" - $49, 24h delivery
+- [x] Update Insider card: "Your 90-Day Roadmap" - $99, 48h delivery
+- [x] Update Syndicate card: "Complete UX Strategy" - $199, 72h delivery, 10 Figma prompts
+- [x] Update shared/pricing.ts with new features, headlines, taglines
+- [ ] Add feature comparison grid below cards (optional)

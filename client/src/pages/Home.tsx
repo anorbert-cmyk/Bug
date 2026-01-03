@@ -551,12 +551,20 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-6 items-center">
             {/* Tier 1: Observer */}
             <div className="pricing-card pricing-card-muted">
-              <div className="flex items-center gap-2 mb-6">
-                <Eye className="w-5 h-5 text-muted-foreground" />
-                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                  Observer
-                </h3>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Eye className="w-5 h-5 text-muted-foreground" />
+                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                    Observer
+                  </h3>
+                </div>
+                <span className="px-2 py-1 text-[10px] font-bold bg-muted border border-border rounded-full text-muted-foreground tracking-wider">
+                  QUICK VALIDATION
+                </span>
               </div>
+
+              <h4 className="text-xl font-bold mb-2 font-playfair">Validate Your Idea</h4>
+              <p className="text-xs text-muted-foreground mb-4">Get a clear GO/NO-GO decision with actionable next steps in 24 hours.</p>
 
               <div className="mb-6">
                 <span className="text-4xl font-bold font-playfair">${TIER_CONFIGS.standard.priceUsd}</span>
@@ -566,15 +574,27 @@ export default function Home() {
               <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-muted-foreground" />
-                  Basic market analysis
+                  Problem-Market Fit Analysis
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-muted-foreground" />
-                  Executive summary
+                  3 Competitor Quick Scan
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-muted-foreground" />
-                  Single API call
+                  Top 5 User Pain Points
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-muted-foreground" />
+                  Go/No-Go Recommendation
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-muted-foreground" />
+                  3 Immediate Action Items
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-muted-foreground" />
+                  24-Hour Delivery
                 </li>
               </ul>
 
@@ -585,29 +605,27 @@ export default function Home() {
                   className="w-full btn-secondary"
                   variant="outline"
                 >
-                  <CreditCard className="w-4 h-4 mr-2" />
-                  CARD PAYMENT (Coming Soon)
-                </Button>
-                <Button
-                  onClick={() => handleStartAnalysis("standard")}
-                  disabled={!problemStatement.trim() || createSession.isPending}
-                  variant="outline"
-                  className="w-full text-xs"
-                >
-                  <Wallet className="w-3.5 h-3.5 mr-2" />
-                  Pay with Crypto (NOWPayments)
+                  Validate My Idea
                 </Button>
               </div>
+              
+              <p className="text-[10px] text-muted-foreground text-center mt-4">Perfect for early-stage founders testing concepts</p>
             </div>
 
             {/* Tier 2: Insider (Highlighted) */}
             <div className="pricing-card-highlight">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-primary" />
                   <h3 className="text-sm font-bold uppercase tracking-[0.1em]">Insider</h3>
                 </div>
+                <span className="px-2 py-1 text-[10px] font-bold bg-primary/20 border border-primary/40 rounded-full text-primary tracking-wider">
+                  MOST POPULAR
+                </span>
               </div>
+
+              <h4 className="text-2xl font-bold mb-2 font-playfair">Your 90-Day Roadmap</h4>
+              <p className="text-xs text-muted-foreground mb-4">From validated idea to execution plan with clear milestones and risk mitigation.</p>
 
               <div className="mb-6">
                 <span className="text-6xl font-bold font-playfair">${TIER_CONFIGS.medium.priceUsd}</span>
@@ -617,19 +635,31 @@ export default function Home() {
               <ul className="space-y-3 mb-8 text-sm">
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-primary" />
-                  Everything in Observer
+                  Everything in Observer, plus:
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-primary" />
-                  Competitive analysis
+                  Full Discovery & Problem Analysis
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-primary" />
-                  Technical feasibility
+                  Strategic Design Roadmap
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-primary" />
-                  MVP roadmap
+                  Week-by-Week Action Plan
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-primary" />
+                  Team Collaboration Model
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-primary" />
+                  5 Critical Risk Mitigations
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-primary" />
+                  48-Hour Delivery
                 </li>
               </ul>
 
@@ -639,19 +669,11 @@ export default function Home() {
                   disabled={!problemStatement.trim() || createSession.isPending}
                   className="w-full btn-primary"
                 >
-                  <CreditCard className="w-4 h-4 mr-2" />
-                  CARD PAYMENT (Coming Soon)
-                </Button>
-                <Button
-                  onClick={() => handleStartAnalysis("medium")}
-                  disabled={!problemStatement.trim() || createSession.isPending}
-                  variant="outline"
-                  className="w-full text-xs"
-                >
-                  <Wallet className="w-3.5 h-3.5 mr-2" />
-                  Pay with Crypto (NOWPayments)
+                  Get My Roadmap
                 </Button>
               </div>
+              
+              <p className="text-[10px] text-muted-foreground text-center mt-4">Ideal for founders ready to execute</p>
             </div>
 
             {/* Tier 3: Syndicate - APEX */}
@@ -667,10 +689,13 @@ export default function Home() {
                       Syndicate
                     </h3>
                   </div>
-                  <span className="px-2 py-1 text-[10px] font-bold bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/40 rounded-full text-cyan-400 tracking-wider">
-                    APEX
+                  <span className="px-2 py-1 text-[10px] font-bold bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/40 rounded-full text-cyan-400 tracking-wider">
+                    APEX • STATE-OF-THE-ART AI
                   </span>
                 </div>
+
+                <h4 className="text-xl font-bold mb-2 font-playfair text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">Complete UX Strategy</h4>
+                <p className="text-xs text-muted-foreground mb-4">Enterprise-grade 4-part analysis with 10 production-ready Figma prompts you can build from today.</p>
                 
                 {/* State-of-the-Art AI Badge */}
                 <div className="flex items-center gap-2 mb-4 px-3 py-2 bg-gradient-to-r from-cyan-950/50 to-blue-950/50 rounded-lg border border-cyan-500/20">
@@ -686,23 +711,31 @@ export default function Home() {
                 <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-purple-400" />
-                    Everything in Insider
+                    Everything in Insider, plus:
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-cyan-400" />
-                    <span className="text-cyan-300">4-part APEX deep analysis</span>
+                    <span className="text-cyan-300">AI-Enhanced Execution Toolkit</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-cyan-400" />
-                    <span className="text-cyan-300">Real-time web research</span>
+                    <span className="text-cyan-300 font-semibold">10 Production-Ready Figma Prompts</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-cyan-400" />
-                    <span className="text-cyan-300">10 Figma AI prompts</span>
+                    <span className="text-cyan-300">Copy-Paste Directly into Figma AI</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-purple-400" />
-                    Verified sources & citations
+                    Full Risk Matrix & Metrics Dashboard
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-purple-400" />
+                    Business OKR Alignment
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-purple-400" />
+                    72-Hour Delivery
                   </li>
                 </ul>
 
@@ -712,18 +745,17 @@ export default function Home() {
                     disabled={!problemStatement.trim() || createSession.isPending}
                     className="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 border-0"
                   >
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    START APEX ANALYSIS
+                    Get Full APEX Analysis
                   </Button>
-                  <Button
-                    onClick={() => handleStartAnalysis("full")}
-                    disabled={!problemStatement.trim() || createSession.isPending}
-                    variant="outline"
-                    className="w-full text-xs"
-                  >
-                    <Wallet className="w-3.5 h-3.5 mr-2" />
-                    Pay with Crypto (NOWPayments)
-                  </Button>
+                </div>
+                
+                <p className="text-[10px] text-muted-foreground text-center mt-4">For teams building production-ready products</p>
+                
+                {/* Figma Prompts Highlight */}
+                <div className="mt-4 p-3 bg-gradient-to-r from-cyan-950/30 to-purple-950/30 rounded-lg border border-cyan-500/20">
+                  <p className="text-[10px] text-cyan-400 text-center">
+                    🎨 <span className="font-semibold">Exclusive:</span> 10 Figma prompts with real microcopy, accessibility specs, and all interaction states included.
+                  </p>
                 </div>
               </div>
             </div>
