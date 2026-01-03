@@ -623,3 +623,38 @@
 ### Admin Page (/admin)
 - [x] Add H1 heading to admin page (login screen + dashboard header)
 - [x] Add H2 headings to admin page sections (Tier Distribution, Payment Methods, Conversion Funnel, Transaction History)
+
+## Design Refinements - January 2025
+
+### Statistics Section ("The Cost of Building Without Strategy")
+- [ ] Update box typography to match elegant pricing card style
+- [ ] Use clean, minimal fonts like the white pricing cards
+- [ ] Reduce visual clutter
+
+### Pricing Section
+- [ ] Reduce pricing box height (currently too tall)
+- [ ] Maintain elegant proportions
+
+### Research Section ("Built on Research, Not Assumptions")
+- [ ] Completely redesign - current style is inconsistent
+- [ ] Remove or redesign "🔬 Powered by Research • All recommendations cite verified sources" badge
+- [ ] Match the elegant minimal style of reference designs
+
+## Security Fixes - January 2025 (Critical)
+
+### Admin Auth DoS Vulnerability
+- [x] Replace in-memory Map for challenges with database storage
+- [x] Fix horizontal scaling issue
+- [x] Prevent OOM attacks from flooding requests
+
+### Payload Limit
+- [x] Reduce JSON payload limit from 50mb to 1mb
+- [x] Global rate limiting prevents large payload attacks
+
+### Rate Limiting
+- [x] Add global rate limiting to prevent brute-force attacks (100 req/15min)
+- [x] Implement resource exhaustion protection
+
+### Payment Webhook Race Condition
+- [x] Add idempotency checks to webhook handler
+- [x] Prevent double-spend of API credits on retries (webhook ID tracking)

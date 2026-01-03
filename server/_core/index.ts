@@ -30,9 +30,22 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
-  // Configure body parser with larger size limit for file uploads
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  
+  // SECURITY: Reduced default payload limit to 1MB (was 50MB - DoS risk)
+  // Specific routes that need larger payloads should override this
+  app.use(express.json({ limit: "1mb" }));
+  app.use(express.urlencoded({ limit: "1mb", extended: true }));
+  
+  // SECURITY: Global rate limiting (100 requests per 15 minutes per IP)
+  // Specific routes have stricter limits defined in middleware/security.ts
+  const { apiRateLimit, securityHeaders, requestLogger } = await import("../middleware/security");
+  app.use(apiRateLimit);
+  app.use(securityHeaders);
+  
+  // Request logging for security monitoring
+  if (process.env.NODE_ENV === "production") {
+    app.use(requestLogger);
+  }
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   

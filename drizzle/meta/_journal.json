@@ -85,6 +85,20 @@
       "when": 1767449269283,
       "tag": "0011_abandoned_pestilence",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1767459605231,
+      "tag": "0012_pale_sunfire",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1767459897850,
+      "tag": "0013_smart_crystal",
+      "breakpoints": true
     }
   ]
 }

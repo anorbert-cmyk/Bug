@@ -8,6 +8,8 @@ import {
   adminWallets, InsertAdminWallet, AdminWallet,
   usedSignatures, InsertUsedSignature,
   emailSubscribers, InsertEmailSubscriber, EmailSubscriber,
+  adminChallenges, InsertAdminChallenge, AdminChallenge,
+  processedWebhooks, InsertProcessedWebhook, ProcessedWebhook,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -285,6 +287,58 @@ export async function markSignatureUsed(signature: string, walletAddress: string
   await db.insert(usedSignatures).values({ signature, walletAddress: walletAddress.toLowerCase() });
 }
 
+// ============ ADMIN CHALLENGE FUNCTIONS (DoS-resistant) ============
+
+export async function storeChallenge(
+  walletAddress: string,
+  challenge: string,
+  timestamp: number,
+  expiresAt: number
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const normalizedAddress = walletAddress.toLowerCase();
+  
+  // Upsert: replace existing challenge for this wallet
+  await db.insert(adminChallenges)
+    .values({ walletAddress: normalizedAddress, challenge, timestamp, expiresAt })
+    .onDuplicateKeyUpdate({
+      set: { challenge, timestamp, expiresAt }
+    });
+}
+
+export async function getChallenge(walletAddress: string): Promise<AdminChallenge | null> {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const result = await db.select()
+    .from(adminChallenges)
+    .where(eq(adminChallenges.walletAddress, walletAddress.toLowerCase()))
+    .limit(1);
+  
+  return result[0] || null;
+}
+
+export async function deleteChallenge(walletAddress: string): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.delete(adminChallenges)
+    .where(eq(adminChallenges.walletAddress, walletAddress.toLowerCase()));
+}
+
+export async function cleanupExpiredChallengesDb(): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  
+  const now = Date.now();
+  const result = await db.delete(adminChallenges)
+    .where(sql`${adminChallenges.expiresAt} < ${now}`);
+  
+  return (result as any).affectedRows || 0;
+}
+
 // ============ STATS FUNCTIONS ============
 
 export async function getAdminStats() {
@@ -349,6 +403,54 @@ export async function getTransactionHistory(limit = 100): Promise<Purchase[]> {
   const db = await getDb();
   if (!db) return [];
   return await db.select().from(purchases).orderBy(desc(purchases.createdAt)).limit(limit);
+}
+
+// ============ WEBHOOK IDEMPOTENCY FUNCTIONS ============
+
+/**
+ * Check if a webhook has already been processed (prevents double-spend)
+ */
+export async function isWebhookProcessed(webhookId: string): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  
+  const result = await db.select()
+    .from(processedWebhooks)
+    .where(eq(processedWebhooks.webhookId, webhookId))
+    .limit(1);
+  
+  return result.length > 0;
+}
+
+/**
+ * Mark a webhook as processed (atomic operation to prevent race conditions)
+ */
+export async function markWebhookProcessed(
+  webhookId: string,
+  paymentProvider: string,
+  sessionId: string,
+  paymentId?: string,
+  status: string = "completed"
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  try {
+    await db.insert(processedWebhooks).values({
+      webhookId,
+      paymentProvider,
+      sessionId,
+      paymentId,
+      status,
+    });
+  } catch (error: any) {
+    // If unique constraint violation, webhook was already processed
+    if (error.code === "ER_DUP_ENTRY") {
+      console.log(`[Webhook] Duplicate webhook ID detected (idempotency): ${webhookId}`);
+      return;
+    }
+    throw error;
+  }
 }
 
 // ============ EMAIL SUBSCRIBER FUNCTIONS ============

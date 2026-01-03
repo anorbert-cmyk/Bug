@@ -17,6 +17,8 @@ import {
   getAnalysisSessionById,
   createAnalysisResult,
   getPurchaseBySessionId,
+  isWebhookProcessed,
+  markWebhookProcessed,
 } from "./db";
 import { notifyOwner } from "./_core/notification";
 import { getTierConfig, getTierPrice, isMultiPartTier } from "../shared/pricing";
@@ -51,13 +53,25 @@ webhookRouter.post("/nowpayments", async (req: Request, res: Response) => {
     const ipnData = parseIPNPayload(payload);
     const sessionId = ipnData.order_id;
     const paymentStatus = ipnData.payment_status;
+    const webhookId = String(ipnData.payment_id);
 
     console.log(`[NOWPayments Webhook] Payment ${ipnData.payment_id} status: ${paymentStatus} (${PAYMENT_STATUS_DESCRIPTIONS[paymentStatus] || 'Unknown'})`);
     console.log(`[NOWPayments Webhook] Order ID (Session): ${sessionId}`);
 
+    // SECURITY: Check if webhook was already processed (idempotency)
+    const alreadyProcessed = await isWebhookProcessed(webhookId);
+    
+    if (alreadyProcessed) {
+      console.log(`[NOWPayments Webhook] Webhook already processed (idempotency): ${webhookId}`);
+      return res.json({ received: true, status: paymentStatus, duplicate: true });
+    }
+
     // Only process finished payments - this ensures payment is fully confirmed
     if (isPaymentConfirmed(paymentStatus)) {
       console.log(`[NOWPayments Webhook] Payment CONFIRMED for session: ${sessionId}`);
+      
+      // Mark webhook as processed BEFORE updating purchase (atomic operation)
+      await markWebhookProcessed(webhookId, "nowpayments", sessionId, String(ipnData.payment_id), "completed");
       
       // Update purchase status
       await updatePurchaseStatus(sessionId, "completed", new Date());
@@ -68,6 +82,10 @@ webhookRouter.post("/nowpayments", async (req: Request, res: Response) => {
       console.log(`[NOWPayments Webhook] Analysis started for session: ${sessionId}`);
     } else if (isPaymentFailed(paymentStatus)) {
       console.log(`[NOWPayments Webhook] Payment FAILED for session: ${sessionId}`);
+      
+      // Mark webhook as processed
+      await markWebhookProcessed(webhookId, "nowpayments", sessionId, String(ipnData.payment_id), "failed");
+      
       await updatePurchaseStatus(sessionId, "failed");
       await updateAnalysisSessionStatus(sessionId, "failed");
     } else {

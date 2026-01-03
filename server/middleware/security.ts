@@ -23,16 +23,16 @@ const strictConfig: RateLimitConfig = {
   maxRequests: 5, // Reduced from 10 for sensitive endpoints
 };
 
-// Ultra-strict config for payment endpoints (prevents payment fraud)
+// Payment endpoints - reasonable limits (not too strict for legitimate users)
 const paymentConfig: RateLimitConfig = {
   windowMs: 60 * 1000, // 1 minute
-  maxRequests: 3, // Only 3 payment attempts per minute
+  maxRequests: 10, // 10 payment attempts per minute (allows retries)
 };
 
-// Analysis config (Perplexity API costs money)
+// Analysis config (Perplexity API costs money, but paid users should have good UX)
 const analysisConfig: RateLimitConfig = {
   windowMs: 60 * 60 * 1000, // 1 hour
-  maxRequests: 10, // Max 10 analyses per hour per IP
+  maxRequests: 20, // Max 20 analyses per hour per IP (reasonable for power users)
 };
 
 // Email submission config (prevent spam)

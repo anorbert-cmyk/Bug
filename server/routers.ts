@@ -530,7 +530,7 @@ export const appRouter = router({
           throw new TRPCError({ code: "UNAUTHORIZED", message: "Not an admin wallet" });
         }
         // Use the walletAuthService to generate and store the challenge
-        const { challenge, timestamp } = generateChallenge(input.walletAddress);
+        const { challenge, timestamp } = await generateChallenge(input.walletAddress);
         return { challenge, timestamp };
       }),
 

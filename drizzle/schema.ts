@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, json, boolean } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, json, boolean, bigint } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -160,6 +160,39 @@ export const usedSignatures = mysqlTable("used_signatures", {
 
 export type UsedSignature = typeof usedSignatures.$inferSelect;
 export type InsertUsedSignature = typeof usedSignatures.$inferInsert;
+
+/**
+ * Admin challenges - database-backed challenge storage for wallet auth
+ * Replaces in-memory Map to prevent DoS attacks and enable horizontal scaling
+ */
+export const adminChallenges = mysqlTable("admin_challenges", {
+  id: int("id").autoincrement().primaryKey(),
+  walletAddress: varchar("walletAddress", { length: 42 }).notNull().unique(),
+  challenge: varchar("challenge", { length: 64 }).notNull(),
+  timestamp: bigint("timestamp", { mode: "number" }).notNull(),
+  expiresAt: bigint("expiresAt", { mode: "number" }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AdminChallenge = typeof adminChallenges.$inferSelect;
+export type InsertAdminChallenge = typeof adminChallenges.$inferInsert;
+
+/**
+ * Processed webhooks - for idempotency and preventing double-spend
+ * Tracks webhook IDs to prevent duplicate processing if payment gateway retries
+ */
+export const processedWebhooks = mysqlTable("processed_webhooks", {
+  id: int("id").autoincrement().primaryKey(),
+  webhookId: varchar("webhookId", { length: 255 }).notNull().unique(),
+  paymentProvider: varchar("paymentProvider", { length: 64 }).notNull(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull(),
+  paymentId: varchar("paymentId", { length: 255 }),
+  status: varchar("status", { length: 64 }).notNull(),
+  processedAt: timestamp("processedAt").defaultNow().notNull(),
+});
+
+export type ProcessedWebhook = typeof processedWebhooks.$inferSelect;
+export type InsertProcessedWebhook = typeof processedWebhooks.$inferInsert;
 
 /**
  * Platform statistics - aggregated stats for admin dashboard

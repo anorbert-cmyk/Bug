@@ -350,12 +350,6 @@ export default function Home() {
       {/* Hero Section */}
       <section className="pt-28 pb-24 relative z-10">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          {/* Research-Backed Trust Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 mb-10">
-            <span className="text-lg">🔬</span>
-            <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">Powered by Research • All recommendations cite verified sources</span>
-          </div>
-
           <h1 className="text-5xl md:text-8xl font-bold tracking-tighter mb-8 leading-[0.95]">
             <span className="text-red-500">70%</span> of digital products fail.
             <br />
@@ -393,67 +387,52 @@ export default function Home() {
       </section>
 
       {/* Why Strategy Wins - Statistics Section */}
-      <section className="py-24 relative z-10">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 font-playfair">
+      <section className="py-20 relative z-10">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-3">
               The Cost of Building Without Strategy
             </h2>
-            <p className="text-muted-foreground font-mono text-xs uppercase tracking-[0.2em]">
+            <p className="text-muted-foreground/70 text-sm">
               Why research-backed validation matters
             </p>
           </div>
 
-          {/* Statistics Grid - 4 Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
+          {/* Statistics Grid - Elegant Minimal Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
             {/* Card 1: Failure Rate */}
-            <div className="glass-panel p-6 text-center group hover:border-red-500/30 transition-all duration-300">
-              <div className="text-4xl mb-3">🚫</div>
-              <div className="text-4xl md:text-5xl font-bold text-red-500 mb-2">70%</div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+            <div className="bg-white/80 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-black/5 dark:border-white/10 hover:shadow-lg transition-all duration-300">
+              <p className="text-xs text-muted-foreground/60 uppercase tracking-wider mb-4">Failure Rate</p>
+              <div className="text-4xl md:text-5xl font-light tracking-tight text-foreground mb-2">70<span className="text-2xl">%</span></div>
+              <p className="text-sm text-muted-foreground/80 leading-relaxed">
                 of products fail due to poor UX
               </p>
-              <p className="text-[10px] text-muted-foreground/60 mt-2 font-mono">Industry research</p>
             </div>
 
             {/* Card 2: User Abandonment */}
-            <div className="glass-panel p-6 text-center group hover:border-amber-500/30 transition-all duration-300">
-              <div className="text-4xl mb-3">⚠️</div>
-              <div className="text-4xl md:text-5xl font-bold text-amber-500 mb-2">88%</div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                won't return after a bad experience
+            <div className="bg-white/80 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-black/5 dark:border-white/10 hover:shadow-lg transition-all duration-300">
+              <p className="text-xs text-muted-foreground/60 uppercase tracking-wider mb-4">Abandonment</p>
+              <div className="text-4xl md:text-5xl font-light tracking-tight text-foreground mb-2">88<span className="text-2xl">%</span></div>
+              <p className="text-sm text-muted-foreground/80 leading-relaxed">
+                won't return after bad UX
               </p>
-              <p className="text-[10px] text-muted-foreground/60 mt-2 font-mono">Baymard Institute</p>
             </div>
 
             {/* Card 3: Lost Revenue */}
-            <div className="glass-panel p-6 text-center group hover:border-red-500/30 transition-all duration-300">
-              <div className="text-4xl mb-3">💸</div>
-              <div className="text-4xl md:text-5xl font-bold text-red-400 mb-2">$2.6B</div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                lost annually to poor UX globally
+            <div className="bg-white/80 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-black/5 dark:border-white/10 hover:shadow-lg transition-all duration-300">
+              <p className="text-xs text-muted-foreground/60 uppercase tracking-wider mb-4">Lost Annually</p>
+              <div className="text-4xl md:text-5xl font-light tracking-tight text-foreground mb-2"><span className="text-2xl">$</span>2.6<span className="text-2xl">B</span></div>
+              <p className="text-sm text-muted-foreground/80 leading-relaxed">
+                to poor UX globally
               </p>
-              <p className="text-[10px] text-muted-foreground/60 mt-2 font-mono">UX research compilation</p>
             </div>
 
             {/* Card 4: ROI Potential */}
-            <div className="glass-panel p-6 text-center group hover:border-green-500/30 transition-all duration-300">
-              <div className="text-4xl mb-3">📈</div>
-              <div className="text-4xl md:text-5xl font-bold text-green-500 mb-2">$100</div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                return per $1 invested in UX
-              </p>
-              <p className="text-[10px] text-muted-foreground/60 mt-2 font-mono">Forrester Research</p>
-            </div>
-          </div>
-
-          {/* Section Footer */}
-          <div className="max-w-3xl mx-auto">
-            <div className="glass-panel p-6 text-center border-cyan-500/20">
-              <p className="text-sm text-muted-foreground leading-relaxed font-light tracking-wide">
-                <ShieldCheck className="w-4 h-4 text-cyan-500 inline mr-2" />
-                Every recommendation we provide is backed by research from world-leading UX research firms. 
-                <strong className="text-foreground font-medium"> No guesswork. No opinions. Just verified, actionable strategy.</strong>
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50/50 dark:from-green-500/10 dark:to-emerald-500/5 backdrop-blur-sm rounded-2xl p-6 border border-green-200/50 dark:border-green-500/20 hover:shadow-lg transition-all duration-300">
+              <p className="text-xs text-green-600/70 dark:text-green-400/70 uppercase tracking-wider mb-4">ROI Potential</p>
+              <div className="text-4xl md:text-5xl font-light tracking-tight text-green-600 dark:text-green-400 mb-2"><span className="text-2xl">$</span>100</div>
+              <p className="text-sm text-green-700/70 dark:text-green-300/70 leading-relaxed">
+                return per $1 invested
               </p>
             </div>
           </div>
@@ -637,25 +616,25 @@ export default function Home() {
                 <span className="text-muted-foreground ml-2">USD</span>
               </div>
 
-              <ul className="space-y-3 mb-8 text-sm text-muted-foreground">
+              <ul className="space-y-2 mb-6 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-muted-foreground" />
+                  <CheckCircle className="w-3.5 h-3.5 text-muted-foreground" />
                   Problem Statement Analysis
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-muted-foreground" />
+                  <CheckCircle className="w-3.5 h-3.5 text-muted-foreground" />
                   Top 3 User Pain Points
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-muted-foreground" />
+                  <CheckCircle className="w-3.5 h-3.5 text-muted-foreground" />
                   Quick Viability Score (1-10)
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-muted-foreground" />
+                  <CheckCircle className="w-3.5 h-3.5 text-muted-foreground" />
                   1 Recommended Next Step
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-muted-foreground" />
+                  <CheckCircle className="w-3.5 h-3.5 text-muted-foreground" />
                   24-Hour Delivery
                 </li>
               </ul>
@@ -698,37 +677,37 @@ export default function Home() {
                 <span className="text-muted-foreground ml-2">USD</span>
               </div>
 
-              <ul className="space-y-3 mb-8 text-sm">
+              <ul className="space-y-2 mb-6 text-sm">
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <CheckCircle className="w-3.5 h-3.5 text-primary" />
                   Everything in Observer, plus:
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <CheckCircle className="w-3.5 h-3.5 text-primary" />
                   Full Discovery & Problem Analysis
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <CheckCircle className="w-3.5 h-3.5 text-primary" />
                   Live Competitor Research (3-5 competitors)
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <CheckCircle className="w-3.5 h-3.5 text-primary" />
                   Strategic Design Roadmap
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <CheckCircle className="w-3.5 h-3.5 text-primary" />
                   Week-by-Week Action Plan
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <CheckCircle className="w-3.5 h-3.5 text-primary" />
                   5 Critical Risk Mitigations
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <CheckCircle className="w-3.5 h-3.5 text-primary" />
                   Error Path & Recovery Mapping
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-primary" />
+                  <CheckCircle className="w-3.5 h-3.5 text-primary" />
                   48-Hour Delivery
                 </li>
               </ul>
@@ -783,41 +762,37 @@ export default function Home() {
                   <span className="text-muted-foreground ml-2">USD</span>
                 </div>
 
-                <ul className="space-y-3 mb-6 text-sm text-muted-foreground">
+                <ul className="space-y-2 mb-5 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-purple-400" />
+                    <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
                     Everything in Insider, plus:
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-purple-400" />
+                    <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
                     AI-Enhanced Execution Toolkit
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-purple-400" />
+                    <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
                     <span className="font-semibold">10 Production-Ready Figma Prompts</span>
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-purple-400" />
-                    Live Competitor Deep Research (Perplexity-Powered)
+                    <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
+                    Live Competitor Deep Research
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-purple-400" />
-                    Full Risk Matrix & Metrics Dashboard
+                    <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
+                    Full Risk Matrix & Metrics
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-purple-400" />
+                    <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
                     Business OKR Alignment
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-purple-400" />
+                    <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
                     Expected ROI Calculation
                   </li>
                   <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-purple-400" />
-                    Verification & Integrity Gate
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-purple-400" />
+                    <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
                     72-Hour Priority Delivery
                   </li>
                 </ul>
@@ -856,58 +831,26 @@ export default function Home() {
       </section>
 
       {/* Research-Backed Methodology Section */}
-      <section className="py-24 relative z-10 bg-muted/10">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 font-playfair">
-              Built on Research, Not Assumptions
+      <section className="py-16 relative z-10">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-light tracking-tight mb-2">
+              Built on Research
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our analysis methodology is derived from 15+ years of UX research and validated by data from:
+            <p className="text-muted-foreground/60 text-sm">
+              Methodology derived from leading UX research
             </p>
           </div>
 
-          {/* Research Logo/Name Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-            <div className="glass-panel p-6 text-center">
-              <div className="text-2xl font-bold text-cyan-400 mb-2">Nielsen Norman</div>
-              <p className="text-xs text-muted-foreground">83% ROI on UX investments</p>
-            </div>
-            <div className="glass-panel p-6 text-center">
-              <div className="text-2xl font-bold text-amber-400 mb-2">Baymard Institute</div>
-              <p className="text-xs text-muted-foreground">35% conversion increase potential</p>
-            </div>
-            <div className="glass-panel p-6 text-center">
-              <div className="text-2xl font-bold text-green-400 mb-2">Forrester Research</div>
-              <p className="text-xs text-muted-foreground">$100 per $1 UX ROI</p>
-            </div>
-            <div className="glass-panel p-6 text-center">
-              <div className="text-2xl font-bold text-purple-400 mb-2">IDEO</div>
-              <p className="text-xs text-muted-foreground">Human-centered design methodology</p>
-            </div>
-          </div>
-
-          {/* Trust Statement */}
-          <div className="max-w-4xl mx-auto">
-            <div className="glass-panel p-6 border-cyan-500/20">
-              <p className="text-sm text-muted-foreground leading-relaxed text-center">
-                Every recommendation includes source classification:
-              </p>
-              <div className="flex flex-wrap justify-center gap-4 mt-4">
-                <div className="flex items-center gap-2 px-3 py-2 bg-green-500/10 rounded-lg border border-green-500/20">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span className="text-xs font-mono text-green-400">VERIFIED</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-2 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
-                  <CheckCircle className="w-4 h-4 text-cyan-500" />
-                  <span className="text-xs font-mono text-cyan-400">BEST PRACTICE</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
-                  <CheckCircle className="w-4 h-4 text-amber-500" />
-                  <span className="text-xs font-mono text-amber-400">ASSUMPTION</span>
-                </div>
-              </div>
-            </div>
+          {/* Research Sources - Minimal Inline */}
+          <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-sm text-muted-foreground/50">
+            <span className="hover:text-foreground/70 transition-colors">Nielsen Norman Group</span>
+            <span className="hidden sm:inline text-muted-foreground/20">|</span>
+            <span className="hover:text-foreground/70 transition-colors">Baymard Institute</span>
+            <span className="hidden sm:inline text-muted-foreground/20">|</span>
+            <span className="hover:text-foreground/70 transition-colors">Forrester Research</span>
+            <span className="hidden sm:inline text-muted-foreground/20">|</span>
+            <span className="hover:text-foreground/70 transition-colors">IDEO</span>
           </div>
         </div>
       </section>

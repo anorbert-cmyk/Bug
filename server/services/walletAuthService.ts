@@ -1,15 +1,24 @@
 /**
  * Wallet Authentication Service
  * Handles MetaMask signature verification for admin access
+ * 
+ * SECURITY: Uses database-backed challenge storage to prevent:
+ * - DoS attacks via memory exhaustion
+ * - Horizontal scaling issues
  */
 
 import { verifyMessage } from "ethers";
-import { isAdminWallet, isSignatureUsed, markSignatureUsed } from "../db";
+import { 
+  isAdminWallet, 
+  isSignatureUsed, 
+  markSignatureUsed,
+  storeChallenge,
+  getChallenge,
+  deleteChallenge,
+  cleanupExpiredChallengesDb
+} from "../db";
 
 const SIGNATURE_VALIDITY_MS = 30 * 60 * 1000; // 30 minutes for better UX
-
-// In-memory challenge store (for production, use Redis)
-const challengeStore = new Map<string, { challenge: string; timestamp: number; expiresAt: number }>();
 
 export interface WalletAuthResult {
   success: boolean;
@@ -19,32 +28,22 @@ export interface WalletAuthResult {
 
 /**
  * Generate a challenge for wallet authentication
+ * Stores challenge in database instead of in-memory Map
  */
-export function generateChallenge(walletAddress: string): { challenge: string; timestamp: number } {
+export async function generateChallenge(walletAddress: string): Promise<{ challenge: string; timestamp: number }> {
   const challenge = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   const timestamp = Date.now();
   const expiresAt = timestamp + SIGNATURE_VALIDITY_MS;
   
-  // Store challenge for this wallet
-  challengeStore.set(walletAddress.toLowerCase(), { challenge, timestamp, expiresAt });
+  // Store challenge in database (DoS-resistant)
+  await storeChallenge(walletAddress.toLowerCase(), challenge, timestamp, expiresAt);
   
-  // Clean up old challenges periodically
-  cleanupExpiredChallenges();
+  // Clean up old challenges periodically (async, non-blocking)
+  cleanupExpiredChallengesDb().catch(err => 
+    console.warn("[WalletAuth] Failed to cleanup expired challenges:", err)
+  );
   
   return { challenge, timestamp };
-}
-
-/**
- * Clean up expired challenges
- */
-function cleanupExpiredChallenges() {
-  const now = Date.now();
-  const entries = Array.from(challengeStore.entries());
-  for (const [key, value] of entries) {
-    if (value.expiresAt < now) {
-      challengeStore.delete(key);
-    }
-  }
 }
 
 /**
@@ -68,8 +67,8 @@ export async function verifyAdminSignatureWithChallenge(
   try {
     const normalizedAddress = claimedAddress.toLowerCase();
     
-    // Check if we have a stored challenge for this address
-    const storedChallenge = challengeStore.get(normalizedAddress);
+    // Check if we have a stored challenge for this address (from database)
+    const storedChallenge = await getChallenge(normalizedAddress);
     if (!storedChallenge) {
       return {
         success: false,
@@ -87,10 +86,10 @@ export async function verifyAdminSignatureWithChallenge(
       };
     }
     
-    // Check timestamp validity (5 minutes)
+    // Check timestamp validity
     const now = Date.now();
     if (now > storedChallenge.expiresAt) {
-      challengeStore.delete(normalizedAddress);
+      await deleteChallenge(normalizedAddress);
       return {
         success: false,
         isAdmin: false,
@@ -151,7 +150,7 @@ export async function verifyAdminSignatureWithChallenge(
 
     // Mark signature as used and remove challenge
     await markSignatureUsed(signature, recoveredAddress);
-    challengeStore.delete(normalizedAddress);
+    await deleteChallenge(normalizedAddress);
 
     return {
       success: true,
