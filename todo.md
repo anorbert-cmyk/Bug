@@ -736,3 +736,37 @@
 - [x] Admin retry endpoint for failed analyses
 - [x] Automatic retry scheduler for transient failures
 - [x] Refund eligibility tracking
+
+## Error Handling Integration - January 2025
+
+### Routers.ts Integration
+- [ ] Import error handling modules into routers.ts
+- [ ] Wrap analysis generation with withRetry()
+- [ ] Add circuit breaker check before API calls
+- [ ] Implement handlePartialFailure for multi-part analyses
+- [ ] Add error notifications for failed analyses
+
+### Admin Error Dashboard
+- [ ] Add error metrics endpoint to admin router
+- [ ] Create Error Dashboard section in Admin.tsx
+- [ ] Display health status, error rate, circuit breaker state
+- [ ] Show recent errors with details
+- [ ] Add manual retry button for failed analyses
+
+
+## Error Handling & Admin Dashboard - January 3, 2026
+- [x] Create comprehensive error handling system (errorHandling.ts)
+- [x] Implement circuit breaker pattern for API resilience (retryStrategy.ts)
+- [x] Create graceful degradation for partial analysis results (gracefulDegradation.ts)
+- [x] Implement error notification system (errorNotifications.ts)
+- [x] Create error monitoring and metrics dashboard (errorMonitoring.ts)
+- [x] Create analysis helpers module (analysisHelpers.ts)
+- [x] Integrate error handling into routers.ts
+- [x] Add admin error dashboard endpoint (getErrorDashboard)
+- [x] Add circuit breaker reset endpoint (resetCircuitBreaker)
+- [x] Create Admin Error Dashboard UI component
+- [x] Add System Health & Error Monitoring section to Admin page
+- [x] Display circuit breaker status with reset button
+- [x] Show success rate and response time metrics
+- [x] Display recent errors log
+- [x] Write comprehensive vitest tests (28 tests passing)

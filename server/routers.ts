@@ -44,6 +44,50 @@ import { verifyAdminSignature, verifyAdminSignatureWithChallenge, checkAdminStat
 import { sendRapidApolloEmail, isEmailConfigured } from "./services/emailService";
 import { executeApexAnalysis, isPerplexityConfigured } from "./services/perplexityApiService";
 
+// Error handling imports
+import { 
+  AnalysisError, 
+  AnalysisErrorCode,
+  ErrorCategory,
+  TIER_ERROR_CONFIGS,
+  classifyError,
+  ApiError,
+  TimeoutError,
+  PartialFailureError,
+  CircuitBreakerOpenError,
+  MaxRetriesExceededError
+} from "./services/errorHandling";
+import { 
+  perplexityCircuitBreaker, 
+  CircuitState
+} from "./services/retryStrategy";
+import { 
+  handlePartialFailure,
+  getRecoveryStatus,
+  generateFallbackContent
+} from "./services/gracefulDegradation";
+import { 
+  notifyAnalysisFailed,
+  notifyPartialCompletion
+} from "./services/errorNotifications";
+import { 
+  getDashboardData,
+  getHealthStatus,
+  getMetrics
+} from "./services/errorMonitoring";
+import {
+  createPartialResultsManager,
+  PartialResultsManager,
+  logAnalysisStart,
+  logPartComplete,
+  logAnalysisComplete,
+  logError,
+  recordMetric,
+  addToRetryQueue,
+  RetryPriority,
+  withRetry
+} from "./services/analysisHelpers";
+
 // Zod schemas
 const tierSchema = z.enum(["standard", "medium", "full"]);
 
@@ -703,6 +747,69 @@ export const appRouter = router({
           }
         };
       }),
+
+    // Get error dashboard data for admin
+    getErrorDashboard: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        // Get error dashboard data from monitoring module
+        const dashboardData = getDashboardData();
+        const healthStatus = getHealthStatus();
+        const metrics = getMetrics();
+        
+        // Get circuit breaker status
+        const circuitBreakerStats = perplexityCircuitBreaker.getStats();
+        
+        return {
+          dashboard: dashboardData,
+          health: healthStatus,
+          metrics: metrics,
+          circuitBreaker: {
+            state: circuitBreakerStats.state,
+            failures: circuitBreakerStats.failures,
+            recentFailures: circuitBreakerStats.recentFailures,
+            resetTime: circuitBreakerStats.resetTime?.toISOString() || null,
+          },
+        };
+      }),
+
+    // Reset circuit breaker (admin action)
+    resetCircuitBreaker: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        // Force reset the circuit breaker
+        perplexityCircuitBreaker.forceReset();
+        
+        return { success: true, message: "Circuit breaker reset to CLOSED state" };
+      }),
   }),
 
   // ============ CONFIG ============
@@ -764,19 +871,65 @@ export const appRouter = router({
   }),
 });
 
-// Background analysis function
+// Background analysis function with comprehensive error handling
 async function startAnalysisInBackground(sessionId: string, problemStatement: string, tier: Tier, email?: string | null) {
+  const startTime = Date.now();
+  const tierConfig = TIER_ERROR_CONFIGS[tier];
+  let partialResultsManager: PartialResultsManager | null = null;
+  
+  // Log analysis start
+  logAnalysisStart(sessionId, tier, problemStatement);
+  
+  // Check circuit breaker state before starting
+  const circuitState = perplexityCircuitBreaker.getState();
+  if (circuitState === CircuitState.OPEN) {
+    console.warn(`[Analysis] Circuit breaker OPEN - queueing session ${sessionId} for retry`);
+    
+    // Add to retry queue instead of failing immediately
+    await addToRetryQueue({
+      sessionId,
+      tier,
+      problemStatement,
+      email: email || undefined,
+      retryCount: 0,
+      priority: tier === 'full' ? RetryPriority.HIGH : tier === 'medium' ? RetryPriority.MEDIUM : RetryPriority.LOW,
+      createdAt: new Date(),
+      lastError: 'Circuit breaker open - API temporarily unavailable',
+    });
+    
+    // Notify user about delay (circuit breaker open)
+    if (email) {
+      // Use classifyError to create proper AnalysisError
+      const circuitError = classifyError(new Error('API temporarily unavailable - your analysis is queued'), { sessionId, tier });
+      await notifyAnalysisFailed(sessionId, tier, email, true, circuitError);
+    }
+    
+    await updateAnalysisSessionStatus(sessionId, "processing");
+    return;
+  }
+
   try {
     console.log(`[Analysis] Starting ${tier} analysis for session ${sessionId}`);
 
     if (isMultiPartTier(tier)) {
-      // Syndicate tier: 6-part comprehensive APEX analysis
+      // Syndicate tier: 6-part comprehensive APEX analysis with error handling
+      const totalParts = 6;
+      partialResultsManager = createPartialResultsManager(sessionId, tier, totalParts);
+      
       const result = await generateMultiPartAnalysis(problemStatement, {
         onPartComplete: async (partNum, content) => {
           console.log(`[Analysis] Part ${partNum} complete for session ${sessionId}`);
+          logPartComplete(sessionId, partNum, totalParts);
+          
+          // Track successful part
+          partialResultsManager?.markPartComplete(partNum, content);
+          
           // Support all 6 parts for Syndicate tier
           const partKey = `part${partNum}` as "part1" | "part2" | "part3" | "part4" | "part5" | "part6";
           await updateAnalysisResult(sessionId, { [partKey]: content });
+          
+          // Record metric
+          recordMetric(sessionId, tier, 'part_complete', Date.now() - startTime);
         },
         onComplete: async (result) => {
           await updateAnalysisResult(sessionId, {
@@ -784,9 +937,15 @@ async function startAnalysisInBackground(sessionId: string, problemStatement: st
             generatedAt: new Date(result.generatedAt),
           });
           await updateAnalysisSessionStatus(sessionId, "completed");
-          console.log(`[Analysis] 6-part Syndicate analysis complete for session ${sessionId}`);
           
-          // Send email notification
+          // Log completion
+          const duration = Date.now() - startTime;
+          logAnalysisComplete(sessionId, tier, duration, true);
+          recordMetric(sessionId, tier, 'success', duration);
+          
+          console.log(`[Analysis] 6-part Syndicate analysis complete for session ${sessionId} in ${duration}ms`);
+          
+          // Send success email notification
           if (email && isEmailConfigured()) {
             await sendRapidApolloEmail({
               to: email,
@@ -801,17 +960,57 @@ async function startAnalysisInBackground(sessionId: string, problemStatement: st
         },
         onError: async (error) => {
           console.error(`[Analysis] Error for session ${sessionId}:`, error);
-          await updateAnalysisSessionStatus(sessionId, "failed");
+          
+          // Check if we have partial results to save
+          if (partialResultsManager) {
+            const completedParts = partialResultsManager.getCompletedParts();
+            const completionPercentage = partialResultsManager.getCompletionPercentage();
+            
+            // Check if we have minimum parts for partial success
+            const minParts = tierConfig.minPartsForPartialSuccess;
+            const minPercentage = (minParts / tierConfig.expectedParts) * 100;
+            if (completionPercentage >= minPercentage) {
+              // We have enough for partial delivery
+              console.log(`[Analysis] Saving partial results (${completionPercentage}%) for session ${sessionId}`);
+              
+              const partialMarkdown = partialResultsManager.generatePartialMarkdown();
+              await updateAnalysisResult(sessionId, {
+                fullMarkdown: partialMarkdown,
+                generatedAt: new Date(),
+              });
+              // Mark as completed even if partial (user can still view results)
+              await updateAnalysisSessionStatus(sessionId, "completed");
+              
+              // Log partial success
+              console.log(`[Analysis] Partial success: ${completedParts.length}/${totalParts} parts completed for session ${sessionId}`);
+              
+              logAnalysisComplete(sessionId, tier, Date.now() - startTime, false, completionPercentage);
+              return;
+            }
+          }
+          
+          // Full failure - add to retry queue
+          await handleAnalysisFailure(sessionId, tier, problemStatement, email, error, startTime);
         },
       });
     } else if (tier === "medium") {
-      // Insider tier: 2-part strategic blueprint
+      // Insider tier: 2-part strategic blueprint with error handling
+      const totalParts = 2;
+      partialResultsManager = createPartialResultsManager(sessionId, tier, totalParts);
+      
       console.log(`[Analysis] Starting Insider 2-part analysis for session ${sessionId}`);
+      
       const result = await generateInsiderAnalysis(problemStatement, {
         onPartComplete: async (partNum, content) => {
           console.log(`[Analysis] Insider Part ${partNum} complete for session ${sessionId}`);
+          logPartComplete(sessionId, partNum, totalParts);
+          
+          partialResultsManager?.markPartComplete(partNum, content);
+          
           const partKey = `part${partNum}` as "part1" | "part2";
           await updateAnalysisResult(sessionId, { [partKey]: content });
+          
+          recordMetric(sessionId, tier, 'part_complete', Date.now() - startTime);
         },
         onComplete: async (result) => {
           await updateAnalysisResult(sessionId, {
@@ -819,7 +1018,12 @@ async function startAnalysisInBackground(sessionId: string, problemStatement: st
             generatedAt: new Date(result.generatedAt),
           });
           await updateAnalysisSessionStatus(sessionId, "completed");
-          console.log(`[Analysis] 2-part Insider analysis complete for session ${sessionId}`);
+          
+          const duration = Date.now() - startTime;
+          logAnalysisComplete(sessionId, tier, duration, true);
+          recordMetric(sessionId, tier, 'success', duration);
+          
+          console.log(`[Analysis] 2-part Insider analysis complete for session ${sessionId} in ${duration}ms`);
           
           // Send email notification
           if (email && isEmailConfigured()) {
@@ -836,19 +1040,65 @@ async function startAnalysisInBackground(sessionId: string, problemStatement: st
         },
         onError: async (error) => {
           console.error(`[Analysis] Insider error for session ${sessionId}:`, error);
-          await updateAnalysisSessionStatus(sessionId, "failed");
+          
+          // Check for partial results (at least part 1)
+          if (partialResultsManager) {
+            const completedParts = partialResultsManager.getCompletedParts();
+            const completionPercentage = partialResultsManager.getCompletionPercentage();
+            
+            // Check if we have minimum parts for partial success
+            const minParts = tierConfig.minPartsForPartialSuccess;
+            const minPercentage = (minParts / tierConfig.expectedParts) * 100;
+            if (completionPercentage >= minPercentage) {
+              console.log(`[Analysis] Saving partial Insider results (${completionPercentage}%) for session ${sessionId}`);
+              
+              const partialMarkdown = partialResultsManager.generatePartialMarkdown();
+              await updateAnalysisResult(sessionId, {
+                fullMarkdown: partialMarkdown,
+                generatedAt: new Date(),
+              });
+              // Mark as completed even if partial (user can still view results)
+              await updateAnalysisSessionStatus(sessionId, "completed");
+              
+              // Log partial success
+              console.log(`[Analysis] Partial success: ${completedParts.length}/${totalParts} parts completed for session ${sessionId}`);
+              
+              logAnalysisComplete(sessionId, tier, Date.now() - startTime, false, completionPercentage);
+              return;
+            }
+          }
+          
+          await handleAnalysisFailure(sessionId, tier, problemStatement, email, error, startTime);
         },
       });
     } else {
-      // Observer tier: Single analysis
+      // Observer tier: Single analysis with retry wrapper
       console.log(`[Analysis] Starting Observer single analysis for session ${sessionId}`);
-      const result = await generateSingleAnalysis(problemStatement, "standard");
+      
+      const result = await withRetry(
+        async () => generateSingleAnalysis(problemStatement, "standard"),
+        {
+          maxRetries: tierConfig.maxRetries,
+          baseDelay: tierConfig.baseDelay,
+          maxDelay: 30000,
+          onRetry: (attempt, error) => {
+            console.log(`[Analysis] Observer retry ${attempt}/${tierConfig.maxRetries} for session ${sessionId}: ${error.message}`);
+            recordMetric(sessionId, tier, 'retry', Date.now() - startTime);
+          },
+        }
+      );
+      
       await updateAnalysisResult(sessionId, {
         singleResult: result.content,
         generatedAt: new Date(result.generatedAt),
       });
       await updateAnalysisSessionStatus(sessionId, "completed");
-      console.log(`[Analysis] Observer analysis complete for session ${sessionId}`);
+      
+      const duration = Date.now() - startTime;
+      logAnalysisComplete(sessionId, tier, duration, true);
+      recordMetric(sessionId, tier, 'success', duration);
+      
+      console.log(`[Analysis] Observer analysis complete for session ${sessionId} in ${duration}ms`);
       
       // Send email notification
       if (email && isEmailConfigured()) {
@@ -864,8 +1114,74 @@ async function startAnalysisInBackground(sessionId: string, problemStatement: st
       }
     }
   } catch (error) {
-    console.error(`[Analysis] Failed for session ${sessionId}:`, error);
+    await handleAnalysisFailure(sessionId, tier, problemStatement, email, error, startTime);
+  }
+}
+
+// Helper function to handle analysis failures with retry queue and notifications
+async function handleAnalysisFailure(
+  sessionId: string, 
+  tier: Tier, 
+  problemStatement: string, 
+  email: string | null | undefined, 
+  error: unknown,
+  startTime: number
+) {
+  const tierConfig = TIER_ERROR_CONFIGS[tier];
+  const duration = Date.now() - startTime;
+  
+  // Create structured error using classifyError
+  const analysisError = error instanceof AnalysisError 
+    ? error 
+    : classifyError(error, { sessionId, tier });
+  
+  // Log the error
+  logError(analysisError, { sessionId, tier, duration });
+  recordMetric(sessionId, tier, 'failure', duration);
+  
+  console.error(`[Analysis] Failed for session ${sessionId}:`, analysisError.message);
+  
+  // Check if we should add to retry queue (recoverable errors only)
+  const isRetryable = analysisError.isRetryable && 
+    analysisError.category !== ErrorCategory.FATAL;
+  
+  if (isRetryable) {
+    // Add to retry queue for automatic retry
+    await addToRetryQueue({
+      sessionId,
+      tier,
+      problemStatement,
+      email: email || undefined,
+      retryCount: 0,
+      priority: tier === 'full' ? RetryPriority.HIGH : tier === 'medium' ? RetryPriority.MEDIUM : RetryPriority.LOW,
+      createdAt: new Date(),
+      lastError: analysisError.message,
+    });
+    
+    await updateAnalysisSessionStatus(sessionId, "processing");
+    
+    // Notify user that analysis is queued for retry
+    if (email) {
+      await notifyAnalysisFailed(sessionId, tier, email, true, analysisError);
+    }
+    
+    console.log(`[Analysis] Session ${sessionId} queued for retry`);
+  } else {
+    // Non-retryable error - mark as failed
     await updateAnalysisSessionStatus(sessionId, "failed");
+    
+    // Notify user of failure
+    if (email) {
+      await notifyAnalysisFailed(sessionId, tier, email, false, analysisError);
+    }
+    
+    // Alert admin for high-value failures
+    if (tier === 'full' || tier === 'medium') {
+      await notifyOwner({
+        title: `Analysis Failed - ${tier.toUpperCase()} Tier`,
+        content: `Session: ${sessionId}\nTier: ${tier}\nError: ${analysisError.message}\nCategory: ${analysisError.category}\n\nThis may require manual intervention or refund.`,
+      });
+    }
   }
 }
 

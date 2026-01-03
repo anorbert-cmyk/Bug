@@ -35,7 +35,11 @@ import {
   Clock,
   ArrowUpDown,
   Mail,
-  Download
+  Download,
+  AlertTriangle,
+  Activity,
+  Zap,
+  RotateCcw
 } from "lucide-react";
 
 // Admin wallet address (should match server-side)
@@ -105,6 +109,23 @@ export default function Admin() {
 
   const emailSubscribers = emailData?.subscribers || [];
   const emailStats = emailData?.stats || { total: 0, verified: 0, unverified: 0, verificationRate: 0 };
+
+  // Error dashboard query
+  const { data: errorDashboard, isLoading: errorLoading, refetch: refetchErrors } = trpc.admin.getErrorDashboard.useQuery(
+    adminAuth || { signature: "", timestamp: 0, address: "" },
+    { enabled: isAuthenticated && !!adminAuth, refetchInterval: 30000 } // Auto-refresh every 30s
+  );
+
+  // Reset circuit breaker mutation
+  const resetCircuitBreaker = trpc.admin.resetCircuitBreaker.useMutation({
+    onSuccess: () => {
+      toast.success("Circuit breaker reset", { description: "API connections restored" });
+      refetchErrors();
+    },
+    onError: (error) => {
+      toast.error("Failed to reset circuit breaker", { description: error.message });
+    }
+  });
 
   // Export emails to CSV
   const exportEmailsToCSV = () => {
@@ -622,6 +643,195 @@ export default function Admin() {
                     )}
                   </div>
                 ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Error Dashboard */}
+        <Card className="glass-panel">
+          <CardHeader>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
+                <Activity className="h-5 w-5" />
+                System Health & Error Monitoring
+              </h2>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => refetchErrors()}
+                  disabled={errorLoading}
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${errorLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {errorLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-20 w-full" />
+                ))}
+              </div>
+            ) : errorDashboard ? (
+              <div className="space-y-6">
+                {/* Circuit Breaker Status */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <Card className={`p-4 ${
+                    errorDashboard.circuitBreaker.state === 'closed' 
+                      ? 'border-green-500/50 bg-green-500/5' 
+                      : errorDashboard.circuitBreaker.state === 'open'
+                      ? 'border-red-500/50 bg-red-500/5'
+                      : 'border-yellow-500/50 bg-yellow-500/5'
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Circuit Breaker</p>
+                        <p className="text-lg font-bold capitalize flex items-center gap-2">
+                          {errorDashboard.circuitBreaker.state === 'closed' && <CheckCircle className="h-4 w-4 text-green-500" />}
+                          {errorDashboard.circuitBreaker.state === 'open' && <XCircle className="h-4 w-4 text-red-500" />}
+                          {errorDashboard.circuitBreaker.state === 'half_open' && <Clock className="h-4 w-4 text-yellow-500" />}
+                          {errorDashboard.circuitBreaker.state.replace('_', ' ')}
+                        </p>
+                      </div>
+                      {errorDashboard.circuitBreaker.state !== 'closed' && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => resetCircuitBreaker.mutate(adminAuth!)}
+                          disabled={resetCircuitBreaker.isPending}
+                        >
+                          <RotateCcw className="h-4 w-4 mr-1" />
+                          Reset
+                        </Button>
+                      )}
+                    </div>
+                    {errorDashboard.circuitBreaker.state === 'open' && errorDashboard.circuitBreaker.resetTime && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Auto-reset: {new Date(errorDashboard.circuitBreaker.resetTime).toLocaleTimeString()}
+                      </p>
+                    )}
+                  </Card>
+
+                  <Card className="p-4">
+                    <p className="text-xs text-muted-foreground">Recent Failures</p>
+                    <p className="text-2xl font-bold">{errorDashboard.circuitBreaker.recentFailures}</p>
+                    <p className="text-xs text-muted-foreground">in last 2 minutes</p>
+                  </Card>
+
+                  <Card className="p-4">
+                    <p className="text-xs text-muted-foreground">Success Rate</p>
+                    <p className="text-2xl font-bold">
+                      {(errorDashboard.metrics as any).successRate?.toFixed(1) || '100'}%
+                    </p>
+                    <p className="text-xs text-muted-foreground">last hour</p>
+                  </Card>
+
+                  <Card className="p-4">
+                    <p className="text-xs text-muted-foreground">Avg Response Time</p>
+                    <p className="text-2xl font-bold">
+                      {errorDashboard.metrics.averageDuration 
+                        ? `${(errorDashboard.metrics.averageDuration / 1000).toFixed(1)}s`
+                        : 'N/A'
+                      }
+                    </p>
+                    <p className="text-xs text-muted-foreground">per analysis</p>
+                  </Card>
+                </div>
+
+                {/* Health Status */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card className="p-4">
+                    <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+                      <Zap className="h-4 w-4" />
+                      System Health
+                    </h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Overall Status</span>
+                        <Badge variant={
+                          errorDashboard.health.status === 'healthy' ? 'default' :
+                          errorDashboard.health.status === 'degraded' ? 'secondary' : 'destructive'
+                        }>
+                          {errorDashboard.health.status}
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Perplexity API</span>
+                        <Badge variant={
+                          (errorDashboard.health as any).services?.perplexity === 'healthy' ? 'default' : 'destructive'
+                        }>
+                          {(errorDashboard.health as any).services?.perplexity || 'operational'}
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Database</span>
+                        <Badge variant={
+                          (errorDashboard.health as any).services?.database === 'healthy' ? 'default' : 'destructive'
+                        }>
+                          {(errorDashboard.health as any).services?.database || 'operational'}
+                        </Badge>
+                      </div>
+                    </div>
+                  </Card>
+
+                  <Card className="p-4">
+                    <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4" />
+                      Error Summary
+                    </h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Total Requests</span>
+                        <span className="font-medium">{errorDashboard.metrics.totalRequests || 0}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Successful</span>
+                        <span className="font-medium text-green-500">{errorDashboard.metrics.successfulRequests || 0}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Failed</span>
+                        <span className="font-medium text-red-500">{errorDashboard.metrics.failedRequests || 0}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Retried</span>
+                        <span className="font-medium text-yellow-500">{(errorDashboard.metrics as any).retriedRequests || 0}</span>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+
+                {/* Recent Errors Log */}
+                {errorDashboard.dashboard?.recentErrors && errorDashboard.dashboard.recentErrors.length > 0 && (
+                  <Card className="p-4">
+                    <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+                      <XCircle className="h-4 w-4 text-red-500" />
+                      Recent Errors
+                    </h3>
+                    <div className="space-y-2 max-h-[200px] overflow-y-auto">
+                      {errorDashboard.dashboard.recentErrors.slice(0, 10).map((error: any, i: number) => (
+                        <div key={i} className="text-xs p-2 bg-muted/50 rounded flex justify-between items-start">
+                          <div>
+                            <code className="text-red-500">{error.code || 'ERROR'}</code>
+                            <span className="text-muted-foreground ml-2">{error.message}</span>
+                          </div>
+                          <span className="text-muted-foreground whitespace-nowrap ml-2">
+                            {error.timestamp ? new Date(error.timestamp).toLocaleTimeString() : ''}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg font-medium">No error data available</p>
+                <p className="text-sm">System monitoring data will appear here</p>
               </div>
             )}
           </CardContent>
