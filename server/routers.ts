@@ -111,6 +111,21 @@ import {
   stopRetryQueueProcessor,
   isProcessorRunning
 } from "./services/retryQueueProcessor";
+import {
+  createOperation,
+  transitionState,
+  recordPartCompletion,
+  recordPartFailure,
+  getOperationDetails,
+  getOperationBySessionId,
+  getOperations,
+  getRetryableOperations,
+  pauseOperation,
+  resumeOperation,
+  cancelOperation,
+  triggerRegeneration,
+  TIER_PARTS
+} from "./services/analysisStateMachine";
 
 // Zod schemas
 const tierSchema = z.enum(["standard", "medium", "full"]);
@@ -964,6 +979,424 @@ export const appRouter = router({
 
         await runHourlyAggregation();
         return { success: true, message: "Hourly metrics aggregation triggered" };
+      }),
+
+    // ============ ANALYSIS OPERATIONS CENTER ============
+    
+    /**
+     * Get all analysis operations with filtering
+     * Returns paginated list of operations with their current state
+     */
+    getAnalysisOperations: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+        state: z.enum(["initialized", "generating", "part_completed", "paused", "failed", "completed", "cancelled"]).optional(),
+        tier: tierSchema.optional(),
+        limit: z.number().min(1).max(100).default(20),
+        offset: z.number().min(0).default(0),
+      }))
+      .query(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const operations = await getOperations({
+          state: input.state,
+          tier: input.tier,
+          limit: input.limit,
+          offset: input.offset,
+        });
+
+        // Get total count for pagination
+        const allOps = await getOperations({ state: input.state, tier: input.tier });
+        
+        return {
+          operations: operations.map(op => ({
+            ...op,
+            progressPercent: op.totalParts > 0 
+              ? Math.round((op.completedParts / op.totalParts) * 100) 
+              : 0,
+            tierLabel: op.tier === 'standard' ? 'Observer' : op.tier === 'medium' ? 'Insider' : 'Syndicate',
+          })),
+          total: allOps.length,
+          hasMore: input.offset + operations.length < allOps.length,
+        };
+      }),
+
+    /**
+     * Get detailed operation information including events and partial results
+     */
+    getOperationDetails: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+        operationId: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const details = await getOperationDetails(input.operationId);
+        
+        if (!details) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Operation not found" });
+        }
+
+        // Calculate additional metrics
+        const op = details.operation;
+        const completedEvents = details.events.filter(e => e.eventType === 'part_completed');
+        const avgPartDuration = completedEvents.length > 0
+          ? Math.round(completedEvents.reduce((sum, e) => sum + (e.durationMs || 0), 0) / completedEvents.length)
+          : null;
+
+        return {
+          operation: {
+            ...op,
+            progressPercent: op.totalParts > 0 
+              ? Math.round((op.completedParts / op.totalParts) * 100) 
+              : 0,
+            tierLabel: op.tier === 'standard' ? 'Observer' : op.tier === 'medium' ? 'Insider' : 'Syndicate',
+          },
+          events: details.events.map(e => ({
+            ...e,
+            createdAtFormatted: e.createdAt ? new Date(e.createdAt).toISOString() : null,
+          })),
+          partialResults: details.partialResults,
+          metrics: {
+            avgPartDurationMs: avgPartDuration,
+            totalEventsCount: details.events.length,
+            failureEventsCount: details.events.filter(e => 
+              e.eventType === 'part_failed' || e.eventType === 'operation_failed'
+            ).length,
+          },
+        };
+      }),
+
+    /**
+     * Get operation by session ID
+     */
+    getOperationBySession: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+        sessionId: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const operation = await getOperationBySessionId(input.sessionId);
+        
+        if (!operation) {
+          return { found: false, operation: null };
+        }
+
+        return {
+          found: true,
+          operation: {
+            ...operation,
+            progressPercent: operation.totalParts > 0 
+              ? Math.round((operation.completedParts / operation.totalParts) * 100) 
+              : 0,
+            tierLabel: operation.tier === 'standard' ? 'Observer' : operation.tier === 'medium' ? 'Insider' : 'Syndicate',
+          },
+        };
+      }),
+
+    /**
+     * Get all failed operations that can be retried
+     */
+    getRetryableOperations: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const operations = await getRetryableOperations();
+        
+        return {
+          operations: operations.map(op => ({
+            ...op,
+            progressPercent: op.totalParts > 0 
+              ? Math.round((op.completedParts / op.totalParts) * 100) 
+              : 0,
+            tierLabel: op.tier === 'standard' ? 'Observer' : op.tier === 'medium' ? 'Insider' : 'Syndicate',
+            canRetry: op.retryCount < 5,
+          })),
+          total: operations.length,
+        };
+      }),
+
+    /**
+     * Pause an active operation (admin action)
+     */
+    pauseOperation: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+        operationId: z.string(),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const result = await pauseOperation(input.operationId, input.address, input.reason);
+        
+        if (!result.success) {
+          throw new TRPCError({ 
+            code: "BAD_REQUEST", 
+            message: result.error || "Failed to pause operation" 
+          });
+        }
+
+        return { 
+          success: true, 
+          message: `Operation paused successfully`,
+          previousState: result.previousState,
+          newState: result.newState,
+        };
+      }),
+
+    /**
+     * Resume a paused operation (admin action)
+     */
+    resumeOperation: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+        operationId: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const result = await resumeOperation(input.operationId, input.address);
+        
+        if (!result.success) {
+          throw new TRPCError({ 
+            code: "BAD_REQUEST", 
+            message: result.error || "Failed to resume operation" 
+          });
+        }
+
+        return { 
+          success: true, 
+          message: `Operation resumed successfully`,
+          previousState: result.previousState,
+          newState: result.newState,
+        };
+      }),
+
+    /**
+     * Cancel an operation (admin action)
+     */
+    cancelOperation: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+        operationId: z.string(),
+        reason: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const result = await cancelOperation(input.operationId, input.address, input.reason);
+        
+        if (!result.success) {
+          throw new TRPCError({ 
+            code: "BAD_REQUEST", 
+            message: result.error || "Failed to cancel operation" 
+          });
+        }
+
+        return { 
+          success: true, 
+          message: `Operation cancelled successfully`,
+          previousState: result.previousState,
+          newState: result.newState,
+        };
+      }),
+
+    /**
+     * Trigger regeneration of a failed analysis (admin action)
+     * Creates a new operation and starts the analysis process
+     */
+    triggerRegeneration: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+        sessionId: z.string(),
+        fromPart: z.number().min(1).max(6).optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        const result = await triggerRegeneration(input.sessionId, input.address, {
+          fromPart: input.fromPart,
+        });
+        
+        if (!result.success) {
+          throw new TRPCError({ 
+            code: "BAD_REQUEST", 
+            message: result.error || "Failed to trigger regeneration" 
+          });
+        }
+
+        // Get session to start background analysis
+        const session = await getAnalysisSessionById(input.sessionId);
+        if (session) {
+          // Start the analysis in background
+          startAnalysisInBackground(
+            input.sessionId, 
+            session.problemStatement, 
+            session.tier as Tier, 
+            session.email
+          );
+        }
+
+        return { 
+          success: true, 
+          message: `Regeneration triggered successfully`,
+          newOperationId: result.newOperationId,
+        };
+      }),
+
+    /**
+     * Get analysis operations summary for dashboard
+     */
+    getOperationsSummary: publicProcedure
+      .input(z.object({
+        signature: z.string(),
+        timestamp: z.number(),
+        address: z.string(),
+      }))
+      .query(async ({ input }) => {
+        const authResult = await verifyAdminSignature(
+          input.signature,
+          input.timestamp,
+          input.address
+        );
+
+        if (!authResult.success) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: authResult.error });
+        }
+
+        // Get counts by state
+        const allOps = await getOperations({});
+        const stateCounts = {
+          initialized: 0,
+          generating: 0,
+          part_completed: 0,
+          paused: 0,
+          failed: 0,
+          completed: 0,
+          cancelled: 0,
+        };
+
+        const tierCounts = {
+          standard: 0,
+          medium: 0,
+          full: 0,
+        };
+
+        let totalCompletedParts = 0;
+        let totalParts = 0;
+
+        for (const op of allOps) {
+          stateCounts[op.state as keyof typeof stateCounts]++;
+          tierCounts[op.tier as keyof typeof tierCounts]++;
+          totalCompletedParts += op.completedParts;
+          totalParts += op.totalParts;
+        }
+
+        const activeOperations = stateCounts.initialized + stateCounts.generating + stateCounts.part_completed;
+        const failedOperations = stateCounts.failed;
+        const successRate = allOps.length > 0 
+          ? Math.round((stateCounts.completed / allOps.length) * 100) 
+          : 0;
+
+        return {
+          total: allOps.length,
+          stateCounts,
+          tierCounts,
+          activeOperations,
+          failedOperations,
+          completedOperations: stateCounts.completed,
+          successRate,
+          overallProgress: totalParts > 0 
+            ? Math.round((totalCompletedParts / totalParts) * 100) 
+            : 0,
+        };
       }),
   }),
 

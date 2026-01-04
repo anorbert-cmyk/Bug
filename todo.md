@@ -795,3 +795,16 @@
 - [x] Add auto-start for retry queue processor on server startup
 - [x] Add auto-start for metrics aggregation scheduler (hourly)
 - [x] Fix Bar chart nested component issue in Admin dashboard (use Cell instead of nested Bar)
+
+
+## Admin Analysis Operations Center - January 4, 2026
+- [x] Design and implement analysis_operations + analysis_operation_events tables for granular phase tracking
+- [x] Create AnalysisStateMachine service with proper state transitions and event sourcing
+- [x] Implement phase-level progress persistence during multi-part generation
+- [x] Add admin API endpoints: getAnalysisOperations, getOperationDetails, getRetryableOperations, triggerRegeneration
+- [x] Add admin API endpoints for operation control: pauseOperation, resumeOperation, cancelOperation
+- [x] Build Analysis Operations Center UI with real-time status monitoring (auto-refresh every 10s)
+- [x] Add partial results viewer with part-by-part inspection and progress visualization
+- [x] Implement manual regeneration with selective part regeneration option (fromPart parameter)
+- [x] Add audit logging for all admin operations (admin_audit_log table)
+- [x] Write comprehensive tests for state machine and API endpoints (68 tests, 279 total)

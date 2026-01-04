@@ -388,3 +388,148 @@ export const hourlyMetrics = mysqlTable("hourly_metrics", {
 
 export type HourlyMetric = typeof hourlyMetrics.$inferSelect;
 export type InsertHourlyMetric = typeof hourlyMetrics.$inferInsert;
+
+
+/**
+ * Analysis Operations - Granular phase-level tracking for multi-part analyses
+ * Follows Event Sourcing pattern for complete audit trail
+ */
+export const analysisOperations = mysqlTable("analysis_operations", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull(),
+  operationId: varchar("operationId", { length: 64 }).notNull().unique(), // UUID for each operation attempt
+  tier: tierEnum.notNull(),
+  
+  // State machine tracking
+  state: mysqlEnum("operationState", [
+    "initialized",      // Operation created, waiting to start
+    "generating",       // Currently generating content
+    "part_completed",   // A part finished, moving to next
+    "paused",          // Manually paused by admin
+    "failed",          // Failed, may be retried
+    "completed",       // All parts successfully generated
+    "cancelled"        // Manually cancelled by admin
+  ]).default("initialized").notNull(),
+  
+  // Progress tracking
+  totalParts: int("totalParts").notNull(), // 1 for Observer, 2 for Insider, 6 for Syndicate
+  completedParts: int("completedParts").default(0).notNull(),
+  currentPart: int("currentPart").default(0).notNull(), // 0 = not started
+  
+  // Timing
+  startedAt: timestamp("startedAt"),
+  lastPartCompletedAt: timestamp("lastPartCompletedAt"),
+  completedAt: timestamp("completedAt"),
+  estimatedCompletionAt: timestamp("estimatedCompletionAt"),
+  
+  // Error tracking
+  lastError: text("lastError"),
+  lastErrorAt: timestamp("lastErrorAt"),
+  failedPart: int("failedPart"), // Which part failed
+  retryCount: int("retryCount").default(0).notNull(),
+  
+  // Metadata
+  triggeredBy: mysqlEnum("triggeredBy", ["user", "system", "admin", "retry_queue"]).default("user").notNull(),
+  adminNotes: text("adminNotes"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AnalysisOperation = typeof analysisOperations.$inferSelect;
+export type InsertAnalysisOperation = typeof analysisOperations.$inferInsert;
+
+/**
+ * Analysis Operation Events - Event sourcing log for complete audit trail
+ * Every state change is recorded as an immutable event
+ */
+export const analysisOperationEvents = mysqlTable("analysis_operation_events", {
+  id: int("id").autoincrement().primaryKey(),
+  operationId: varchar("operationId", { length: 64 }).notNull(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull(),
+  
+  // Event details
+  eventType: mysqlEnum("eventType", [
+    "operation_started",
+    "part_started",
+    "part_completed",
+    "part_failed",
+    "operation_completed",
+    "operation_failed",
+    "operation_paused",
+    "operation_resumed",
+    "operation_cancelled",
+    "operation_retried",
+    "admin_intervention"
+  ]).notNull(),
+  
+  // Context
+  partNumber: int("partNumber"), // Which part this event relates to
+  previousState: varchar("previousState", { length: 32 }),
+  newState: varchar("newState", { length: 32 }),
+  
+  // Error details (for failure events)
+  errorCode: varchar("errorCode", { length: 64 }),
+  errorMessage: text("errorMessage"),
+  
+  // Performance metrics
+  durationMs: int("durationMs"), // Duration of the part/operation
+  tokenCount: int("tokenCount"), // Tokens generated
+  
+  // Actor tracking
+  actorType: mysqlEnum("actorType", ["system", "admin", "user"]).default("system").notNull(),
+  actorId: varchar("actorId", { length: 64 }), // Admin wallet or user ID
+  
+  // Additional context
+  metadata: json("metadata"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AnalysisOperationEvent = typeof analysisOperationEvents.$inferSelect;
+export type InsertAnalysisOperationEvent = typeof analysisOperationEvents.$inferInsert;
+
+/**
+ * Admin Audit Log - Tracks all admin actions for compliance and debugging
+ */
+export const adminAuditLog = mysqlTable("admin_audit_log", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Admin identification
+  adminWallet: varchar("adminWallet", { length: 42 }).notNull(),
+  
+  // Action details
+  action: mysqlEnum("action", [
+    "view_analysis",
+    "view_partial_results",
+    "trigger_regeneration",
+    "pause_operation",
+    "resume_operation",
+    "cancel_operation",
+    "modify_priority",
+    "acknowledge_alert",
+    "reset_circuit_breaker",
+    "export_data",
+    "other"
+  ]).notNull(),
+  
+  // Target
+  targetType: mysqlEnum("targetType", ["analysis", "operation", "user", "system"]).notNull(),
+  targetId: varchar("targetId", { length: 64 }), // sessionId, operationId, userId, etc.
+  
+  // Request details
+  requestDetails: json("requestDetails"), // Parameters passed to the action
+  
+  // Result
+  success: boolean("success").default(true).notNull(),
+  resultDetails: json("resultDetails"), // Response or error details
+  
+  // Context
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AdminAuditLogEntry = typeof adminAuditLog.$inferSelect;
+export type InsertAdminAuditLogEntry = typeof adminAuditLog.$inferInsert;

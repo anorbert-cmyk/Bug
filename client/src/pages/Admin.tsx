@@ -191,6 +191,86 @@ export default function Admin() {
     }
   });
 
+  // ============ ANALYSIS OPERATIONS CENTER ============
+  const [operationsFilter, setOperationsFilter] = useState<string | undefined>(undefined);
+  const [selectedOperationId, setSelectedOperationId] = useState<string | null>(null);
+
+  // Operations summary query
+  const { data: operationsSummary, isLoading: summaryLoading, refetch: refetchSummary } = trpc.admin.getOperationsSummary.useQuery(
+    adminAuth || { signature: "", timestamp: 0, address: "" },
+    { enabled: isAuthenticated && !!adminAuth, refetchInterval: 15000 }
+  );
+
+  // Operations list query
+  const { data: operationsData, isLoading: operationsLoading, refetch: refetchOperations } = trpc.admin.getAnalysisOperations.useQuery(
+    adminAuth ? { ...adminAuth, state: operationsFilter as any, limit: 20, offset: 0 } : { signature: "", timestamp: 0, address: "", limit: 20, offset: 0 },
+    { enabled: isAuthenticated && !!adminAuth, refetchInterval: 10000 }
+  );
+
+  // Retryable operations query
+  const { data: retryableOps, isLoading: retryableLoading, refetch: refetchRetryable } = trpc.admin.getRetryableOperations.useQuery(
+    adminAuth || { signature: "", timestamp: 0, address: "" },
+    { enabled: isAuthenticated && !!adminAuth }
+  );
+
+  // Operation details query (when an operation is selected)
+  const { data: operationDetails, isLoading: detailsLoading, refetch: refetchDetails } = trpc.admin.getOperationDetails.useQuery(
+    adminAuth && selectedOperationId ? { ...adminAuth, operationId: selectedOperationId } : { signature: "", timestamp: 0, address: "", operationId: "" },
+    { enabled: isAuthenticated && !!adminAuth && !!selectedOperationId }
+  );
+
+  // Pause operation mutation
+  const pauseOperationMutation = trpc.admin.pauseOperation.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      refetchOperations();
+      refetchSummary();
+      if (selectedOperationId) refetchDetails();
+    },
+    onError: (error) => {
+      toast.error("Failed to pause operation", { description: error.message });
+    }
+  });
+
+  // Resume operation mutation
+  const resumeOperationMutation = trpc.admin.resumeOperation.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      refetchOperations();
+      refetchSummary();
+      if (selectedOperationId) refetchDetails();
+    },
+    onError: (error) => {
+      toast.error("Failed to resume operation", { description: error.message });
+    }
+  });
+
+  // Cancel operation mutation
+  const cancelOperationMutation = trpc.admin.cancelOperation.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      refetchOperations();
+      refetchSummary();
+      if (selectedOperationId) refetchDetails();
+    },
+    onError: (error) => {
+      toast.error("Failed to cancel operation", { description: error.message });
+    }
+  });
+
+  // Trigger regeneration mutation
+  const triggerRegenerationMutation = trpc.admin.triggerRegeneration.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message, { description: `New operation: ${data.newOperationId?.slice(0, 8)}...` });
+      refetchOperations();
+      refetchSummary();
+      refetchRetryable();
+    },
+    onError: (error) => {
+      toast.error("Failed to trigger regeneration", { description: error.message });
+    }
+  });
+
   // Export emails to CSV
   const exportEmailsToCSV = () => {
     const headers = ["Email", "Source", "Verified", "Subscribed At", "Verified At"];
@@ -707,6 +787,397 @@ export default function Admin() {
                     )}
                   </div>
                 ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Analysis Operations Center */}
+        <Card className="glass-panel">
+          <CardHeader>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
+                <Database className="h-5 w-5" />
+                Analysis Operations Center
+              </h2>
+              <div className="flex items-center gap-2">
+                <select
+                  className="h-9 px-3 rounded-md border border-input bg-background text-sm"
+                  value={operationsFilter || "all"}
+                  onChange={(e) => setOperationsFilter(e.target.value === "all" ? undefined : e.target.value)}
+                >
+                  <option value="all">All States</option>
+                  <option value="initialized">Initialized</option>
+                  <option value="generating">Generating</option>
+                  <option value="part_completed">Part Completed</option>
+                  <option value="paused">Paused</option>
+                  <option value="failed">Failed</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => { refetchOperations(); refetchSummary(); }}
+                  disabled={operationsLoading}
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${operationsLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Operations Summary Cards */}
+            {summaryLoading ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-24" />)}
+              </div>
+            ) : operationsSummary ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <div className="text-2xl font-bold text-blue-400">{operationsSummary.activeOperations}</div>
+                  <div className="text-sm text-muted-foreground">Active</div>
+                </div>
+                <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <div className="text-2xl font-bold text-green-400">{operationsSummary.completedOperations}</div>
+                  <div className="text-sm text-muted-foreground">Completed</div>
+                </div>
+                <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                  <div className="text-2xl font-bold text-red-400">{operationsSummary.failedOperations}</div>
+                  <div className="text-sm text-muted-foreground">Failed</div>
+                </div>
+                <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                  <div className="text-2xl font-bold text-purple-400">{operationsSummary.successRate}%</div>
+                  <div className="text-sm text-muted-foreground">Success Rate</div>
+                </div>
+              </div>
+            ) : null}
+
+            {/* Operations Table */}
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Operation ID</TableHead>
+                    <TableHead>Session</TableHead>
+                    <TableHead>Tier</TableHead>
+                    <TableHead>State</TableHead>
+                    <TableHead>Progress</TableHead>
+                    <TableHead>Started</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {operationsLoading ? (
+                    [...Array(5)].map((_, i) => (
+                      <TableRow key={i}>
+                        {[...Array(7)].map((_, j) => (
+                          <TableCell key={j}><Skeleton className="h-4 w-full" /></TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : operationsData?.operations?.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                        No operations found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    operationsData?.operations?.map((op: any) => (
+                      <TableRow key={op.operationId} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedOperationId(op.operationId)}>
+                        <TableCell className="font-mono text-xs">
+                          {op.operationId?.slice(0, 8)}...
+                        </TableCell>
+                        <TableCell className="font-mono text-xs">
+                          {op.sessionId?.slice(0, 8)}...
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={op.tier === 'full' ? 'default' : op.tier === 'medium' ? 'secondary' : 'outline'}>
+                            {op.tierLabel}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            op.state === 'completed' ? 'default' :
+                            op.state === 'failed' ? 'destructive' :
+                            op.state === 'generating' || op.state === 'part_completed' ? 'secondary' :
+                            op.state === 'paused' ? 'outline' : 'outline'
+                          } className={
+                            op.state === 'completed' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                            op.state === 'generating' || op.state === 'part_completed' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
+                            ''
+                          }>
+                            {op.state === 'part_completed' ? `Part ${op.completedParts}/${op.totalParts}` : op.state}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full transition-all ${
+                                  op.state === 'completed' ? 'bg-green-500' :
+                                  op.state === 'failed' ? 'bg-red-500' :
+                                  'bg-blue-500'
+                                }`}
+                                style={{ width: `${op.progressPercent}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-muted-foreground">{op.progressPercent}%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {op.startedAt ? new Date(op.startedAt).toLocaleString() : '—'}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            {(op.state === 'generating' || op.state === 'part_completed') && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (adminAuth) pauseOperationMutation.mutate({ ...adminAuth, operationId: op.operationId });
+                                }}
+                                disabled={pauseOperationMutation.isPending}
+                              >
+                                <Pause className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {op.state === 'paused' && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (adminAuth) resumeOperationMutation.mutate({ ...adminAuth, operationId: op.operationId });
+                                }}
+                                disabled={resumeOperationMutation.isPending}
+                              >
+                                <Play className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {op.state === 'failed' && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (adminAuth) triggerRegenerationMutation.mutate({ ...adminAuth, sessionId: op.sessionId });
+                                }}
+                                disabled={triggerRegenerationMutation.isPending}
+                              >
+                                <RotateCcw className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {op.state !== 'completed' && op.state !== 'cancelled' && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-destructive hover:text-destructive"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (adminAuth) cancelOperationMutation.mutate({ ...adminAuth, operationId: op.operationId });
+                                }}
+                                disabled={cancelOperationMutation.isPending}
+                              >
+                                <XCircle className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Operation Details Panel */}
+            {selectedOperationId && (
+              <div className="mt-6 p-4 rounded-lg border bg-muted/30">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold">Operation Details</h3>
+                  <Button variant="ghost" size="sm" onClick={() => setSelectedOperationId(null)}>
+                    <XCircle className="h-4 w-4" />
+                  </Button>
+                </div>
+                {detailsLoading ? (
+                  <div className="space-y-4">
+                    <Skeleton className="h-20" />
+                    <Skeleton className="h-40" />
+                  </div>
+                ) : operationDetails ? (
+                  <div className="space-y-4">
+                    {/* Operation Info */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <div className="text-muted-foreground">Operation ID</div>
+                        <div className="font-mono">{operationDetails.operation.operationId?.slice(0, 12)}...</div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground">Session ID</div>
+                        <div className="font-mono">{operationDetails.operation.sessionId?.slice(0, 12)}...</div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground">Tier</div>
+                        <div>{operationDetails.operation.tierLabel}</div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground">Triggered By</div>
+                        <div className="capitalize">{operationDetails.operation.triggeredBy}</div>
+                      </div>
+                    </div>
+
+                    {/* Progress Visualization */}
+                    <div>
+                      <div className="text-sm text-muted-foreground mb-2">Progress: {operationDetails.operation.completedParts}/{operationDetails.operation.totalParts} parts</div>
+                      <div className="flex gap-1">
+                        {[...Array(operationDetails.operation.totalParts)].map((_, i) => (
+                          <div
+                            key={i}
+                            className={`h-8 flex-1 rounded ${
+                              i < operationDetails.operation.completedParts
+                                ? 'bg-green-500'
+                                : i === operationDetails.operation.currentPart - 1
+                                ? operationDetails.operation.state === 'failed'
+                                  ? 'bg-red-500 animate-pulse'
+                                  : 'bg-blue-500 animate-pulse'
+                                : 'bg-muted'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                        {[...Array(operationDetails.operation.totalParts)].map((_, i) => (
+                          <span key={i}>Part {i + 1}</span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Error Info (if failed) */}
+                    {operationDetails.operation.state === 'failed' && operationDetails.operation.lastError && (
+                      <div className="p-3 rounded bg-red-500/10 border border-red-500/20">
+                        <div className="flex items-center gap-2 text-red-400 font-medium mb-1">
+                          <AlertTriangle className="h-4 w-4" />
+                          Failed at Part {operationDetails.operation.failedPart}
+                        </div>
+                        <div className="text-sm text-muted-foreground">{operationDetails.operation.lastError}</div>
+                      </div>
+                    )}
+
+                    {/* Partial Results */}
+                    {Object.keys(operationDetails.partialResults || {}).length > 0 && (
+                      <div>
+                        <div className="text-sm font-medium mb-2">Partial Results Available</div>
+                        <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                          {[1, 2, 3, 4, 5, 6].slice(0, operationDetails.operation.totalParts).map((partNum) => {
+                            const partKey = `part${partNum}` as keyof typeof operationDetails.partialResults;
+                            const hasContent = !!operationDetails.partialResults[partKey];
+                            return (
+                              <div
+                                key={partNum}
+                                className={`p-2 rounded text-center text-sm ${
+                                  hasContent
+                                    ? 'bg-green-500/10 border border-green-500/20 text-green-400'
+                                    : 'bg-muted text-muted-foreground'
+                                }`}
+                              >
+                                Part {partNum}
+                                {hasContent && <CheckCircle className="h-3 w-3 inline ml-1" />}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Event Timeline */}
+                    <div>
+                      <div className="text-sm font-medium mb-2">Event Timeline ({operationDetails.events?.length || 0} events)</div>
+                      <div className="max-h-48 overflow-y-auto space-y-2">
+                        {operationDetails.events?.slice(0, 10).map((event: any, i: number) => (
+                          <div key={i} className="flex items-start gap-3 text-sm p-2 rounded bg-muted/50">
+                            <div className={`w-2 h-2 rounded-full mt-1.5 ${
+                              event.eventType.includes('completed') ? 'bg-green-500' :
+                              event.eventType.includes('failed') ? 'bg-red-500' :
+                              event.eventType.includes('started') ? 'bg-blue-500' :
+                              'bg-muted-foreground'
+                            }`} />
+                            <div className="flex-1">
+                              <div className="font-medium">{event.eventType.replace(/_/g, ' ')}</div>
+                              {event.partNumber && <div className="text-xs text-muted-foreground">Part {event.partNumber}</div>}
+                              {event.durationMs && <div className="text-xs text-muted-foreground">{(event.durationMs / 1000).toFixed(1)}s</div>}
+                              {event.errorMessage && <div className="text-xs text-red-400">{event.errorMessage}</div>}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {event.createdAtFormatted ? new Date(event.createdAtFormatted).toLocaleTimeString() : ''}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Metrics */}
+                    {operationDetails.metrics && (
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div className="p-2 rounded bg-muted">
+                          <div className="text-muted-foreground">Avg Part Duration</div>
+                          <div className="font-medium">
+                            {operationDetails.metrics.avgPartDurationMs
+                              ? `${(operationDetails.metrics.avgPartDurationMs / 1000).toFixed(1)}s`
+                              : '—'}
+                          </div>
+                        </div>
+                        <div className="p-2 rounded bg-muted">
+                          <div className="text-muted-foreground">Total Events</div>
+                          <div className="font-medium">{operationDetails.metrics.totalEventsCount}</div>
+                        </div>
+                        <div className="p-2 rounded bg-muted">
+                          <div className="text-muted-foreground">Failure Events</div>
+                          <div className="font-medium text-red-400">{operationDetails.metrics.failureEventsCount}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center text-muted-foreground py-4">Operation not found</div>
+                )}
+              </div>
+            )}
+
+            {/* Failed Operations Quick Actions */}
+            {retryableOps && retryableOps.operations?.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 text-red-400" />
+                  Failed Operations Requiring Attention ({retryableOps.total})
+                </h3>
+                <div className="space-y-2">
+                  {retryableOps.operations.slice(0, 5).map((op: any) => (
+                    <div key={op.operationId} className="flex items-center justify-between p-3 rounded bg-red-500/5 border border-red-500/20">
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className="text-red-400 border-red-400/30">
+                          {op.tierLabel}
+                        </Badge>
+                        <span className="text-sm font-mono">{op.sessionId?.slice(0, 12)}...</span>
+                        <span className="text-xs text-muted-foreground">Part {op.failedPart || op.currentPart}/{op.totalParts}</span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-green-400 border-green-400/30 hover:bg-green-500/10"
+                        onClick={() => {
+                          if (adminAuth) triggerRegenerationMutation.mutate({ ...adminAuth, sessionId: op.sessionId });
+                        }}
+                        disabled={triggerRegenerationMutation.isPending}
+                      >
+                        <RotateCcw className="h-4 w-4 mr-1" />
+                        Regenerate
+                      </Button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </CardContent>
