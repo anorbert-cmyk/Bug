@@ -245,14 +245,14 @@ export default function Home() {
         <div className="fractal-blob blob-3" />
       </div>
 
-      {/* Navigation */}
+      {/* Navigation - Brutalist Technical */}
       <nav className="sticky top-6 z-40 mx-auto max-w-[95%] px-2 sm:px-4">
-        <div className="hud-card rounded-full px-3 sm:px-5 py-2 sm:py-2.5 flex justify-between items-center">
+        <div className="border border-border bg-card/95 backdrop-blur-sm px-3 sm:px-5 py-2 sm:py-2.5 flex justify-between items-center">
           <a href="/" className="flex items-center gap-2 hover:opacity-80 transition flex-shrink-0">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <Zap className="w-3.5 h-3.5 text-white" />
+            <div className="w-6 h-6 border border-primary/50 bg-primary/10 flex items-center justify-center">
+              <Zap className="w-3.5 h-3.5 text-primary" />
             </div>
-            <span className="font-bold text-sm tracking-tight font-mono hidden sm:inline">ValidateStrategy</span>
+            <span className="font-bold text-sm tracking-tight font-mono hidden sm:inline">VALIDATE<span className="text-primary">STRATEGY</span></span>
           </a>
 
           <div className="flex items-center gap-1.5 sm:gap-3 flex-wrap justify-end">
@@ -345,53 +345,77 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - Brutalist Technical */}
       <section className="pt-28 pb-24 relative z-10">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-8xl font-bold tracking-tighter mb-8 leading-[0.95]">
-            <span className="text-gradient-primary">Stop Guessing. Start Scaling.</span>
-          </h1>
+        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'linear-gradient(to right, rgba(128,128,128,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(128,128,128,0.03) 1px, transparent 1px)', backgroundSize: '64px 64px' }} />
 
-          <p className="text-lg md:text-xl text-muted-foreground mb-4 max-w-2xl mx-auto leading-relaxed font-light tracking-wide">
-            Get boardroom-ready product strategy and UX validation in{" "}
-            <strong className="text-foreground font-medium">24 hours</strong>.
-          </p>
+        <div className="max-w-5xl mx-auto px-4 relative">
+          {/* Status Badge */}
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex items-center gap-2 border border-primary/40 bg-primary/5 px-4 py-1.5">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary">System Online · 24h Turnaround</span>
+            </div>
+          </div>
 
-          <p className="text-base md:text-lg text-muted-foreground/80 mb-12 max-w-2xl mx-auto leading-relaxed">
-            The new standard for modern product teams. Validation isn't optional—it's your only defense against market failure. Backed by research from{" "}
-            <strong className="text-foreground font-medium">Nielsen Norman & Baymard</strong>.
-          </p>
+          {/* Main Headline */}
+          <div className="text-center mb-8">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-6 leading-[0.9]">
+              <span className="block text-foreground">STOP GUESSING.</span>
+              <span className="block text-primary">START SCALING.</span>
+            </h1>
+          </div>
 
-          <div className="flex flex-col gap-4 justify-center items-center">
+          {/* Terminal-Style Subheadline */}
+          <div className="max-w-2xl mx-auto mb-8">
+            <div className="border border-border bg-card/50 p-4 font-mono text-sm">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border/50">
+                <div className="w-2 h-2 rounded-full bg-red-500" />
+                <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <span className="text-[10px] text-muted-foreground ml-2">validate_strategy.sh</span>
+              </div>
+              <p className="text-muted-foreground">
+                <span className="text-primary">$</span> Get boardroom-ready product strategy and UX validation in <span className="text-foreground font-medium">24 hours</span>.
+              </p>
+              <p className="text-muted-foreground/70 mt-2">
+                <span className="text-primary">$</span> Backed by research from <span className="text-foreground font-medium">Nielsen Norman</span> & <span className="text-foreground font-medium">Baymard Institute</span>.
+              </p>
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col gap-6 items-center">
             <div className="flex flex-col sm:flex-row gap-3 items-center">
               <Button
                 onClick={() =>
                   document.getElementById("protocol")?.scrollIntoView({ behavior: "smooth" })
                 }
-                className="btn-primary px-8 py-4 text-lg flex items-center gap-3 group"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-base font-mono uppercase tracking-wider flex items-center gap-3 group border-0"
               >
-                Start Your Validation
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <span className="text-primary-foreground/70">&gt;</span>
+                START VALIDATION
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button
                 onClick={() => navigate("/demo-analysis")}
                 variant="outline"
-                className="px-6 py-4 text-base flex items-center gap-2 border-2"
+                className="px-6 py-4 text-base font-mono uppercase tracking-wider flex items-center gap-2 border-2 border-border hover:border-primary/50"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                See Full Demo Analysis
+                <Eye className="w-4 h-4" />
+                VIEW DEMO
               </Button>
             </div>
-            <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
+
+            {/* Trust Indicators */}
+            <div className="flex items-center gap-6 text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-500" />
+                <div className="w-1.5 h-1.5 bg-green-500" />
                 <span>Zero-Knowledge Privacy</span>
               </div>
+              <div className="w-px h-4 bg-border" />
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-cyan-500" />
+                <div className="w-1.5 h-1.5 bg-cyan-500" />
                 <span>Research-Backed</span>
               </div>
             </div>
@@ -631,15 +655,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="mint" className="py-16 md:py-32 relative z-10">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-10 md:mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 ">
-              Choose Your Weapon
-            </h2>
-            <p className="text-muted-foreground font-mono text-xs uppercase tracking-[0.2em]">
-              The market doesn't forgive bad strategy
+      {/* Pricing Section - Brutalist Technical */}
+      <section id="mint" className="py-16 md:py-32 relative z-10 border-y border-border bg-muted/20">
+        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'linear-gradient(to right, rgba(128,128,128,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(128,128,128,0.05) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
+
+        <div className="max-w-7xl mx-auto px-4 relative">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10 md:mb-16">
+            <div>
+              <div className="inline-flex items-center gap-2 border border-primary/40 bg-primary/5 px-3 py-1 mb-4">
+                <div className="w-1.5 h-1.5 bg-primary animate-pulse" />
+                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary">Deployment Tiers</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+                Choose Your <span className="text-primary">Weapon</span>
+              </h2>
+            </div>
+            <p className="text-muted-foreground text-sm font-mono md:text-right max-w-xs">
+              The market doesn't forgive bad strategy.
             </p>
           </div>
 
