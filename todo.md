@@ -909,3 +909,9 @@
 - [x] Adjust padding and font sizes for mobile readability
 - [x] Ensure Insider card prominence on mobile without scale issues (shows first)
 - [x] Test touch targets for buttons (min 48px height)
+
+
+## Risk Reversal Enhancement - January 4, 2026
+- [x] Add trust statement below pricing section ("No credit card required to see demo")
+- [x] Add "See Full Demo" CTA button to hero section
+- [x] Ensure demo CTAs are prominent and clear

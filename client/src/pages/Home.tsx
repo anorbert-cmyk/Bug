@@ -347,15 +347,28 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col gap-4 justify-center items-center">
-            <Button
-              onClick={() =>
-                document.getElementById("protocol")?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="btn-primary px-8 py-4 text-lg flex items-center gap-3 group"
-            >
-              Start Analysis
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 items-center">
+              <Button
+                onClick={() =>
+                  document.getElementById("protocol")?.scrollIntoView({ behavior: "smooth" })
+                }
+                className="btn-primary px-8 py-4 text-lg flex items-center gap-3 group"
+              >
+                Start Analysis
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button
+                onClick={() => navigate("/demo-analysis")}
+                variant="outline"
+                className="px-6 py-4 text-base flex items-center gap-2 border-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                See Full Demo
+              </Button>
+            </div>
             <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-green-500" />
@@ -790,6 +803,18 @@ export default function Home() {
                   <p className="text-[10px] text-muted-foreground text-center">For teams building production-ready products</p>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Trust Statement - Risk Reversal */}
+          <div className="text-center mt-12 pt-8 border-t border-border/50">
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-muted/30 border border-border/50">
+              <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm font-medium text-foreground">No credit card required to see demo</span>
+              <span className="text-muted-foreground text-sm">·</span>
+              <span className="text-sm text-muted-foreground">Try before you buy</span>
             </div>
           </div>
         </div>
