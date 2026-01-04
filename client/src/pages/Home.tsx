@@ -562,9 +562,9 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section id="mint" className="py-32 relative z-10">
+      <section id="mint" className="py-16 md:py-32 relative z-10">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-20">
+          <div className="text-center mb-10 md:mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 font-playfair">
               Choose Your Protocol
             </h2>
@@ -573,9 +573,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 items-end">
+          <div className="flex flex-col md:grid md:grid-cols-3 gap-4 md:gap-6 md:items-end">
             {/* Tier 1: Observer - Muted/Decoy */}
-            <div className="pricing-card pricing-card-muted opacity-90 hover:opacity-100 transition-all duration-300">
+            <div className="pricing-card pricing-card-muted opacity-90 hover:opacity-100 transition-all duration-300 order-2 md:order-1">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Eye className="w-5 h-5 text-muted-foreground" />
@@ -636,8 +636,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Tier 2: Insider (Highlighted - 15% larger) */}
-            <div className="pricing-card-highlight shadow-2xl">
+            {/* Tier 2: Insider (Highlighted - Most Popular) */}
+            <div className="pricing-card-highlight shadow-2xl order-1 md:order-2">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-primary" />
@@ -708,7 +708,7 @@ export default function Home() {
             </div>
 
             {/* Tier 3: Syndicate - APEX with Premium Glow */}
-            <div className="pricing-card relative overflow-hidden border-2 border-purple-500/40 shadow-[0_0_30px_rgba(168,85,247,0.15)]">
+            <div className="pricing-card relative overflow-hidden border-2 border-purple-500/40 shadow-[0_0_30px_rgba(168,85,247,0.15)] order-3">
               {/* APEX Glow Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-purple-500/10 pointer-events-none" />
               <div className="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />

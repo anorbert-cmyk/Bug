@@ -901,3 +901,11 @@
 - [x] Make middle (Insider) card slightly taller than others
 - [x] Remove ugly USP boxes (Research-Backed, ROI, Verified) from Syndicate card
 - [x] Ensure consistent styling across all cards
+
+
+## Pricing Cards Mobile Optimization - January 4, 2026
+- [x] Ensure cards stack vertically on mobile (single column)
+- [x] Remove fixed min-height on mobile for natural content flow
+- [x] Adjust padding and font sizes for mobile readability
+- [x] Ensure Insider card prominence on mobile without scale issues (shows first)
+- [x] Test touch targets for buttons (min 48px height)

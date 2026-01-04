@@ -642,6 +642,29 @@
     opacity: 1;
   }
 
+  /* Mobile-first responsive pricing cards */
+  @media (max-width: 768px) {
+    .pricing-card {
+      @apply p-6 rounded-2xl;
+      min-height: auto;
+    }
+
+    .pricing-card-highlight {
+      @apply p-6 rounded-2xl;
+      min-height: auto;
+    }
+
+    .pricing-card ul {
+      @apply text-sm;
+    }
+
+    .pricing-card button,
+    .pricing-card-highlight button {
+      @apply py-4 text-base;
+      min-height: 48px; /* Touch-friendly target */
+    }
+  }
+
   /* ========================================
      TIER BADGES
   ======================================== */
