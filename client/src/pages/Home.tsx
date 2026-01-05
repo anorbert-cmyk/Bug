@@ -376,7 +376,7 @@ export default function Home() {
                 <span className="text-[10px] text-muted-foreground ml-2">validate_strategy.sh</span>
               </div>
               <h2 className="text-muted-foreground text-base md:text-lg font-normal m-0 p-0">
-                <span className="text-primary">$</span> Get boardroom-ready <strong className="font-medium text-foreground">product strategy</strong> and <strong className="font-medium text-foreground">UX validation</strong> in <span className="text-foreground font-medium">24 hours</span>.
+                <span className="text-primary">$</span> Get <strong className="font-medium text-foreground">boardroom-ready product strategy</strong> and <strong className="font-medium text-foreground">UX validation</strong> in <span className="text-foreground font-medium">24 hours</span>. Stop building blind.
               </h2>
               <p className="text-muted-foreground/70 mt-2">
                 <span className="text-primary">$</span> Backed by research from <span className="text-foreground font-medium">Nielsen Norman</span> & <span className="text-foreground font-medium">Baymard Institute</span>.
