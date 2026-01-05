@@ -28,12 +28,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // Keep recharts with Admin page only (lazy loaded)
-          if (id.includes('recharts') || id.includes('d3-') || id.includes('decimal.js')) {
-            return 'admin-charts';
-          }
-          // Core React - needed everywhere
-          if (id.includes('react-dom') || id.includes('react/')) {
+          // Core React - needed everywhere (must be first to ensure proper initialization)
+          if (id.includes('react-dom') || id.includes('react/') || id.includes('node_modules/react/')) {
             return 'vendor-react';
           }
           // Router - small, needed for navigation
@@ -48,6 +44,8 @@ export default defineConfig({
           if (id.includes('clsx') || id.includes('tailwind-merge') || id.includes('class-variance-authority')) {
             return 'vendor-utils';
           }
+          // DO NOT create admin-charts chunk - let it be bundled with Admin page naturally
+          // This prevents the side-effect import issue
         },
       },
     },
