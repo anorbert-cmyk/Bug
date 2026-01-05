@@ -1210,3 +1210,21 @@
 
 - [ ] Remove vite-plugin-manus-runtime from package.json and vite.config.ts (causes forwardRef error) - REVERTED
 - [ ] Fix React chunk splitting logic in vite.config.ts for React 19 compatibility - REVERTED
+
+## CSP/ForwardRef Fix - January 5, 2025
+- [ ] Remove streamdown, recharts, vite-plugin-manus-runtime from package.json
+- [ ] Add react-markdown, rehype-highlight, remark-gfm to package.json
+- [ ] Update vite.config.ts (remove manus runtime plugin, fix chunk splitting)
+- [ ] Create new Markdown.tsx component (CSP-compliant markdown renderer)
+- [ ] Replace Streamdown with Markdown in DemoAnalysis.tsx
+- [ ] Replace Streamdown with Markdown in AnalysisResult.tsx
+- [ ] Replace Streamdown with Markdown in AIChatBox.tsx
+- [ ] Update Admin.tsx to use CSS-based charts instead of recharts
+- [ ] Delete chart.tsx (recharts wrapper)
+- [ ] Create TermsOfService.tsx page
+- [ ] Create PrivacyPolicy.tsx page
+- [ ] Add /terms and /privacy routes to App.tsx
+- [ ] Update Home.tsx navbar and footer logos
+- [ ] Update Home.tsx H1 heading for mobile
+- [ ] Add SEO fallback to index.html
+- [ ] Create resizable-table.tsx component
