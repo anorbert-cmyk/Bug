@@ -953,3 +953,34 @@
 
 ## Hero Copy Optimization - January 5, 2026
 - [x] Add conversion-optimized tagline "Stop building blind." to hero subtitle
+
+## SEO & Copy Optimization - January 5, 2026 (COMPLETED)
+- [x] Update title tag to emphasize "24 Hours" USP
+- [x] Shorten meta description to 137 characters (within 50-160 range)
+- [x] Update hero subtitle to "Stop building blind" tagline
+- [x] Add aggregateRating placeholder in JSON-LD (commented out)
+- [x] Create GSC_SETUP_GUIDE.md for Google Search Console setup
+- [x] Keep 6 focused keywords (not harmful)
+- [x] Maintain Technical Brutalist brand voice
+
+## PageSpeed Insights Analysis - January 5, 2026
+- Performance: 59/100 (target: 90+)
+- Accessibility: 79/100 (target: 90+)
+- Best Practices: 81/100 (target: 90+)
+- SEO: 100/100 ✅
+
+### Identified Issues:
+- Render blocking CSS (470ms savings potential)
+- Unused JavaScript (522 KiB savings potential)
+- Legacy JavaScript polyfills (8 KiB savings)
+- Missing source maps
+- Deprecated unload event listeners
+- Button/link accessibility issues
+- Viewport zoom disabled
+- Missing main landmark
+- Low contrast text
+
+### Planned Optimization Phases:
+- Phase 1: Quick wins (~6k tokens) - viewport, main landmark, font preload, lazy routes
+- Phase 2: Critical (~12k tokens) - critical CSS, image optimization, accessibility
+- Phase 3: Fine-tuning (~8k tokens) - tree shaking, best practices
