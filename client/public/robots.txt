@@ -23,7 +23,7 @@ Disallow: /*?priority=*
 Disallow: /*?ref=*
 Disallow: /*?utm_*
 
-# Googlebot specific rules (optional, for fine-tuning)
+# Googlebot specific rules
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 0
@@ -32,14 +32,6 @@ Crawl-delay: 0
 User-agent: Bingbot
 Allow: /
 Crawl-delay: 1
-
-# Block AI training crawlers (optional - uncomment if desired)
-# User-agent: GPTBot
-# Disallow: /
-# User-agent: ChatGPT-User
-# Disallow: /
-# User-agent: CCBot
-# Disallow: /
 
 # Sitemap location
 Sitemap: https://validatestrategy.com/sitemap.xml

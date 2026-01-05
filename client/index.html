@@ -174,18 +174,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   </noscript>
   
-  <!-- Critical CSS for above-the-fold content -->
+  <!-- Critical CSS for above-the-fold content (loading state only) -->
   <style>
-    /* Critical CSS - Inline for fastest FCP */
-    :root { --background: 0 0% 3.9%; --foreground: 0 0% 98%; }
-    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: hsl(var(--background)); color: hsl(var(--foreground)); }
+    /* Minimal critical CSS - only for initial loading spinner */
+    body { margin: 0; }
     #root { min-height: 100vh; }
-    .min-h-screen { min-height: 100vh; }
-    .flex { display: flex; }
-    .items-center { align-items: center; }
-    .justify-center { justify-content: center; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .animate-spin { animation: spin 1s linear infinite; }
+    @keyframes critical-spin { to { transform: rotate(360deg); } }
+    .critical-loader { 
+      min-height: 100vh; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      background: #0a0a0a; 
+    }
+    .critical-spinner { 
+      width: 2rem; 
+      height: 2rem; 
+      border: 2px solid #6366f1; 
+      border-top-color: transparent; 
+      border-radius: 50%; 
+      animation: critical-spin 1s linear infinite; 
+    }
   </style>
 </head>
 
