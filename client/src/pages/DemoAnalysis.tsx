@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Streamdown } from "streamdown";
+import { Markdown } from "@/components/Markdown";
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
@@ -1077,7 +1077,7 @@ export default function DemoAnalysis() {
               </CardHeader>
               <CardContent>
                 <div className={`prose prose-invert max-w-none ${!isUnlocked ? 'blur-sm select-none pointer-events-none' : ''}`}>
-                  <Streamdown>{part1}</Streamdown>
+                  <Markdown>{part1}</Markdown>
                 </div>
                 {!isUnlocked && (
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -1110,7 +1110,7 @@ export default function DemoAnalysis() {
               </CardHeader>
               <CardContent>
                 <div className={`prose prose-invert max-w-none ${!isUnlocked ? 'blur-sm select-none pointer-events-none' : ''}`}>
-                  <Streamdown>{part2}</Streamdown>
+                  <Markdown>{part2}</Markdown>
                 </div>
                 {!isUnlocked && (
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -1143,7 +1143,7 @@ export default function DemoAnalysis() {
               </CardHeader>
               <CardContent>
                 <div className={`prose prose-invert max-w-none ${!isUnlocked ? 'blur-sm select-none pointer-events-none' : ''}`}>
-                  <Streamdown>{part3}</Streamdown>
+                  <Markdown>{part3}</Markdown>
                 </div>
                 {!isUnlocked && (
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -1344,7 +1344,7 @@ export default function DemoAnalysis() {
               </CardHeader>
               <CardContent>
                 <div className={`prose prose-invert max-w-none ${!isUnlocked ? 'blur-sm select-none pointer-events-none' : ''}`}>
-                  <Streamdown>{part6}</Streamdown>
+                  <Markdown>{part6}</Markdown>
                 </div>
                 {!isUnlocked && (
                   <div className="absolute inset-0 flex items-center justify-center">

@@ -19,6 +19,8 @@ const History = lazy(() => import("./pages/History"));
 const MyAnalyses = lazy(() => import("./pages/MyAnalyses"));
 const DemoAnalysis = lazy(() => import("./pages/DemoAnalysis"));
 const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
 // Loading fallback component
 function PageLoader() {
@@ -46,6 +48,8 @@ function Router() {
         <Route path="/my-analyses" component={MyAnalyses} />
         <Route path="/demo-analysis" component={DemoAnalysis} />
         <Route path="/verify-email" component={VerifyEmail} />
+        <Route path="/terms" component={TermsOfService} />
+        <Route path="/privacy" component={PrivacyPolicy} />
         <Route path="/404" component={NotFound} />
         {/* Final fallback route */}
         <Route component={NotFound} />

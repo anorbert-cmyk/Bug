@@ -1166,3 +1166,26 @@
 - [x] Fixed: Removed manual admin-charts chunk from vite.config.ts
 - [x] Recharts now bundled directly with Admin page (lazy loaded)
 - [x] All 324 tests passing
+
+
+## Legal Pages & Footer Update - January 5, 2026
+- [ ] Fix persistent forwardRef error on published site
+- [ ] Create Terms of Service page (American English, protective clauses)
+- [ ] Create Privacy Policy page (American English, protective clauses)
+- [ ] Update footer logo
+- [ ] Add links to legal pages in footer
+
+
+## Admin Dashboard UX Improvements - January 5, 2026
+- [ ] Remove recharts dependency (CSP compliance)
+- [ ] Add resizable columns to Analysis Operations Center table
+- [ ] Add pagination with page size selector (10/25/50/100 rows)
+- [ ] Audit and apply UX best practices across dashboard
+- [ ] Create Terms of Service page (American English)
+- [ ] Create Privacy Policy page (American English)
+- [ ] Update footer logo
+- [ ] Add legal page links to footer
+
+- [x] Replace Streamdown with CSP-compliant react-markdown
+- [x] Fix nested anchor tags in Terms and Privacy pages
+- [x] Add VS logo to footer

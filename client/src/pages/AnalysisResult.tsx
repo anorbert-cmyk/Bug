@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Streamdown } from "streamdown";
+import { Markdown } from "@/components/Markdown";
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { 
@@ -652,7 +652,7 @@ export default function AnalysisResult() {
           <div className="prose prose-invert max-w-none prose-sm">
             {otherSections.slice(0, 3).map((section, i) => (
               <div key={i} className="mb-4">
-                <Streamdown>{`### ${section.title}\n${section.content}`}</Streamdown>
+                <Markdown>{`### ${section.title}\n${section.content}`}</Markdown>
               </div>
             ))}
           </div>
@@ -668,7 +668,7 @@ export default function AnalysisResult() {
           <div className="prose prose-invert max-w-none prose-sm">
             {otherSections.slice(3).map((section, i) => (
               <div key={i} className="mb-4">
-                <Streamdown>{`### ${section.title}\n${section.content}`}</Streamdown>
+                <Markdown>{`### ${section.title}\n${section.content}`}</Markdown>
               </div>
             ))}
           </div>
@@ -726,7 +726,7 @@ export default function AnalysisResult() {
     if (sections.length === 0) {
       return (
         <div className="prose prose-invert max-w-none">
-          <Streamdown>{content}</Streamdown>
+          <Markdown>{content}</Markdown>
         </div>
       );
     }
@@ -757,7 +757,7 @@ export default function AnalysisResult() {
                 {/* Direct content under H2 */}
                 {hasDirectContent && (
                   <div className="prose prose-invert max-w-none prose-sm">
-                    <Streamdown>{section.content}</Streamdown>
+                    <Markdown>{section.content}</Markdown>
                   </div>
                 )}
                 
@@ -768,7 +768,7 @@ export default function AnalysisResult() {
                       <div key={subIndex} className="border-l-2 border-primary/30 pl-4">
                         <h4 className="text-sm font-semibold text-foreground/90 mb-2">{sub.title}</h4>
                         <div className="prose prose-invert max-w-none prose-sm text-muted-foreground">
-                          <Streamdown>{sub.content}</Streamdown>
+                          <Markdown>{sub.content}</Markdown>
                         </div>
                       </div>
                     ))}
@@ -1099,43 +1099,43 @@ export default function AnalysisResult() {
                     </CardHeader>
                     <CardContent className="prose prose-invert max-w-none">
                       {result.fullMarkdown ? (
-                        <Streamdown>{result.fullMarkdown}</Streamdown>
+                        <Markdown>{result.fullMarkdown}</Markdown>
                       ) : (result.part1 || result.part2 || result.part3 || result.part4 || result.part5 || result.part6) ? (
                         <div className="space-y-8">
                           {result.part1 && (
                             <div>
                               <h2 className="text-xl font-bold text-blue-400 mb-4">Part 1: Discovery & Problem Analysis</h2>
-                              <Streamdown>{result.part1}</Streamdown>
+                              <Markdown>{result.part1}</Markdown>
                             </div>
                           )}
                           {result.part2 && (
                             <div>
                               <h2 className="text-xl font-bold text-cyan-400 mb-4">Part 2: Competitor Deep-Dive</h2>
-                              <Streamdown>{result.part2}</Streamdown>
+                              <Markdown>{result.part2}</Markdown>
                             </div>
                           )}
                           {result.part3 && (
                             <div>
                               <h2 className="text-xl font-bold text-purple-400 mb-4">Part 3: Strategic Roadmap</h2>
-                              <Streamdown>{result.part3}</Streamdown>
+                              <Markdown>{result.part3}</Markdown>
                             </div>
                           )}
                           {result.part4 && (
                             <div>
                               <h2 className="text-xl font-bold text-yellow-400 mb-4">Part 4: 5 Core Design Prompts</h2>
-                              <Streamdown>{result.part4}</Streamdown>
+                              <Markdown>{result.part4}</Markdown>
                             </div>
                           )}
                           {result.part5 && (
                             <div>
                               <h2 className="text-xl font-bold text-green-400 mb-4">Part 5: 5 Advanced Design Prompts</h2>
-                              <Streamdown>{result.part5}</Streamdown>
+                              <Markdown>{result.part5}</Markdown>
                             </div>
                           )}
                           {result.part6 && (
                             <div>
                               <h2 className="text-xl font-bold text-red-400 mb-4">Part 6: Risk, Metrics & ROI</h2>
-                              <Streamdown>{result.part6}</Streamdown>
+                              <Markdown>{result.part6}</Markdown>
                             </div>
                           )}
                         </div>
@@ -1198,7 +1198,7 @@ export default function AnalysisResult() {
                 </CardHeader>
                 <CardContent className="prose prose-invert max-w-none">
                   {result.singleResult ? (
-                    <Streamdown>{result.singleResult}</Streamdown>
+                    <Markdown>{result.singleResult}</Markdown>
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
                       <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />

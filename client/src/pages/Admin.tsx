@@ -55,21 +55,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  Legend,
-  Cell
-} from "recharts";
+// CSS-based charts - no recharts dependency (CSP compliant)
 
 // Admin wallet address (should match server-side)
 const ADMIN_WALLET = "0xa14504ffe5E9A245c9d4079547Fa16fA0A823114".toLowerCase();
@@ -209,6 +195,17 @@ export default function Admin() {
   // ============ ANALYSIS OPERATIONS CENTER ============
   const [operationsFilter, setOperationsFilter] = useState<string | undefined>(undefined);
   const [selectedOperationId, setSelectedOperationId] = useState<string | null>(null);
+  const [operationsPage, setOperationsPage] = useState(0);
+  const [operationsPageSize, setOperationsPageSize] = useState(10);
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({
+    operationId: 120,
+    session: 100,
+    tier: 100,
+    state: 120,
+    progress: 140,
+    started: 160,
+    actions: 120,
+  });
 
   // Operations summary query
   const { data: operationsSummary, isLoading: summaryLoading, refetch: refetchSummary } = trpc.admin.getOperationsSummary.useQuery(
@@ -218,7 +215,7 @@ export default function Admin() {
 
   // Operations list query
   const { data: operationsData, isLoading: operationsLoading, refetch: refetchOperations } = trpc.admin.getAnalysisOperations.useQuery(
-    adminAuth ? { ...adminAuth, state: operationsFilter as any, limit: 20, offset: 0 } : { signature: "", timestamp: 0, address: "", limit: 20, offset: 0 },
+    adminAuth ? { ...adminAuth, state: operationsFilter as any, limit: operationsPageSize, offset: operationsPage * operationsPageSize } : { signature: "", timestamp: 0, address: "", limit: operationsPageSize, offset: 0 },
     { enabled: isAuthenticated && !!adminAuth, refetchInterval: 10000 }
   );
 
@@ -1060,6 +1057,66 @@ export default function Admin() {
               </Table>
             </div>
 
+            {/* Pagination Controls */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Rows per page:</span>
+                <select
+                  className="h-8 px-2 rounded-md border border-input bg-background text-sm"
+                  value={operationsPageSize}
+                  onChange={(e) => {
+                    setOperationsPageSize(Number(e.target.value));
+                    setOperationsPage(0); // Reset to first page
+                  }}
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <span className="ml-4">
+                  Showing {operationsPage * operationsPageSize + 1}-{Math.min((operationsPage + 1) * operationsPageSize, operationsData?.total || 0)} of {operationsData?.total || 0}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setOperationsPage(0)}
+                  disabled={operationsPage === 0}
+                >
+                  First
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setOperationsPage(p => Math.max(0, p - 1))}
+                  disabled={operationsPage === 0}
+                >
+                  Previous
+                </Button>
+                <span className="text-sm px-2">
+                  Page {operationsPage + 1} of {Math.ceil((operationsData?.total || 0) / operationsPageSize) || 1}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setOperationsPage(p => p + 1)}
+                  disabled={!operationsData?.hasMore}
+                >
+                  Next
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setOperationsPage(Math.ceil((operationsData?.total || 0) / operationsPageSize) - 1)}
+                  disabled={!operationsData?.hasMore}
+                >
+                  Last
+                </Button>
+              </div>
+            </div>
+
             {/* Operation Details Panel */}
             {selectedOperationId && (
               <div className="mt-6 p-4 rounded-lg border bg-muted/30">
@@ -1559,54 +1616,52 @@ export default function Admin() {
                   </Card>
                 </div>
 
-                {/* Hourly Chart */}
+                {/* Hourly Chart - CSS Based */}
                 {historicalMetrics.hourlyData && historicalMetrics.hourlyData.length > 0 && (
                   <Card className="p-4">
                     <h3 className="text-sm font-medium mb-4">Request Volume Over Time</h3>
-                    <div className="h-[250px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={historicalMetrics.hourlyData.map((h: any) => ({
-                          hour: new Date(h.hour).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                          requests: h.requests,
-                          successes: h.successes,
-                          failures: h.failures,
-                        }))}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                          <XAxis 
-                            dataKey="hour" 
-                            stroke="#888" 
-                            fontSize={12}
-                            tickLine={false}
-                          />
-                          <YAxis stroke="#888" fontSize={12} tickLine={false} />
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: 'hsl(var(--card))', 
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: '8px'
-                            }}
-                          />
-                          <Legend />
-                          <Area 
-                            type="monotone" 
-                            dataKey="successes" 
-                            stackId="1"
-                            stroke="#22c55e" 
-                            fill="#22c55e" 
-                            fillOpacity={0.6}
-                            name="Successful"
-                          />
-                          <Area 
-                            type="monotone" 
-                            dataKey="failures" 
-                            stackId="1"
-                            stroke="#ef4444" 
-                            fill="#ef4444" 
-                            fillOpacity={0.6}
-                            name="Failed"
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
+                    <div className="h-[250px] flex flex-col">
+                      {/* Legend */}
+                      <div className="flex gap-4 mb-4 text-xs">
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 bg-green-500 rounded" />
+                          <span>Successful</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-3 h-3 bg-red-500 rounded" />
+                          <span>Failed</span>
+                        </div>
+                      </div>
+                      {/* Bar Chart */}
+                      <div className="flex-1 flex items-end gap-1">
+                        {historicalMetrics.hourlyData.slice(-24).map((h: any, i: number) => {
+                          const maxRequests = Math.max(...historicalMetrics.hourlyData.map((d: any) => d.requests || 1));
+                          const successHeight = maxRequests > 0 ? ((h.successes || 0) / maxRequests) * 100 : 0;
+                          const failHeight = maxRequests > 0 ? ((h.failures || 0) / maxRequests) * 100 : 0;
+                          return (
+                            <div key={i} className="flex-1 flex flex-col items-center gap-0.5 group relative">
+                              <div className="w-full flex flex-col-reverse" style={{ height: '180px' }}>
+                                <div 
+                                  className="w-full bg-green-500 rounded-t transition-all" 
+                                  style={{ height: `${successHeight}%` }}
+                                />
+                                <div 
+                                  className="w-full bg-red-500 transition-all" 
+                                  style={{ height: `${failHeight}%` }}
+                                />
+                              </div>
+                              <span className="text-[10px] text-muted-foreground truncate w-full text-center">
+                                {new Date(h.hour).toLocaleTimeString([], { hour: '2-digit' })}
+                              </span>
+                              {/* Tooltip */}
+                              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-card border border-border rounded px-2 py-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                                <div className="text-green-500">Success: {h.successes || 0}</div>
+                                <div className="text-red-500">Failed: {h.failures || 0}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </Card>
                 )}
@@ -1615,34 +1670,35 @@ export default function Admin() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card className="p-4">
                     <h3 className="text-sm font-medium mb-4">Requests by Tier</h3>
-                    <div className="h-[200px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={[
-                          { tier: 'Observer', count: historicalMetrics.byTier.standard, fill: '#3b82f6' },
-                          { tier: 'Insider', count: historicalMetrics.byTier.medium, fill: '#8b5cf6' },
-                          { tier: 'Syndicate', count: historicalMetrics.byTier.full, fill: '#f59e0b' },
-                        ]}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                          <XAxis dataKey="tier" stroke="#888" fontSize={12} />
-                          <YAxis stroke="#888" fontSize={12} />
-                          <Tooltip 
-                            contentStyle={{ 
-                              backgroundColor: 'hsl(var(--card))', 
-                              border: '1px solid hsl(var(--border))',
-                              borderRadius: '8px'
-                            }}
-                          />
-                          <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                            {[
-                              { tier: 'Observer', fill: '#3b82f6' },
-                              { tier: 'Insider', fill: '#8b5cf6' },
-                              { tier: 'Syndicate', fill: '#f59e0b' },
-                            ].map((entry, index) => (
-                              <Cell key={index} fill={entry.fill} />
-                            ))}
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
+                    <div className="h-[200px] flex items-end justify-around gap-4 pt-4">
+                      {[
+                        { tier: 'Observer', count: historicalMetrics.byTier.standard, color: 'bg-blue-500' },
+                        { tier: 'Insider', count: historicalMetrics.byTier.medium, color: 'bg-purple-500' },
+                        { tier: 'Syndicate', count: historicalMetrics.byTier.full, color: 'bg-amber-500' },
+                      ].map((item) => {
+                        const maxCount = Math.max(
+                          historicalMetrics.byTier.standard || 1,
+                          historicalMetrics.byTier.medium || 1,
+                          historicalMetrics.byTier.full || 1
+                        );
+                        const heightPercent = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
+                        return (
+                          <div key={item.tier} className="flex-1 flex flex-col items-center gap-2 group relative">
+                            <div className="w-full max-w-[60px] flex flex-col justify-end" style={{ height: '140px' }}>
+                              <div 
+                                className={`w-full ${item.color} rounded-t transition-all duration-500`}
+                                style={{ height: `${Math.max(heightPercent, 5)}%` }}
+                              />
+                            </div>
+                            <span className="text-xs text-muted-foreground">{item.tier}</span>
+                            <span className="text-sm font-medium">{item.count}</span>
+                            {/* Tooltip */}
+                            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-card border border-border rounded px-2 py-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                              {item.tier}: {item.count} requests
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </Card>
 
