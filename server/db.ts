@@ -1254,27 +1254,33 @@ Conservative estimate:
 };
 
 export async function getDemoAnalysisResult(): Promise<AnalysisResult | undefined> {
-  const db = await getDb();
-  if (!db) {
-    // Return hardcoded fallback when no database
+  try {
+    const db = await getDb();
+    if (!db) {
+      // Return hardcoded fallback when no database
+      return DEMO_ANALYSIS_FALLBACK;
+    }
+
+    // Get demo session ID from env var with safe fallback
+    const demoSessionId = process.env.DEMO_SESSION_ID || 'test-apex-demo-LAIdJqey';
+
+    // Get the demo analysis result by session ID
+    const result = await db.select().from(analysisResults).where(eq(analysisResults.sessionId, demoSessionId)).limit(1);
+    if (result.length > 0) return result[0];
+
+    // Fallback: try demo-session or first result by ID
+    const fallback = await db.select().from(analysisResults).where(eq(analysisResults.sessionId, 'demo-session')).limit(1);
+    if (fallback.length > 0) return fallback[0];
+
+    const lastFallback = await db.select().from(analysisResults).orderBy(analysisResults.id).limit(1);
+    if (lastFallback.length > 0) return lastFallback[0];
+
+    // Ultimate fallback: return hardcoded demo content
+    return DEMO_ANALYSIS_FALLBACK;
+  } catch (error) {
+    console.error('getDemoAnalysisResult error, returning fallback:', error);
+    // On any database error, return the hardcoded fallback
     return DEMO_ANALYSIS_FALLBACK;
   }
-
-  // Get demo session ID from env var with safe fallback
-  const demoSessionId = process.env.DEMO_SESSION_ID || 'test-apex-demo-LAIdJqey';
-
-  // Get the demo analysis result by session ID
-  const result = await db.select().from(analysisResults).where(eq(analysisResults.sessionId, demoSessionId)).limit(1);
-  if (result.length > 0) return result[0];
-
-  // Fallback: try demo-session or first result by ID
-  const fallback = await db.select().from(analysisResults).where(eq(analysisResults.sessionId, 'demo-session')).limit(1);
-  if (fallback.length > 0) return fallback[0];
-
-  const lastFallback = await db.select().from(analysisResults).orderBy(analysisResults.id).limit(1);
-  if (lastFallback.length > 0) return lastFallback[0];
-
-  // Ultimate fallback: return hardcoded demo content
-  return DEMO_ANALYSIS_FALLBACK;
 }
 
