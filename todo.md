@@ -1208,5 +1208,5 @@
 - [ ] Responsive design check
 - [ ] Accessibility improvements
 
-- [x] Remove vite-plugin-manus-runtime from package.json and vite.config.ts (causes forwardRef error)
-- [x] Fix React chunk splitting logic in vite.config.ts for React 19 compatibility
+- [ ] Remove vite-plugin-manus-runtime from package.json and vite.config.ts (causes forwardRef error) - REVERTED
+- [ ] Fix React chunk splitting logic in vite.config.ts for React 19 compatibility - REVERTED
