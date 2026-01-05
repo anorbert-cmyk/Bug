@@ -501,13 +501,15 @@ export default function Admin() {
 
   // Authenticated - show admin dashboard
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/50 backdrop-blur-xl sticky top-0 z-10 bg-background/80">
-        <div className="container flex items-center justify-between h-16">
-          <div className="flex items-center gap-4">
-            <Shield className="h-6 w-6 text-primary" />
-            <h1 className="font-bold text-lg">Admin Dashboard</h1>
+    <div className="admin-container">
+      {/* Header - Technical Brutalist */}
+      <header className="admin-header">
+        <div className="container flex items-center justify-between h-14">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 border border-primary/50 bg-primary/10 flex items-center justify-center">
+              <Shield className="h-4 w-4 text-primary" />
+            </div>
+            <h1 className="font-mono font-bold text-sm uppercase tracking-wider">Admin Dashboard</h1>
             <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/30">
               <div className="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse" />
               Live
@@ -527,8 +529,12 @@ export default function Admin() {
 
       <div className="container py-8 space-y-8">
         {/* Stats Cards - Row 1 */}
+        <div className="admin-section-title">
+          <Zap className="w-3 h-3" />
+          Revenue Metrics
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="glass-panel">
+          <Card className="admin-stat-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -546,7 +552,7 @@ export default function Admin() {
             </CardContent>
           </Card>
 
-          <Card className="glass-panel">
+          <Card className="admin-stat-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -564,7 +570,7 @@ export default function Admin() {
             </CardContent>
           </Card>
 
-          <Card className="glass-panel">
+          <Card className="admin-stat-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -582,7 +588,7 @@ export default function Admin() {
             </CardContent>
           </Card>
 
-          <Card className="glass-panel">
+          <Card className="admin-stat-card">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -665,7 +671,7 @@ export default function Admin() {
         {/* Charts & Distribution */}
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Tier Distribution */}
-          <Card className="glass-panel">
+          <Card className="admin-card">
             <CardHeader>
               <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
                 <PieChart className="h-5 w-5" />
@@ -715,7 +721,7 @@ export default function Admin() {
           </Card>
 
           {/* Payment Methods */}
-          <Card className="glass-panel">
+          <Card className="admin-card">
             <CardHeader>
               <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
                 <BarChart3 className="h-5 w-5" />
@@ -763,7 +769,7 @@ export default function Admin() {
         </div>
 
         {/* Conversion Funnel */}
-        <Card className="glass-panel">
+        <Card className="admin-card">
           <CardHeader>
             <h2 className="text-lg font-semibold leading-none tracking-tight">Conversion Funnel</h2>
           </CardHeader>
@@ -800,7 +806,7 @@ export default function Admin() {
         </Card>
 
         {/* Analysis Operations Center */}
-        <Card className="glass-panel">
+        <Card className="admin-card">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
@@ -1191,7 +1197,7 @@ export default function Admin() {
         </Card>
 
         {/* Error Dashboard */}
-        <Card className="glass-panel">
+        <Card className="admin-card">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
@@ -1380,7 +1386,7 @@ export default function Admin() {
         </Card>
 
         {/* Historical Metrics & Analytics */}
-        <Card className="glass-panel">
+        <Card className="admin-card">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
@@ -1652,7 +1658,7 @@ export default function Admin() {
         </Card>
 
         {/* Retry Queue Status */}
-        <Card className="glass-panel">
+        <Card className="admin-card">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
@@ -1785,7 +1791,7 @@ export default function Admin() {
 
         {/* Error Summary by Code */}
         {errorSummary && errorSummary.errors && errorSummary.errors.length > 0 && (
-          <Card className="glass-panel">
+          <Card className="admin-card">
             <CardHeader>
               <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
                 <AlertTriangle className="h-5 w-5" />
@@ -1827,7 +1833,7 @@ export default function Admin() {
         )}
 
         {/* Email Subscribers */}
-        <Card className="glass-panel">
+        <Card className="admin-card">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
@@ -1944,7 +1950,7 @@ export default function Admin() {
         </Card>
 
         {/* Transactions Table */}
-        <Card className="glass-panel">
+        <Card className="admin-card">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">
@@ -2125,7 +2131,7 @@ export default function Admin() {
         </Card>
 
         {/* ============ LOG VIEWER ============ */}
-        <Card className="glass-panel">
+        <Card className="admin-card">
           <CardHeader>
             <div className="flex items-center justify-between">
               <h2 className="flex items-center gap-2 text-lg font-semibold leading-none tracking-tight">

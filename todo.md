@@ -1026,3 +1026,33 @@
 - [x] Create favicon.ico
 - [x] Create site.webmanifest for PWA support
 - [x] Update index.html with all favicon references
+
+
+## Design & UX Fixes - January 5, 2026 (Batch 2)
+
+### Mobile Logo Fix
+- [x] Fix logo and "ValidateStrategy" name not visible on mobile navbar - now shows "VS" on mobile, full name on larger screens
+
+### Winston Logging Integration
+- [x] Fix Log Viewer on Admin Dashboard to properly display Winston logs
+- [x] Ensure real-time log streaming works - auto-refresh every 5s
+- [x] Created logs directory with sample logs
+
+### Admin Dashboard Design Update
+- [x] Apply Technical Brutalist design (glassmorphism, noise texture)
+- [x] CSS only - no content changes
+- [x] Match homepage aesthetic
+- [x] Added admin-container, admin-header, admin-card, admin-stat-card classes
+- [x] Added section titles with horizontal lines
+
+### Demo Analysis Design Update
+- [x] Apply Technical Brutalist design (glassmorphism, noise texture)
+- [x] CSS only - no content changes
+- [x] Match homepage aesthetic
+- [x] Added fractal blob background
+- [x] Updated header with brutalist styling
+
+### SEO Optimization
+- [x] Add SoftwareApplication schema for better app store visibility
+- [x] Enhanced Organization schema with logo and contact
+- [x] Demo Analysis page already has proper SEO through main index.html

@@ -252,7 +252,7 @@ export default function Home() {
             <div className="w-6 h-6 border border-primary/50 bg-primary/10 flex items-center justify-center">
               <Zap className="w-3.5 h-3.5 text-primary" />
             </div>
-            <span className="font-bold text-sm tracking-tight font-mono hidden sm:inline">VALIDATE<span className="text-primary">STRATEGY</span></span>
+            <span className="font-bold text-[10px] sm:text-sm tracking-tight font-mono">VS<span className="text-primary hidden xs:inline">TRATEGY</span></span>
           </a>
 
           <div className="flex items-center gap-1.5 sm:gap-3 flex-wrap justify-end">

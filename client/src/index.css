@@ -586,6 +586,162 @@
   }
 
   /* ========================================
+     ADMIN DASHBOARD - TECHNICAL BRUTALIST
+  ======================================== */
+  .admin-container {
+    @apply relative min-h-screen;
+    background: var(--bg-primary);
+  }
+
+  .admin-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: var(--noise-opacity);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .dark .admin-container::before {
+    opacity: 0.03;
+  }
+
+  .admin-header {
+    @apply sticky top-0 z-40 border-b;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-color: var(--glass-border);
+  }
+
+  .admin-card {
+    @apply relative overflow-hidden rounded-none border transition-all duration-300;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-color: var(--glass-border);
+  }
+
+  .admin-card:hover {
+    border-color: var(--glass-border-hover);
+    box-shadow: 4px 4px 0px 0px rgba(99, 102, 241, 0.1);
+  }
+
+  .admin-card-header {
+    @apply px-4 py-3 border-b font-mono text-xs uppercase tracking-wider;
+    border-color: var(--glass-border);
+    background: rgba(99, 102, 241, 0.03);
+  }
+
+  .admin-stat-card {
+    @apply relative overflow-hidden border transition-all duration-300;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border-color: var(--glass-border);
+    border-radius: 0;
+  }
+
+  .admin-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent-indigo);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .admin-stat-card:hover::before {
+    opacity: 1;
+  }
+
+  .admin-stat-card:hover {
+    transform: translateX(4px);
+    box-shadow: -4px 0 0 0 var(--accent-indigo);
+  }
+
+  .admin-table {
+    @apply w-full font-mono text-sm;
+  }
+
+  .admin-table th {
+    @apply px-4 py-3 text-left text-xs uppercase tracking-wider border-b;
+    background: rgba(99, 102, 241, 0.03);
+    border-color: var(--glass-border);
+  }
+
+  .admin-table td {
+    @apply px-4 py-3 border-b;
+    border-color: var(--glass-border);
+  }
+
+  .admin-table tr:hover td {
+    background: rgba(99, 102, 241, 0.03);
+  }
+
+  .admin-badge {
+    @apply inline-flex items-center px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider border;
+    border-radius: 0;
+  }
+
+  .admin-badge-success {
+    @apply bg-green-500/10 text-green-400 border-green-500/30;
+  }
+
+  .admin-badge-warning {
+    @apply bg-yellow-500/10 text-yellow-400 border-yellow-500/30;
+  }
+
+  .admin-badge-error {
+    @apply bg-red-500/10 text-red-400 border-red-500/30;
+  }
+
+  .admin-badge-info {
+    @apply bg-blue-500/10 text-blue-400 border-blue-500/30;
+  }
+
+  .admin-log-entry {
+    @apply px-3 py-2 font-mono text-xs border-l-2 transition-all duration-200;
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .admin-log-entry:hover {
+    background: rgba(99, 102, 241, 0.05);
+  }
+
+  .admin-log-error {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.05);
+  }
+
+  .admin-log-warn {
+    border-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.05);
+  }
+
+  .admin-log-info {
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.05);
+  }
+
+  .admin-section-title {
+    @apply flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-muted-foreground mb-4;
+  }
+
+  .admin-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--glass-border);
+  }
+
+  /* ========================================
      TEXT GRADIENTS
   ======================================== */
   .text-gradient-primary {

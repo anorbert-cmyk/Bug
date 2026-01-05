@@ -959,7 +959,13 @@ export default function DemoAnalysis() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      {/* Fractal blob background - Technical Brutalist */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="fractal-blob blob-1" />
+        <div className="fractal-blob blob-2" />
+        <div className="fractal-blob blob-3" />
+      </div>
       {/* Email Gate Modal */}
       <EmailGateModal 
         isOpen={showEmailGate || showVerificationMessage} 
@@ -968,17 +974,17 @@ export default function DemoAnalysis() {
         showVerificationMessage={showVerificationMessage}
       />
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* Header - Technical Brutalist */}
+      <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur-xl">
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/")} className="font-mono text-xs uppercase tracking-wider">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Home
             </Button>
-            <div>
-              <h1 className="text-lg font-bold">Demo Analysis</h1>
-              <p className="text-xs text-muted-foreground">Sample APEX Strategic Output</p>
+            <div className="border-l border-border pl-4">
+              <h1 className="text-sm font-mono font-bold uppercase tracking-wider">Demo Analysis</h1>
+              <p className="text-[10px] text-muted-foreground font-mono">Sample APEX Strategic Output</p>
             </div>
           </div>
           
@@ -1013,7 +1019,7 @@ export default function DemoAnalysis() {
 
       <main className="container py-6 space-y-6">
         {/* Problem Statement */}
-        <Card className="glass-panel">
+        <Card className="glass-panel relative z-10">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               <Target className="h-4 w-4" />
