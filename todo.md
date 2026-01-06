@@ -1236,3 +1236,6 @@
 - [x] Update master prompt file with new Syndicate tier content
 
 - [x] Add hover tooltip explanations for new Syndicate tier features on Pricing page
+
+- [x] Add 300ms fade-in/fade-out animation to Syndicate tier tooltips
+- [x] Add info icon next to features on mobile for tooltip discoverability
