@@ -62,9 +62,9 @@ export const TIER_EMAIL_CONFIGS: Record<string, TierEmailConfig> = {
     tierName: "Syndicate",
     tierBadge: "APEX • STATE-OF-THE-ART AI",
     headline: "Your Complete APEX Analysis is Ready!",
-    subheadline: "4-part strategic analysis with 10 production-ready design prompts.",
+    subheadline: "6-part strategic analysis with 10 production-ready design prompts.",
     valueProps: [
-      "✅ 4-Part Comprehensive Analysis",
+      "✅ 6-Part Comprehensive Analysis",
       "✅ AI-Enhanced Execution Toolkit",
       "✅ 10 Production-Ready Design Prompts",
       "✅ Copy-Paste into Any Design Tool",

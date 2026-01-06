@@ -306,9 +306,9 @@ EVIDENCE & SOURCE HANDLING:
 - No placeholders: No lorem ipsum - use real, production-ready microcopy`;
 
 export const SYNDICATE_PART_SCOPES: Record<number, string> = {
-  1: `### PART 1 OF 6: DISCOVERY & PROBLEM ANALYSIS (~6,000 tokens)
+  1: `### PART 1 OF 6: DISCOVERY & PROBLEM ANALYSIS (~6,500 tokens)
 
-Execute comprehensive discovery and problem framing.
+Execute comprehensive discovery and problem framing with competitive intelligence.
 
 OUTPUT THESE SECTIONS:
 
@@ -326,6 +326,24 @@ OUTPUT THESE SECTIONS:
 - Current pain points and gaps (mark assumptions clearly)
 - Explicit success criteria (measurable, user-outcome tied)
 
+## War Room: Competitor Dynamic Simulation
+**CRITICAL:** Use live web search to find 3-5 REAL competitors. Do NOT use placeholders.
+
+| Competitor | UX Strength | UX Weakness | Differentiator Opportunity | **Their Likely Counter-Move (3-6 months)** |
+|------------|-------------|-------------|---------------------------|-------------------------------------------|
+| [Real Name] | [Specific strength] | [Specific weakness] | [Your opportunity] | [Predicted response if you launch] |
+
+**Strategic Implications:** Based on simulated counter-moves, what should you prioritize to stay ahead?
+
+## The Reality Check (Business Viability Shield)
+- **Dynamic Unit Economics:** Calculate "Cost to Serve" based on detected industry:
+  - If AI/SaaS → Token/API costs per user
+  - If E-commerce → COGS + fulfillment
+  - If Web3 → Gas fees + infrastructure
+  - If Marketplace → CAC for both sides
+- **Feasibility Score (0-100%):** Rate technical difficulty. Flag "Dealkillers" specific to this industry.
+- **The "Why It Will Fail" Pre-Mortem:** Identify the TOP 3 industry-specific reasons this startup will die. Be brutally honest.
+
 ## Assumption Ledger (5-7 assumptions)
 | # | Assumption | Confidence | Validation Plan | Business Risk if Wrong |
 |---|------------|------------|-----------------|------------------------|
@@ -335,11 +353,11 @@ OUTPUT THESE SECTIONS:
 **Next Steps (2 Weeks):** 3-5 milestones with dependencies
 
 ## Key Findings Summary (for subsequent parts)
-150-word summary: Core problem, primary persona, industry context, top 3 assumptions, recommended direction.
+150-word summary: Core problem, primary persona, industry context, top 3 assumptions, War Room insights, Pre-Mortem risks.
 
 **End with:** \`[✅ PART 1 COMPLETE - Discovery & Problem Analysis]\``,
 
-  2: `### PART 2 OF 6: COMPETITOR DEEP-DIVE (~6,000 tokens)
+  2: `### PART 2 OF 6: COMPETITOR DEEP-DIVE (~6,500 tokens)
 
 Execute intensive competitive research using real-time web search.
 
@@ -380,7 +398,7 @@ Include 8-12 relevant features.
 
 **End with:** \`[✅ PART 2 COMPLETE - Competitor Deep-Dive]\``,
 
-  3: `### PART 3 OF 6: STRATEGIC ROADMAP (~6,000 tokens)
+  3: `### PART 3 OF 6: STRATEGIC ROADMAP (~6,500 tokens)
 
 Create detailed implementation roadmap based on discovery and competitive insights.
 
@@ -390,6 +408,26 @@ OUTPUT THESE SECTIONS:
 - **Primary Methodology:** (Lean UX, Design Sprint, JTBD, Service Design)
 - **Why this approach:** Fit for this specific problem
 - **"Behind the Decision":** Alternatives considered and rejected
+
+## MANDATORY PHASE 0: Proof of Demand ("The Fake Door")
+**CRITICAL:** This phase validates willingness to pay BEFORE writing code.
+
+**Goal:** Test if users will open their wallets, not just say "I'd use that."
+
+**Action Plan:**
+1. Launch a landing page with "Pre-order" or "Join Waitlist" button
+2. Simulate checkout flow (Stripe test mode or email capture)
+3. Track conversion: Visitors → Button clicks → "Purchase" attempts
+
+**Success Metric:** Target conversion rate based on industry benchmark (use live search to find: "average waitlist conversion rate for [Detected Industry]")
+
+**Why This First:** If nobody clicks "Buy", the rest of the roadmap is irrelevant. The only real validation is a wallet opening.
+
+**Fake Door Landing Page Components:**
+- Headline: Benefit-driven value prop from Part 1 pain points
+- Pricing Card: "Early Adopter" tier with real price
+- CTA: "Pre-order Now" (triggers Stripe or captures email)
+- Modal: "Processing your spot... You haven't been charged yet. You are #X on the waitlist."
 
 ## Phase-by-Phase Roadmap
 Structure based on complexity (Week/Month/Quarter).
@@ -422,52 +460,106 @@ For solo founders: Modified approach with AI tools and async practices.
 
 **End with:** \`[✅ PART 3 COMPLETE - Strategic Roadmap]\``,
 
-  4: `### PART 4 OF 6: 5 CORE DESIGN PROMPTS (~7,000 tokens)
+  4: `### PART 4 OF 6: 5 CORE DESIGN PROMPTS (~7,500 tokens)
 
 Create 5 production-ready design prompts for core screens.
+
+**CRITICAL INSTRUCTION:** These prompts MUST be derived from:
+- **User Persona** detected in Part 1
+- **Pain Points** identified in Part 1
+- **Strategic Roadmap/Features** from Part 3
+Do NOT use generic templates. Every screen must solve a specific problem identified earlier.
 
 These prompts will be copy-pasted directly into AI design tools (Figma AI, Lovable, v0, Galileo).
 They must be: Self-contained, Specific (real dimensions, colors, typography), Production-ready (no placeholders), Accessible (WCAG 2.1 AA), Responsive.
 
+**PROMPT STRUCTURE (Use for all 5 screens):**
+\`\`\`markdown
+---FIGMA-PROMPT-START---
+Screen: {Name}
+Role: {Specific user persona interacting with this screen}
+Goal: {Specific JTBD this screen solves - reference Pain Point #X from Part 1}
+
+DESIGN & AESTHETICS (Industry: {Detected Industry}):
+- Visual Style: {e.g., "Neo-Brutalism for crypto" or "Clean Clinical for health"}
+- Color Palette: {Primary} | {Secondary} | {Background} | {Surface}
+- Typography: {Header Font} | {Body Font}
+- Grid System: 12-col desktop (80px margin), 4-col mobile (20px margin)
+- Spacing: 8px base unit (Strict 4/8/16/24/32/48/64/80 scale)
+
+COMPONENT HIERARCHY (Top to Bottom):
+1. Global Navigation: {Items specific to user type}
+2. Hero/Header: {Headline structure, imagery, key action}
+3. [Section A]: {Detailed component specs}
+4. [Section B]: {Detailed component specs}
+5. [Section C]: {Detailed component specs}
+
+CONTENT & MICROCOPY (Must match Tone of Voice):
+- Headline: "{Exact verified text}"
+- Subtext: "{Exact verified text - no lorem ipsum}"
+- CTA Primary: "{Text}" (State: Default/Hover/Disabled)
+- CTA Secondary: "{Text}"
+- Empty State Message: "{Helpful guidance text}"
+- Error Message: "{Specific, actionable error text}"
+- Success Message: "{Confirmation with next steps}"
+
+INTERACTION & STATES:
+- Hover Effects: {Specific visual feedback}
+- Focus States: {Accessibility ring style}
+- Loading: {Skeleton loader pattern}
+- Error: {Inline validation message}
+- Success: {Confirmation state}
+- Empty: {Zero-state design}
+
+ACCESSIBILITY (A11Y) & COMPLIANCE:
+- Color Contrast: WCAG AA compliant
+- Touch Targets: Min 44x44px
+- Screen Reader: ARIA labels for complex components
+- Keyboard Navigation: Tab order specification
+- Regulatory: {Disclaimer/Consent banner if fintech/health/web3}
+---FIGMA-PROMPT-END---
+\`\`\`
+
 OUTPUT 5 DETAILED DESIGN PROMPTS:
 
 ### Prompt 1: Onboarding/Welcome Flow
-Full specification including:
-- Layout (exact dimensions, grid)
-- Step-by-step content (real headlines, subheadlines, CTAs)
-- Visual design (colors hex, typography, spacing, shadows)
-- Interaction states (default, hover, focus, active, disabled, loading, success, error)
-- Accessibility (focus indicators, contrast, touch targets, aria-labels)
-- Responsive behavior (desktop, tablet, mobile)
+Linked to: Pain Point #{X} - {description}
+[Use full prompt structure above]
 
 ### Prompt 2: Main Dashboard/Home
-[Same detailed structure]
+Linked to: Pain Point #{X} - {description}
+[Use full prompt structure above]
 
 ### Prompt 3: Core Action Screen
 The primary use case screen - where users accomplish their main goal.
-[Same detailed structure]
+Linked to: Pain Point #{X} - {description}
+[Use full prompt structure above]
 
 ### Prompt 4: Settings/Profile
 Account management and preferences.
-[Same detailed structure]
+Linked to: Pain Point #{X} - {description}
+[Use full prompt structure above]
 
 ### Prompt 5: Navigation/Menu System
 Global navigation (desktop and mobile).
-[Same detailed structure]
+Linked to: User Persona - {description}
+[Use full prompt structure above]
 
 For each prompt include:
-1. **Prompt Title**
-2. **Full Prompt Text** (copy-paste ready)
-3. **Expected Output**
+1. **Prompt Title** with Pain Point linkage
+2. **Full Prompt Text** (copy-paste ready using structure above)
+3. **Strategic Rationale:** How this design solves the linked Pain Point
 4. **Customization Notes**
 
 **End with:** \`[✅ PART 4 COMPLETE - 5 Core Design Prompts]\``,
 
-  5: `### PART 5 OF 6: 5 ADVANCED DESIGN PROMPTS + EDGE CASES (~7,000 tokens)
+  5: `### PART 5 OF 6: 5 ADVANCED DESIGN PROMPTS + EDGE CASES (~7,500 tokens)
 
 Create 5 production-ready design prompts for edge cases and advanced states.
 
 Most products fail on edge cases, not happy paths. These prompts ensure complete UX coverage.
+
+**Use the same FIGMA-PROMPT structure from Part 4 for each prompt.**
 
 OUTPUT 5 DETAILED DESIGN PROMPTS:
 
@@ -477,40 +569,64 @@ Multiple scenarios:
 - No search results - helpful suggestions
 - No notifications - "all caught up" positive framing
 - Permission required - clear explanation and CTA
+[Use full FIGMA-PROMPT structure]
 
 ### Prompt 7: Error States & Recovery Flows
 - Form validation errors (inline, summary)
 - API/system errors (temporary with retry, permanent with resolution)
 - 404 / Not found (creative, helpful)
 - Permission denied (clear explanation, resolution path)
+[Use full FIGMA-PROMPT structure]
 
 ### Prompt 8: Loading & Skeleton Screens
 - Skeleton screens (dashboard, list, card)
 - Progress indicators (determinate, indeterminate)
 - Optimistic UI patterns
 - Lazy loading / infinite scroll
+[Use full FIGMA-PROMPT structure]
 
 ### Prompt 9: Notifications & Alerts
 - Toast notifications (success, error, warning, info)
 - Modal alerts (destructive confirmation, important info)
 - Inline alerts (page-level)
 - Badge/indicator system
+[Use full FIGMA-PROMPT structure]
 
-### Prompt 10: Mobile-Specific Adaptations
-- Mobile navigation (bottom tabs, hamburger, gestures)
-- Mobile form optimization (input sizing, keyboards, sticky submit)
-- Mobile patterns (pull-to-refresh, swipe actions, bottom sheets)
-- Touch optimizations (targets, spacing, active states)
+### Prompt 10: Industry-Specific Screen
+**CONDITIONAL BASED ON DETECTED INDUSTRY:**
+
+**If Web3/Crypto/DeFi detected:**
+- Wallet Connection Screen: Multi-wallet support (MetaMask, WalletConnect, Coinbase)
+- Transaction Confirmation Modal: Gas estimation, slippage, network selection
+- Token/NFT Display: Balance, price, portfolio value
+- On-chain Activity Feed: Transaction history with explorer links
+
+**If Fintech detected:**
+- Account Overview: Balance, recent transactions, quick actions
+- Payment/Transfer Flow: Amount input, recipient, confirmation
+- Security/2FA Screen: Biometric, OTP, recovery options
+
+**If SaaS/B2B detected:**
+- Team Management: Invite, roles, permissions
+- Billing/Subscription: Plans, usage, invoices
+- Integration Settings: API keys, webhooks, connected apps
+
+**If E-commerce detected:**
+- Product Detail Page: Images, variants, add to cart
+- Checkout Flow: Cart, shipping, payment, confirmation
+- Order Tracking: Status, timeline, support
+
+[Use full FIGMA-PROMPT structure with industry-specific components]
 
 For each prompt include:
-1. **Prompt Title**
-2. **Full Prompt Text** (copy-paste ready)
-3. **Expected Output**
+1. **Prompt Title** with Pain Point linkage
+2. **Full Prompt Text** (copy-paste ready using FIGMA-PROMPT structure)
+3. **Strategic Rationale:** How this design handles edge cases
 4. **Customization Notes**
 
 **End with:** \`[✅ PART 5 COMPLETE - 5 Advanced Design Prompts + Edge Cases]\``,
 
-  6: `### PART 6 OF 6: RISK, METRICS & STRATEGIC RATIONALE (~5,000 tokens)
+  6: `### PART 6 OF 6: RISK, METRICS & STRATEGIC RATIONALE (~5,500 tokens)
 
 Complete the analysis with risk assessment, success metrics, and ROI justification.
 
@@ -551,13 +667,27 @@ Key choices made, alternatives rejected, critical assumptions, what would change
 ## Final Executive Summary
 One-page brief: Opportunity, Recommendation, Key Deliverables, Investment & Returns, Critical Success Factors, Immediate Next Steps.
 
-## Verification Gate
-- [ ] All 10 design prompts use real patterns (no placeholders)
-- [ ] Competitor data is sourced and dated
-- [ ] Metrics are measurable with baselines
-- [ ] Risks have specific mitigations
-- [ ] Timeline is realistic
-- [ ] Business alignment is explicit
+## Proactive Hypothesis Testing
+For each major assumption from Part 1:
+| Hypothesis | Test Method | Success Criteria | Timeline | Owner |
+|------------|-------------|------------------|----------|-------|
+| [From Assumption Ledger] | [Specific test] | [Measurable outcome] | [When] | [Who] |
+
+## Verification & Integrity Gate
+**MANDATORY SELF-CHECK (AI must verify before completing):**
+
+- [ ] **War Room Simulation:** Part 1 includes competitor counter-moves (not just static analysis)
+- [ ] **Fake Door Validation:** Part 3 includes Phase 0 demand validation strategy
+- [ ] **Unit Economics:** Part 1 includes industry-specific cost calculations
+- [ ] **Pre-Mortem:** Part 1 includes "Why It Will Fail" with 3 specific risks
+- [ ] **Pain Point Linkage:** All 10 design prompts reference specific Pain Points from Part 1
+- [ ] **Industry Adaptation:** Design prompts include industry-specific components (Web3/Fintech/SaaS/E-commerce)
+- [ ] **Real Data:** Competitor data includes source URLs and dates
+- [ ] **Measurable Metrics:** All KPIs have baselines and targets
+- [ ] **Actionable Checklists:** Every part ends with specific action items
+- [ ] **No Placeholders:** All microcopy is real, production-ready text
+
+**If any checkbox is unchecked, go back and fix it before completing.**
 
 **End with:**
 \`[✅ PART 6 COMPLETE - Risk, Metrics & Strategic Rationale]\`

@@ -47,7 +47,7 @@ describe("perplexityService", () => {
   });
 
   describe("generateMultiPartAnalysis", () => {
-    it("should generate 4-part analysis for full tier", async () => {
+    it("should generate 6-part analysis for full tier (Syndicate)", async () => {
       const callbacks = {
         onPartComplete: vi.fn(),
         onComplete: vi.fn(),
@@ -60,10 +60,14 @@ describe("perplexityService", () => {
       expect(result.part2).toBe("Mock analysis response");
       expect(result.part3).toBe("Mock analysis response");
       expect(result.part4).toBe("Mock analysis response");
+      expect(result.part5).toBe("Mock analysis response");
+      expect(result.part6).toBe("Mock analysis response");
       expect(result.fullMarkdown).toContain("Part 1");
       expect(result.fullMarkdown).toContain("Part 2");
       expect(result.fullMarkdown).toContain("Part 3");
       expect(result.fullMarkdown).toContain("Part 4");
+      expect(result.fullMarkdown).toContain("Part 5");
+      expect(result.fullMarkdown).toContain("Part 6");
       expect(result.generatedAt).toBeGreaterThan(0);
     });
 

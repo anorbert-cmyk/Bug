@@ -36,7 +36,14 @@ const TIER_INFO: Record<string, { name: string; emoji: string; features: string[
   full: {
     name: "Syndicate",
     emoji: "⚡",
-    features: ["APEX 4-Part Analysis", "Perplexity AI Research", "10 Figma Prompts", "Risk Assessment", "Full Implementation Guide"]
+    features: [
+      "APEX 6-Part Strategic Analysis",
+      "\"War Room\" Competitor Simulation (Live counter-moves)",
+      "\"Fake Door\" Demand Validation Strategy",
+      "Dynamic Unit Economics & Pre-Mortem Analysis",
+      "10 Production-Ready Figma Prompts",
+      "Full Tech Stack Architecture & Go-to-Market Plan"
+    ]
   }
 };
 

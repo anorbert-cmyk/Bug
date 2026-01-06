@@ -1221,7 +1221,7 @@ export default function AnalysisResult() {
                       <div>
                         <h3 className="font-semibold">Want Deeper Insights?</h3>
                         <p className="text-sm text-muted-foreground">
-                          Upgrade to Syndicate for a comprehensive 4-part analysis with 10 Figma prompts
+                          Upgrade to Syndicate for a comprehensive 6-part analysis with 10 Figma prompts
                         </p>
                       </div>
                     </div>

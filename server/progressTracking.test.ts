@@ -70,8 +70,8 @@ describe("APEX Progress Tracking", () => {
       );
     });
 
-    it("should handle all 4 parts", async () => {
-      for (const partNum of [1, 2, 3, 4] as const) {
+    it("should handle all 6 parts (Syndicate tier)", async () => {
+      for (const partNum of [1, 2, 3, 4, 5, 6] as const) {
         await updateAnalysisPartProgress("test-session", partNum, "in_progress");
         expect(updateAnalysisPartProgress).toHaveBeenCalledWith(
           "test-session",

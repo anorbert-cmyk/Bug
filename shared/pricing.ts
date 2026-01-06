@@ -78,7 +78,7 @@ export const TIER_CONFIGS: Record<Tier, TierConfig> = {
     displayName: "Syndicate Tier",
     priceUsd: 199,
     headline: "Complete UX Strategy",
-    tagline: "Enterprise-grade 4-part analysis with 10 production-ready Figma prompts you can build from today.",
+    tagline: "Enterprise-grade 6-part analysis with 10 production-ready Figma prompts you can build from today.",
     description: "Full strategic analysis with design-ready outputs",
     badge: "APEX • STATE-OF-THE-ART AI",
     ctaText: "Get Full APEX Analysis",

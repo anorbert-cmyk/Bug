@@ -42,7 +42,7 @@ import { createInvoice, isNowPaymentsConfigured, getPaymentStatus } from "./serv
 import { createOrder as createPayPalOrder, captureOrder as capturePayPalOrder, isPayPalConfigured } from "./services/paypalService";
 import { verifyAdminSignature, verifyAdminSignatureWithChallenge, checkAdminStatus, generateChallenge } from "./services/walletAuthService";
 import { sendValidateStrategyEmail, isEmailConfigured } from "./services/emailService";
-import { executeApexAnalysis, isPerplexityConfigured } from "./services/perplexityApiService";
+// isPerplexityConfigured is now checked via PERPLEXITY_API_KEY env var directly
 
 // Error handling imports
 import {
@@ -1507,52 +1507,12 @@ export const appRouter = router({
         // Coinbase replaced with NOWPayments
         coinbaseEnabled: false, // isCoinbaseConfigured(),
         paypalEnabled: isPayPalConfigured(),
-        perplexityEnabled: isPerplexityConfigured(),
+        perplexityEnabled: !!process.env.PERPLEXITY_API_KEY,
       };
     }),
   }),
 
-  // ============ APEX ANALYSIS (Perplexity API) ============
-  apex: router({
-    // Check if APEX tier is available (Perplexity configured)
-    isAvailable: publicProcedure.query(() => {
-      return { available: isPerplexityConfigured() };
-    }),
-
-    // Start APEX analysis (requires completed payment for full tier)
-    startAnalysis: publicProcedure
-      .input(z.object({ sessionId: z.string() }))
-      .mutation(async ({ input }) => {
-        if (!isPerplexityConfigured()) {
-          throw new TRPCError({
-            code: "PRECONDITION_FAILED",
-            message: "APEX analysis is not available. Perplexity API key not configured."
-          });
-        }
-
-        const session = await getAnalysisSessionById(input.sessionId);
-        if (!session) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "Session not found" });
-        }
-
-        if (session.tier !== "full") {
-          throw new TRPCError({
-            code: "PRECONDITION_FAILED",
-            message: "APEX analysis is only available for Syndicate tier"
-          });
-        }
-
-        const purchase = await getPurchaseBySessionId(input.sessionId);
-        if (!purchase || purchase.paymentStatus !== "completed") {
-          throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Payment not completed" });
-        }
-
-        // Start APEX analysis in background
-        startApexAnalysisInBackground(input.sessionId, session.problemStatement, session.email);
-
-        return { status: "processing", message: "APEX analysis started" };
-      }),
-  }),
+  // APEX analysis is now handled via payment.confirmAndStartAnalysis which uses the 6-part generateMultiPartAnalysis
 });
 
 // Background analysis function with comprehensive error handling
@@ -1915,62 +1875,6 @@ async function handleAnalysisFailure(
         content: `Session: ${sessionId}\nTier: ${tier}\nError: ${analysisError.message}\nCategory: ${analysisError.category}\n\nThis may require manual intervention or refund.`,
       });
     }
-  }
-}
-
-// Background APEX analysis function (uses Perplexity API)
-async function startApexAnalysisInBackground(sessionId: string, problemStatement: string, email?: string | null) {
-  try {
-    console.log(`[APEX Analysis] Starting Perplexity-powered analysis for session ${sessionId}`);
-
-    await updateAnalysisSessionStatus(sessionId, "processing");
-
-    // Set estimated completion time (approximately 2-3 minutes for full APEX analysis)
-    const estimatedCompletion = new Date(Date.now() + 3 * 60 * 1000); // 3 minutes from now
-    await setEstimatedCompletion(sessionId, estimatedCompletion);
-
-    const result = await executeApexAnalysis(problemStatement, {
-      onPartStart: async (partNum) => {
-        console.log(`[APEX Analysis] Starting Part ${partNum}/4 for session ${sessionId}`);
-        // Update progress: mark part as in_progress
-        await updateAnalysisPartProgress(sessionId, partNum as 1 | 2 | 3 | 4, "in_progress");
-      },
-      onPartComplete: async (partNum, content) => {
-        console.log(`[APEX Analysis] Part ${partNum} complete for session ${sessionId}`);
-        const partKey = `part${partNum}` as "part1" | "part2" | "part3" | "part4";
-        // Update progress: mark part as completed and save content
-        await updateAnalysisPartProgress(sessionId, partNum as 1 | 2 | 3 | 4, "completed");
-        await updateAnalysisResult(sessionId, { [partKey]: content });
-      },
-      onError: async (error) => {
-        console.error(`[APEX Analysis] Error for session ${sessionId}:`, error);
-        await updateAnalysisSessionStatus(sessionId, "failed");
-      },
-    });
-
-    // Update with full results
-    await updateAnalysisResult(sessionId, {
-      fullMarkdown: result.fullMarkdown,
-      generatedAt: new Date(result.generatedAt),
-    });
-    await updateAnalysisSessionStatus(sessionId, "completed");
-    console.log(`[APEX Analysis] Complete for session ${sessionId}, tokens used: ${result.totalTokens}`);
-
-    // Send email notification
-    if (email && isEmailConfigured()) {
-      await sendValidateStrategyEmail({
-        to: email,
-        userName: email.split('@')[0],
-        magicLinkUrl: `${process.env.VITE_APP_URL || ''}/analysis/${sessionId}`,
-        transactionId: sessionId,
-        amount: String(getTierPrice("full")),
-        currency: 'USD',
-        tier: "full",
-      });
-    }
-  } catch (error) {
-    console.error(`[APEX Analysis] Failed for session ${sessionId}:`, error);
-    await updateAnalysisSessionStatus(sessionId, "failed");
   }
 }
 

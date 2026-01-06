@@ -176,12 +176,16 @@ describe("perplexityService - Tier Routing", () => {
       expect("part2" in result).toBe(true);
     });
 
-    it("should route full tier to multi-part analysis", async () => {
+    it("should route full tier to 6-part multi-part analysis", async () => {
       const result = await generateAnalysis("Test problem", "full");
       
       expect(result).toBeDefined();
       expect("part1" in result).toBe(true);
+      expect("part2" in result).toBe(true);
+      expect("part3" in result).toBe(true);
       expect("part4" in result).toBe(true);
+      expect("part5" in result).toBe(true);
+      expect("part6" in result).toBe(true);
     });
   });
 });

@@ -1239,3 +1239,11 @@
 
 - [x] Add 300ms fade-in/fade-out animation to Syndicate tier tooltips
 - [x] Add info icon next to features on mobile for tooltip discoverability
+
+- [ ] Fix Syndicate tier mobile layout - make feature list more compact and aesthetic
+
+- [x] Update tierPromptService.ts with new Syndicate Master Prompt elements (War Room, Fake Door, Unit Economics, Pre-Mortem, Figma Prompts)
+
+- [x] Check and revert shared/apexPrompt.ts if it has new Syndicate elements (Observer/Insider should NOT have War Room, Fake Door, etc.)
+- [x] Update paymentConfirmationEmail.ts Syndicate features list
+- [x] Increase Syndicate tier token limits by 500 for each part (6,500/6,500/6,500/7,500/7,500/5,500)

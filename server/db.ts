@@ -851,10 +851,10 @@ LAYOUT:
 
 TIER STRUCTURE:
 1. Observer ($49) - "Quick validation for side projects"
-   - 2-part analysis, Email delivery, 48hr turnaround
+   - 1-part analysis (single API call), Email delivery, 48hr turnaround
    
 2. Insider ($99) - "Full analysis for serious founders" [POPULAR]
-   - 4-part analysis, Dashboard access, 24hr turnaround
+   - 2-part analysis, Dashboard access, 24hr turnaround
    - Competitor deep-dive, Strategic roadmap
    
 3. Syndicate ($199) - "Complete package for funded teams"

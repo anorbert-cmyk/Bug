@@ -638,7 +638,7 @@ function EmailGateModal({
               <div>
                 <h2 className="text-2xl font-bold">Unlock the Full APEX Demo</h2>
                 <p className="text-muted-foreground mt-2">
-                  Enter your email to access the complete 4-part strategic analysis and see what you'll get with a real purchase.
+                  Enter your email to access the complete 6-part strategic analysis and see what you'll get with a real purchase.
                 </p>
               </div>
 

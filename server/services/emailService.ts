@@ -380,7 +380,7 @@ export async function sendVerificationEmail(params: VerificationEmailParams): Pr
                                     <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 12px; padding: 20px; margin-top: 30px; text-align: left;">
                                         <div style="font-size: 12px; text-transform: uppercase; color: #6366f1; letter-spacing: 1px; font-weight: 700; margin-bottom: 15px;">What you'll unlock:</div>
                                         <div style="color: #e0e0e0; font-size: 14px;">
-                                            ✓ Full 4-part APEX strategic analysis<br>
+                                            ✓ Full 6-part APEX strategic analysis<br>
                                             ✓ 10 production-ready Figma prompts<br>
                                             ✓ Risk assessment & success metrics<br>
                                             ✓ Export to Markdown
@@ -415,7 +415,7 @@ Verify Email: ${params.verificationUrl}
 This link expires in 24 hours.
 
 What you'll unlock:
-- Full 4-part APEX strategic analysis
+- Full 6-part APEX strategic analysis
 - 10 production-ready Figma prompts
 - Risk assessment & success metrics
 - Export to Markdown

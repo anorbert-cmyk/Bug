@@ -258,7 +258,7 @@ export default function MyAnalyses() {
                               <p className="text-xs text-muted-foreground">
                                 {key === 'standard' && 'Basic analysis'}
                                 {key === 'medium' && 'Detailed insights'}
-                                {key === 'full' && 'Complete 4-part APEX analysis'}
+                                {key === 'full' && 'Complete 6-part APEX analysis'}
                               </p>
                             </div>
                           </div>
