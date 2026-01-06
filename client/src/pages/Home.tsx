@@ -1,5 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Textarea } from "@/components/ui/textarea";
 import { useTheme } from "@/contexts/ThemeContext";
 import { trpc } from "@/lib/trpc";
@@ -871,27 +872,69 @@ export default function Home() {
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      "War Room" Competitor Sim <span className="text-muted-foreground text-xs">(Live counter-moves)</span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-help border-b border-dotted border-muted-foreground/50">"War Room" Competitor Sim <span className="text-muted-foreground text-xs">(Live counter-moves)</span></span>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>We simulate what your competitors will do in the next 3 months. Not static analysis - predictive intelligence that keeps you ahead.</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      "Fake Door" Strategy <span className="text-muted-foreground text-xs">(Validate demand first)</span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-help border-b border-dotted border-muted-foreground/50">"Fake Door" Strategy <span className="text-muted-foreground text-xs">(Validate demand first)</span></span>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>Validate demand BEFORE you code. Pre-order landing page + waitlist = proof that people will pay. The only real validation is a wallet opening.</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      Investor Pitch Deck Outline
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-help border-b border-dotted border-muted-foreground/50">Investor Pitch Deck Outline</span>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>Structured outline ready for your pitch deck. Problem, solution, market size, traction, team, and ask - all backed by your validated strategy.</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      Go-to-Market Launch Plan
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-help border-b border-dotted border-muted-foreground/50">Go-to-Market Launch Plan</span>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>Week-by-week launch roadmap with milestones, channels, and success metrics. From Phase 0 validation to full market entry.</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      Profitability Model <span className="text-muted-foreground text-xs">(Unit Economics)</span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-help border-b border-dotted border-muted-foreground/50">Profitability Model <span className="text-muted-foreground text-xs">(Unit Economics)</span></span>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>Industry-specific unit economics: Cost to Serve vs. Revenue per Customer. AI tokens, COGS, gas fees - we calculate what matters for YOUR business model.</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      Full Tech Stack Architecture
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-help border-b border-dotted border-muted-foreground/50">Full Tech Stack Architecture</span>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>Complete technical blueprint: frontend, backend, database, APIs, and infrastructure. Investment-grade documentation ready for your dev team.</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </li>
                   </ul>
 

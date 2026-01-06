@@ -1234,3 +1234,5 @@
 
 - [x] Update Syndicate tier features in Home.tsx with new value propositions
 - [x] Update master prompt file with new Syndicate tier content
+
+- [x] Add hover tooltip explanations for new Syndicate tier features on Pricing page
