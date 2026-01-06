@@ -6,7 +6,43 @@ import path from "path";
 import { defineConfig } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime()];
+// Custom plugin to fix modulepreload order - ensures vendor-react loads BEFORE main bundle
+function modulePreloadOrderPlugin() {
+  return {
+    name: 'modulepreload-order-fix',
+    enforce: 'post' as const,
+    transformIndexHtml(html: string) {
+      // Extract all modulepreload links
+      const preloadRegex = /<link[^>]*rel="modulepreload"[^>]*>/g;
+      const preloads = html.match(preloadRegex) || [];
+      
+      // Sort them: vendor-react first, then vendor-ui, then vendor-utils, then others
+      const sorted = preloads.sort((a, b) => {
+        const getOrder = (link: string) => {
+          if (link.includes('00-vendor-react') || link.includes('vendor-react')) return 0;
+          if (link.includes('01-vendor-ui') || link.includes('vendor-ui')) return 1;
+          if (link.includes('02-vendor-utils') || link.includes('vendor-utils')) return 2;
+          return 3;
+        };
+        return getOrder(a) - getOrder(b);
+      });
+      
+      // Remove all original preloads
+      let result = html.replace(preloadRegex, '');
+      
+      // Find the main script tag and insert sorted preloads BEFORE it
+      const mainScriptMatch = result.match(/<script[^>]*type="module"[^>]*src="[^"]*index[^"]*"[^>]*>/);
+      if (mainScriptMatch) {
+        const insertPoint = result.indexOf(mainScriptMatch[0]);
+        result = result.slice(0, insertPoint) + sorted.join('\n    ') + '\n    ' + result.slice(insertPoint);
+      }
+      
+      return result;
+    }
+  };
+}
+
+const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), modulePreloadOrderPlugin()];
 
 export default defineConfig({
   plugins,
