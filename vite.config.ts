@@ -26,6 +26,21 @@ export default defineConfig({
     sourcemap: true, // Enable source maps for debugging
     rollupOptions: {
       output: {
+        // Fix blank page error by ensuring vendor-react loads before main bundle
+        // Use numeric prefixes to control modulepreload order (alphabetical)
+        chunkFileNames: (chunkInfo) => {
+          // Prioritize vendor-react to load first
+          if (chunkInfo.name === 'vendor-react') {
+            return 'assets/00-vendor-react-[hash].js';  // ← Loads FIRST
+          }
+          if (chunkInfo.name === 'vendor-ui') {
+            return 'assets/01-vendor-ui-[hash].js';     // ← Loads SECOND
+          }
+          if (chunkInfo.name === 'vendor-utils') {
+            return 'assets/02-vendor-utils-[hash].js';  // ← Loads THIRD
+          }
+          return 'assets/[name]-[hash].js';
+        },
         manualChunks(id) {
           // IMPORTANT: Exclude recharts and its dependencies from vendor-react
           // These use Function("return this") which violates CSP
