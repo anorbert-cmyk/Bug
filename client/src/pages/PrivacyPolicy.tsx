@@ -38,8 +38,8 @@ export default function PrivacyPolicy() {
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>
                 <strong className="text-foreground">Email Address (Optional):</strong> Only if you choose to provide it 
-                for receiving notifications when your analysis is complete, transaction status updates for cryptocurrency 
-                payments, or invoices after card payments.
+                for receiving notifications when your analysis is complete and transaction status updates for cryptocurrency 
+                payments.
               </li>
             </ul>
             <p className="text-muted-foreground leading-relaxed mt-4">
@@ -67,7 +67,7 @@ export default function PrivacyPolicy() {
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
               <li>Notifying you when your strategic analysis is complete and ready for download</li>
               <li>Sending transaction status updates for cryptocurrency payments</li>
-              <li>Delivering invoices after successful card payments</li>
+              <li>Delivering invoices after successful payments</li>
             </ul>
             <p className="text-muted-foreground leading-relaxed mt-4">
               We will never sell, rent, or share your email address with third parties for marketing purposes. We do 
@@ -87,10 +87,9 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">6. Payment Processing</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We do not store credit card numbers or payment credentials. All payment processing is handled by 
-              third-party payment processors (Stripe for card payments, NOWPayments for cryptocurrency). These 
-              processors have their own privacy policies and security measures. We only receive confirmation of 
-              successful transactions.
+              We do not store payment credentials. Payment processing is currently handled by NOWPayments for 
+              cryptocurrency. Credit/debit card payments via Stripe are coming soon. These processors have their 
+              own privacy policies and security measures. We only receive confirmation of successful transactions.
             </p>
           </section>
 
@@ -109,7 +108,7 @@ export default function PrivacyPolicy() {
               We use the following third-party services:
             </p>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li><strong className="text-foreground">Stripe:</strong> For processing card payments (PCI-DSS compliant)</li>
+              <li><strong className="text-foreground">Stripe:</strong> For processing card payments (coming soon, PCI-DSS compliant)</li>
               <li><strong className="text-foreground">NOWPayments:</strong> For processing cryptocurrency payments</li>
               <li><strong className="text-foreground">AI Processing:</strong> For generating strategic analyses (data processed under strict confidentiality)</li>
             </ul>

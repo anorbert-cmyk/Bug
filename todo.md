@@ -1228,3 +1228,6 @@
 - [ ] Update Home.tsx H1 heading for mobile
 - [ ] Add SEO fallback to index.html
 - [ ] Create resizable-table.tsx component
+
+- [x] Remove/update credit card payment mentions in Terms of Service (not yet implemented)
+- [x] Remove/update credit card payment mentions in Privacy Policy (not yet implemented)

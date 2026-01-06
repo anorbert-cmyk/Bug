@@ -63,7 +63,7 @@ export default function TermsOfService() {
           <section>
             <h2 className="text-2xl font-semibold mb-4">5. Payment Terms</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              We accept payment via credit/debit cards (processed by Stripe) and cryptocurrency (processed by NOWPayments). 
+              We currently accept payment via cryptocurrency (processed by NOWPayments). Credit/debit card payments (via Stripe) are coming soon. 
               All prices are displayed in USD unless otherwise specified. Payment is required before analysis processing begins.
             </p>
             <p className="text-muted-foreground leading-relaxed">
