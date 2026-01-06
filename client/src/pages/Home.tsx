@@ -871,15 +871,11 @@ export default function Home() {
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      Detailed Product Requirements (PRD)
+                      "War Room" Competitor Sim <span className="text-muted-foreground text-xs">(Live counter-moves)</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      Technical Architecture Diagram
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      User Flow & Database Schema
+                      "Fake Door" Strategy <span className="text-muted-foreground text-xs">(Validate demand first)</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
@@ -887,11 +883,15 @@ export default function Home() {
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      Go-to-Market Strategy (GTM)
+                      Go-to-Market Launch Plan
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
-                      Advanced AI Prompt Library
+                      Profitability Model <span className="text-muted-foreground text-xs">(Unit Economics)</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
+                      Full Tech Stack Architecture
                     </li>
                   </ul>
 

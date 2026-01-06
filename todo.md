@@ -1231,3 +1231,6 @@
 
 - [x] Remove/update credit card payment mentions in Terms of Service (not yet implemented)
 - [x] Remove/update credit card payment mentions in Privacy Policy (not yet implemented)
+
+- [x] Update Syndicate tier features in Home.tsx with new value propositions
+- [x] Update master prompt file with new Syndicate tier content

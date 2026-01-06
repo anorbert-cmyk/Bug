@@ -172,7 +172,7 @@ describe("APEX Master Prompt", () => {
     
     expect(prompt).toContain("PART 1 – Discovery & Problem Analysis");
     expect(prompt).toContain("PART 2 – Strategic Design & Roadmap");
-    expect(prompt).toContain("PART 3 – AI Toolkit, Deliverables & Figma Prompts");
+    expect(prompt).toContain("PART 3 – AI Toolkit, Deliverables & 10 High-Fidelity Figma Prompts");
     expect(prompt).toContain("PART 4 – Risk, Metrics & Strategic Rationale");
   });
 
