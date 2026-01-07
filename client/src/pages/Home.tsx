@@ -361,7 +361,7 @@ export default function Home() {
           <div className="flex justify-center mb-8">
             <div className="inline-flex items-center gap-2 border border-primary/40 bg-primary/5 px-4 py-1.5">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary">System Online · 24h Turnaround</span>
+              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary">Instant Analysis · Results in Minutes</span>
             </div>
           </div>
 
@@ -383,9 +383,12 @@ export default function Home() {
                 <span className="text-[10px] text-muted-foreground ml-2">validate_strategy.sh</span>
               </div>
               <h2 className="text-muted-foreground text-base md:text-lg font-normal m-0 p-0">
-                <span className="text-primary">$</span> Get <strong className="font-medium text-foreground">boardroom-ready product strategy</strong> and <strong className="font-medium text-foreground">UX validation</strong> in <span className="text-foreground font-medium">24 hours</span>. Stop building blind.
+                <span className="text-primary">$</span> Get <strong className="font-medium text-foreground">boardroom-ready product strategy</strong> and <strong className="font-medium text-foreground">UX validation</strong> in <span className="text-foreground font-medium">minutes, not months</span>.
               </h2>
               <p className="text-muted-foreground/70 mt-2">
+                <span className="text-primary">$</span> The complete journey from idea to execution—all in one AI-powered platform.
+              </p>
+              <p className="text-muted-foreground/70 mt-1">
                 <span className="text-primary">$</span> Backed by research from <span className="text-foreground font-medium">Nielsen Norman</span> & <span className="text-foreground font-medium">Baymard Institute</span>.
               </p>
             </div>
@@ -596,7 +599,7 @@ export default function Home() {
             <div className="inline-flex items-center gap-3 px-6 py-3 border border-border bg-card">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               <span className="text-sm text-muted-foreground font-mono">
-                Average delivery time: <strong className="text-foreground">Under 24 hours</strong>
+                Average delivery time: <strong className="text-foreground">5-15 minutes</strong>
               </span>
             </div>
           </div>
@@ -732,7 +735,7 @@ export default function Home() {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-3.5 h-3.5 text-muted-foreground" />
-                    24-Hour Delivery
+                    Instant Delivery (~5 min)
                   </li>
                 </ul>
 
@@ -815,7 +818,7 @@ export default function Home() {
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="w-3.5 h-3.5 text-primary" />
-                    48-Hour Delivery
+                    Instant Delivery (~10 min)
                   </li>
                 </ul>
 
@@ -936,6 +939,10 @@ export default function Home() {
                           <p>Complete technical blueprint: frontend, backend, database, APIs, and infrastructure. Investment-grade documentation ready for your dev team.</p>
                         </TooltipContent>
                       </Tooltip>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="w-3.5 h-3.5 text-purple-400" />
+                      Priority Instant Delivery (~15 min)
                     </li>
                   </ul>
 
@@ -1201,6 +1208,98 @@ export default function Home() {
         </div>
       </section>
 
+      {/* The Complete Solution - Comparison Section */}
+      <section className="py-24 relative z-10 border-y border-border bg-card/40">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 border border-primary/40 bg-primary/5 px-3 py-1 mb-6">
+              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary">Why ValidateStrategy</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              The End-to-End <span className="text-primary">Validation Platform</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Stop juggling 5 different tools. Get everything you need in one place.
+            </p>
+          </div>
+
+          {/* Comparison Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full border border-border">
+              <thead>
+                <tr className="bg-muted/50">
+                  <th className="text-left p-4 font-mono text-xs uppercase tracking-wider text-muted-foreground border-b border-border">Capability</th>
+                  <th className="text-center p-4 font-mono text-xs uppercase tracking-wider text-muted-foreground border-b border-border">DIY Approach</th>
+                  <th className="text-center p-4 font-mono text-xs uppercase tracking-wider text-muted-foreground border-b border-border">Hire Agency</th>
+                  <th className="text-center p-4 font-mono text-xs uppercase tracking-wider text-primary border-b border-border bg-primary/5">ValidateStrategy</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                <tr className="border-b border-border/50">
+                  <td className="p-4 font-medium">Market Research</td>
+                  <td className="p-4 text-center text-muted-foreground">2-4 weeks</td>
+                  <td className="p-4 text-center text-muted-foreground">$3,000-8,000</td>
+                  <td className="p-4 text-center bg-primary/5 text-primary font-medium">Included</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4 font-medium">Competitor Analysis</td>
+                  <td className="p-4 text-center text-muted-foreground">1-2 weeks</td>
+                  <td className="p-4 text-center text-muted-foreground">$2,000-5,000</td>
+                  <td className="p-4 text-center bg-primary/5 text-primary font-medium">Included</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4 font-medium">UX Strategy</td>
+                  <td className="p-4 text-center text-muted-foreground">Guesswork</td>
+                  <td className="p-4 text-center text-muted-foreground">$5,000-15,000</td>
+                  <td className="p-4 text-center bg-primary/5 text-primary font-medium">Included</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4 font-medium">Technical Architecture</td>
+                  <td className="p-4 text-center text-muted-foreground">Trial & Error</td>
+                  <td className="p-4 text-center text-muted-foreground">$3,000-10,000</td>
+                  <td className="p-4 text-center bg-primary/5 text-primary font-medium">Syndicate Tier</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4 font-medium">Risk Assessment</td>
+                  <td className="p-4 text-center text-muted-foreground">Blind spots</td>
+                  <td className="p-4 text-center text-muted-foreground">$2,000-5,000</td>
+                  <td className="p-4 text-center bg-primary/5 text-primary font-medium">Included</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="p-4 font-medium">Go-to-Market Plan</td>
+                  <td className="p-4 text-center text-muted-foreground">Ad-hoc</td>
+                  <td className="p-4 text-center text-muted-foreground">$5,000-20,000</td>
+                  <td className="p-4 text-center bg-primary/5 text-primary font-medium">Syndicate Tier</td>
+                </tr>
+                <tr className="border-b border-border/50 bg-muted/30">
+                  <td className="p-4 font-bold">Total Time</td>
+                  <td className="p-4 text-center text-muted-foreground font-medium">4-8 weeks</td>
+                  <td className="p-4 text-center text-muted-foreground font-medium">2-4 weeks</td>
+                  <td className="p-4 text-center bg-primary/5 text-primary font-bold">5-15 minutes</td>
+                </tr>
+                <tr className="bg-muted/30">
+                  <td className="p-4 font-bold">Total Cost</td>
+                  <td className="p-4 text-center text-muted-foreground font-medium">Your time + opportunity cost</td>
+                  <td className="p-4 text-center text-muted-foreground font-medium">$15,000-50,000+</td>
+                  <td className="p-4 text-center bg-primary/5 text-primary font-bold">$49-199</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Bottom CTA */}
+          <div className="mt-12 text-center">
+            <p className="text-muted-foreground mb-6">
+              Save weeks of research and thousands of dollars. Get the same insights agencies charge $15,000+ for.
+            </p>
+            <a href="#pricing" className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
+              See Pricing
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Feature Comparison Table */}
       <section className="py-24 relative z-10">
         <div className="max-w-6xl mx-auto px-4">
@@ -1274,9 +1373,9 @@ export default function Home() {
                 </tr>
                 <tr className="border-b border-border/50">
                   <td className="p-4">Delivery</td>
-                  <td className="p-4 text-center text-muted-foreground">24h</td>
-                  <td className="p-4 text-center bg-primary/5">48h</td>
-                  <td className="p-4 text-center text-purple-400">72h Priority</td>
+                  <td className="p-4 text-center text-muted-foreground">~5 min</td>
+                  <td className="p-4 text-center bg-primary/5">~10 min</td>
+                  <td className="p-4 text-center text-purple-400">~15 min Priority</td>
                 </tr>
                 <tr>
                   <td className="p-4 font-semibold">Agency Value</td>
@@ -1352,6 +1451,125 @@ export default function Home() {
           <div className="mt-12 text-center">
             <p className="text-xs text-muted-foreground font-mono">
               Join <strong className="text-foreground">500+</strong> teams who validated their ideas with ValidateStrategy
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Design Tool Compatibility Section */}
+      <section className="py-24 relative z-10 bg-muted/30">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 border border-primary/40 bg-primary/5 px-3 py-1 mb-6">
+              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-primary">Workflow Integration</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Works With Your <span className="text-primary">Design Stack</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Export your validated strategy directly to the tools your team already uses.
+            </p>
+          </div>
+
+          {/* Tool Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {/* Figma */}
+            <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 38 57" fill="currentColor">
+                  <path d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z" />
+                  <path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z" />
+                  <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z" />
+                  <path d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" />
+                  <path d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" />
+                </svg>
+              </div>
+              <h3 className="font-bold mb-1">Figma</h3>
+              <p className="text-xs text-muted-foreground">AI-ready design prompts</p>
+            </div>
+
+            {/* Sketch */}
+            <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 1.25l-9.5 6.5 3.5 10.5h12l3.5-10.5-9.5-6.5zm0 2.5l6.5 4.5-2.5 7.5h-8l-2.5-7.5 6.5-4.5z" />
+                </svg>
+              </div>
+              <h3 className="font-bold mb-1">Sketch</h3>
+              <p className="text-xs text-muted-foreground">Component specs</p>
+            </div>
+
+            {/* Adobe XD */}
+            <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4.25 2A2.25 2.25 0 002 4.25v15.5A2.25 2.25 0 004.25 22h15.5A2.25 2.25 0 0022 19.75V4.25A2.25 2.25 0 0019.75 2H4.25zM7 7h2.5l2 4 2-4H16l-3.5 5.5L16 18h-2.5l-2-4-2 4H7l3.5-5.5L7 7z" />
+                </svg>
+              </div>
+              <h3 className="font-bold mb-1">Adobe XD</h3>
+              <p className="text-xs text-muted-foreground">Prototype flows</p>
+            </div>
+
+            {/* Notion */}
+            <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 3h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm1 2v14h14V5H5zm2 2h4v2H7V7zm0 4h10v2H7v-2zm0 4h10v2H7v-2z" />
+                </svg>
+              </div>
+              <h3 className="font-bold mb-1">Notion</h3>
+              <p className="text-xs text-muted-foreground">PRD templates</p>
+            </div>
+
+            {/* Linear */}
+            <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.56.45-3.01 1.22-4.24L16.24 18.78C15.01 19.55 13.56 20 12 20zm6.78-3.76L7.76 5.22C8.99 4.45 10.44 4 12 4c4.42 0 8 3.58 8 8 0 1.56-.45 3.01-1.22 4.24z" />
+                </svg>
+              </div>
+              <h3 className="font-bold mb-1">Linear</h3>
+              <p className="text-xs text-muted-foreground">Sprint planning</p>
+            </div>
+
+            {/* Jira */}
+            <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11.53 2c-.58 0-1.17.22-1.62.67L2.67 9.91a2.29 2.29 0 000 3.24l7.24 7.24c.9.9 2.35.9 3.24 0l7.24-7.24a2.29 2.29 0 000-3.24l-7.24-7.24A2.28 2.28 0 0011.53 2zm.47 5l4 4-4 4-4-4 4-4z" />
+                </svg>
+              </div>
+              <h3 className="font-bold mb-1">Jira</h3>
+              <p className="text-xs text-muted-foreground">User stories</p>
+            </div>
+
+            {/* Miro */}
+            <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.392 2H13.9l2.96 6.852L9.097 2H5.604l2.96 6.852L.8 2v20l7.764-13.148L5.604 22h3.493l7.763-13.148L13.9 22h3.492l7.764-13.148L22.2 22V2h-4.808z" />
+                </svg>
+              </div>
+              <h3 className="font-bold mb-1">Miro</h3>
+              <p className="text-xs text-muted-foreground">Journey maps</p>
+            </div>
+
+            {/* Markdown */}
+            <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2 4a2 2 0 012-2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm3 3v10h2v-5l2 3 2-3v5h2V7h-2l-2 3-2-3H5zm12 0v6h-2l3 4 3-4h-2V7h-2z" />
+                </svg>
+              </div>
+              <h3 className="font-bold mb-1">Markdown</h3>
+              <p className="text-xs text-muted-foreground">Universal export</p>
+            </div>
+          </div>
+
+          {/* Bottom Note */}
+          <div className="mt-12 text-center">
+            <p className="text-sm text-muted-foreground">
+              All reports export as <span className="text-foreground font-medium">Markdown</span> - paste directly into any tool.
             </p>
           </div>
         </div>
