@@ -1299,3 +1299,6 @@
 - [x] Verify CSRF protection (SameSite cookies)
 - [x] Document security audit findings
 - [x] Run npm audit for vulnerable dependencies (0 vulnerabilities found)
+
+## Design Tool Cards UX Refinement - January 7, 2026
+- [x] Remove cursor-pointer from Design Tool cards (cards are informational, not clickable)
