@@ -1571,6 +1571,9 @@ export default function Home() {
             <p className="text-sm text-muted-foreground">
               All reports export as <span className="text-foreground font-medium">Markdown</span> - paste directly into any tool.
             </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Direct integration is on the way.
+            </p>
           </div>
         </div>
       </section>

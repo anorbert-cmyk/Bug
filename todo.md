@@ -1272,3 +1272,12 @@
 ## Design Tool Compatibility Update - January 7, 2026
 - [x] Replace Adobe XD with Lovable
 - [x] Update other tools to modern 2025 trends (Cursor, v0, Framer, etc.)
+
+## Color Contrast Accessibility Fix - January 7, 2026
+- [ ] Audit Home page for WCAG AA contrast violations
+- [ ] Fix CSS variables (foreground, background, muted-foreground)
+- [ ] Fix component-specific contrast issues
+- [ ] Verify all pages meet AA standards (4.5:1 normal text, 3:1 large text)
+
+## Design Tool Integration Message - January 7, 2026
+- [x] Add "Direct integration is on the way" to Design Tool Compatibility section
