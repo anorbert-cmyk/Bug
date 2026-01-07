@@ -1488,37 +1488,48 @@ export default function Home() {
               <p className="text-xs text-muted-foreground">AI-ready design prompts</p>
             </div>
 
-            {/* Sketch */}
+            {/* Lovable */}
             <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
               <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 1.25l-9.5 6.5 3.5 10.5h12l3.5-10.5-9.5-6.5zm0 2.5l6.5 4.5-2.5 7.5h-8l-2.5-7.5 6.5-4.5z" />
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                 </svg>
               </div>
-              <h3 className="font-bold mb-1">Sketch</h3>
-              <p className="text-xs text-muted-foreground">Component specs</p>
+              <h3 className="font-bold mb-1">Lovable</h3>
+              <p className="text-xs text-muted-foreground">AI app builder</p>
             </div>
 
-            {/* Adobe XD */}
+            {/* Cursor */}
             <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
               <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M4.25 2A2.25 2.25 0 002 4.25v15.5A2.25 2.25 0 004.25 22h15.5A2.25 2.25 0 0022 19.75V4.25A2.25 2.25 0 0019.75 2H4.25zM7 7h2.5l2 4 2-4H16l-3.5 5.5L16 18h-2.5l-2-4-2 4H7l3.5-5.5L7 7z" />
+                  <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 01.35-.15h6.87a.5.5 0 00.35-.85L6.35 2.86a.5.5 0 00-.85.35z" />
                 </svg>
               </div>
-              <h3 className="font-bold mb-1">Adobe XD</h3>
-              <p className="text-xs text-muted-foreground">Prototype flows</p>
+              <h3 className="font-bold mb-1">Cursor</h3>
+              <p className="text-xs text-muted-foreground">AI code editor</p>
             </div>
 
-            {/* Notion */}
+            {/* v0 by Vercel */}
             <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
               <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M4 3h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm1 2v14h14V5H5zm2 2h4v2H7V7zm0 4h10v2H7v-2zm0 4h10v2H7v-2z" />
+                  <path d="M12 2L2 19.5h20L12 2zm0 4l7 12H5l7-12z" />
                 </svg>
               </div>
-              <h3 className="font-bold mb-1">Notion</h3>
-              <p className="text-xs text-muted-foreground">PRD templates</p>
+              <h3 className="font-bold mb-1">v0</h3>
+              <p className="text-xs text-muted-foreground">UI generation</p>
+            </div>
+
+            {/* Framer */}
+            <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4 0h16v8h-8zM4 8h8l8 8H4zM4 16h8v8z" />
+                </svg>
+              </div>
+              <h3 className="font-bold mb-1">Framer</h3>
+              <p className="text-xs text-muted-foreground">No-code websites</p>
             </div>
 
             {/* Linear */}
@@ -1532,26 +1543,15 @@ export default function Home() {
               <p className="text-xs text-muted-foreground">Sprint planning</p>
             </div>
 
-            {/* Jira */}
+            {/* Notion */}
             <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
               <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.53 2c-.58 0-1.17.22-1.62.67L2.67 9.91a2.29 2.29 0 000 3.24l7.24 7.24c.9.9 2.35.9 3.24 0l7.24-7.24a2.29 2.29 0 000-3.24l-7.24-7.24A2.28 2.28 0 0011.53 2zm.47 5l4 4-4 4-4-4 4-4z" />
+                  <path d="M4 3h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm1 2v14h14V5H5zm2 2h4v2H7V7zm0 4h10v2H7v-2zm0 4h10v2H7v-2z" />
                 </svg>
               </div>
-              <h3 className="font-bold mb-1">Jira</h3>
-              <p className="text-xs text-muted-foreground">User stories</p>
-            </div>
-
-            {/* Miro */}
-            <div className="group bg-card border border-border p-6 hover:border-primary/50 transition-all duration-300 text-center">
-              <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <svg className="w-10 h-10 text-muted-foreground group-hover:text-foreground transition-colors" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.392 2H13.9l2.96 6.852L9.097 2H5.604l2.96 6.852L.8 2v20l7.764-13.148L5.604 22h3.493l7.763-13.148L13.9 22h3.492l7.764-13.148L22.2 22V2h-4.808z" />
-                </svg>
-              </div>
-              <h3 className="font-bold mb-1">Miro</h3>
-              <p className="text-xs text-muted-foreground">Journey maps</p>
+              <h3 className="font-bold mb-1">Notion</h3>
+              <p className="text-xs text-muted-foreground">PRD templates</p>
             </div>
 
             {/* Markdown */}
